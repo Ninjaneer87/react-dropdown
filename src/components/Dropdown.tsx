@@ -5,6 +5,7 @@ import {
 } from '../context/DropdownContext';
 import DropdownMenu from './DropdownMenu';
 import DropdownHeader from './DropdownHeader';
+import DropdownFooter from './DropdownFooter';
 import DropdownSection from './DropdownSection';
 import DropdownItem from './DropdownItem';
 import DropdownTrigger from './DropdownTrigger';
@@ -99,7 +100,7 @@ const Dropdown = ({
           shouldCloseOnScroll={shouldCloseOnScroll}
           shouldCloseOnBlur={shouldCloseOnBlur}
           shouldCloseOnEsc={shouldCloseOnEsc}
-          // backdrop={backdrop}
+          backdrop={backdrop}
           placement={placement}
           isDisabled={isDisabled}
           isOpen={open}
@@ -178,6 +179,7 @@ const Dropdown = ({
 
 Dropdown.Menu = DropdownMenu;
 Dropdown.Header = DropdownHeader;
+Dropdown.Footer = DropdownFooter;
 Dropdown.Section = DropdownSection;
 Dropdown.Item = DropdownItem;
 Dropdown.Trigger = DropdownTrigger;

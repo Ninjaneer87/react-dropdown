@@ -14,6 +14,7 @@ import {
   createPositionFromPlacement,
   Coords,
   createChildPositionFromPlacement,
+  buildPlacement,
 } from '../utils/common';
 import ClientPortal from './ClientPortal';
 
@@ -36,7 +37,7 @@ const Popover = ({
 }: PopoverProps & PopoverComposition) => {
   const popoverContext = usePopoverContext();
   const isChildPopover = popoverContext !== null;
-  const popoverRef = useRef<HTMLDivElement>(null);
+  const popoverMenuRef = useRef<HTMLDivElement>(null);
   const popoverTriggerRef = useRef<HTMLDivElement>(null);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -101,7 +102,9 @@ const Popover = ({
   // Handle onBlur
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      const hasPopoverParent = (event.target as Element)?.closest('.popover-menu');
+      const hasPopoverParent = (event.target as Element)?.closest(
+        '.popover-menu',
+      );
 
       if (!hasPopoverParent) {
         if (onBlur) onBlur();
@@ -126,18 +129,20 @@ const Popover = ({
     setIsOpen(false);
   }, [isDisabled]);
 
-  const setMenuCoords = useCallback(() => {
-    if (!popoverTriggerRef.current) return;
+  const setMenuCoords = () => {
+    if (!popoverTriggerRef.current || !popoverMenuRef.current) return;
 
     const triggerRect = popoverTriggerRef.current.getBoundingClientRect();
-    const rootCoords = createPositionFromPlacement(placement, triggerRect);
+    const popoverRect = popoverMenuRef.current?.getBoundingClientRect();
+    const fitPlacement = buildPlacement(placement, triggerRect, popoverRect);
+    const rootCoords = createPositionFromPlacement(fitPlacement, triggerRect);
     const childCoords = createChildPositionFromPlacement(
-      placement,
+      fitPlacement,
       triggerRect,
     );
 
     setPopoverContentCoords(isChildPopover ? childCoords : rootCoords);
-  }, [placement, isChildPopover]);
+  };
 
   // Handle position and scroll
   useEffect(() => {
@@ -164,13 +169,7 @@ const Popover = ({
         document.body.style.overflow = 'auto';
       }
     };
-  }, [
-    open,
-    shouldBlockScroll,
-    shouldCloseOnScroll,
-    handleClose,
-    setMenuCoords,
-  ]);
+  }, [open, shouldBlockScroll, shouldCloseOnScroll, handleClose]);
 
   function handleToggle() {
     if (isDisabled) return;
@@ -204,9 +203,9 @@ const Popover = ({
     }
   }
 
-  return (
-    <PopoverContext.Provider value={{ isOpen: open, handleClose }}>
-      {isMounted && !!backdrop && (
+  const popoverJSX = (
+    <>
+      {isMounted && !!backdrop && !isChildPopover && (
         <div
           className={`fixed inset-0 ${
             backdrop !== 'transparent' ? 'bg-black/10' : ''
@@ -218,9 +217,8 @@ const Popover = ({
       )}
 
       <div
-        className="relative"
+        className={`relative ${isChildPopover ? 'w-full' : 'w-fit'}`}
         onKeyDown={onPopoverKeyDown}
-        ref={popoverRef}
         onScroll={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -236,19 +234,30 @@ const Popover = ({
           {popoverTrigger}
         </div>
 
-        {isMounted && (
-          <ClientPortal>
+        <ClientPortal>
+          {(isMounted || open) && (
             <div
               className={`popover-menu fixed ${
                 open ? 'scale-in' : 'scale-out'
-              } transition-all`}
+              } transition-opacity`}
               style={popoverContentCoords}
+              ref={popoverMenuRef}
             >
               {popoverContent}
             </div>
-          </ClientPortal>
-        )}
+          )}
+        </ClientPortal>
       </div>
+    </>
+  );
+
+  if (isChildPopover) {
+    return popoverJSX;
+  }
+
+  return (
+    <PopoverContext.Provider value={{ isOpen: open, handleClose }}>
+      {popoverJSX}
     </PopoverContext.Provider>
   );
 };

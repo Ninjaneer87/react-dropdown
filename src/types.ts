@@ -84,6 +84,11 @@ export type DropdownHeaderProps = {
   isSticky?: boolean;
 };
 
+export type DropdownFooterProps = {
+  children: React.ReactNode;
+  isSticky?: boolean;
+};
+
 export type DropdownSectionProps = {
   children: React.ReactNode;
   scrolling?: boolean;
@@ -109,6 +114,10 @@ export type DropdownComposition = {
    * DropdownHeader is a non-clickable element that provides context for the Dropdown.
    */
   Header?: React.FC<DropdownHeaderProps>;
+  /**
+   * DropdownFooter provides bottom space, usually used for actions.
+   */
+  Footer?: React.FC<DropdownFooterProps>;
   /**
    * DropdownSection groups DropdownItem components.
    */

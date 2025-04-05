@@ -101,14 +101,14 @@ export function createChildPositionFromPlacement(
   // Start
   if (!align || align === 'start') {
     if (position === 'left' || position === 'right') {
-      top = triggerRect.bottom;
-      translateY = '-100%';
+      top = triggerRect.top;
     }
   }
   // End
   if (align === 'end') {
     if (position === 'left' || position === 'right') {
-      top = triggerRect.top;
+      top = triggerRect.bottom;
+      translateY = '-100%';
     }
   }
 
@@ -119,4 +119,105 @@ export function createChildPositionFromPlacement(
     ...(right !== undefined && { right }),
     translate: `${translateX ?? '0px'} ${translateY ?? '0px'}`,
   };
+}
+
+export function buildPlacement(
+  placement: PopoverPlacement,
+  triggerRect: DOMRect,
+  popoverRect: DOMRect | undefined,
+): PopoverPlacement {
+  if (!popoverRect) {
+    return placement;
+  }
+
+  const [position, align] = placement.split('-');
+
+  let fitPosition = position;
+
+  if (position === 'top') {
+    const fits = triggerRect.top - popoverRect.height >= 0;
+    if (!fits) {
+      fitPosition = 'bottom';
+    }
+  }
+  if (position === 'bottom') {
+    const fits =
+      window.innerHeight - triggerRect.bottom - popoverRect.height >= 0;
+    if (!fits) {
+      fitPosition = 'top';
+    }
+  }
+  if (position === 'left') {
+    const fits = triggerRect.left - popoverRect.width >= 0;
+    if (!fits) {
+      fitPosition = 'right';
+    }
+  }
+  if (position === 'right') {
+    const fits = window.innerWidth - triggerRect.right - popoverRect.width >= 0;
+    if (!fits) {
+      fitPosition = 'left';
+    }
+  }
+
+  let fitAlign = align;
+  if (align === 'start') {
+    if (position === 'top' || position === 'bottom') {
+      const fits = triggerRect.left - popoverRect.width >= 0;
+      if (!fits) {
+        fitAlign = 'end';
+      }
+    }
+    if (position === 'left' || position === 'right') {
+      const fits =
+        window.innerHeight - triggerRect.bottom - popoverRect.height >= 0;
+      if (!fits) {
+        fitAlign = 'end';
+      }
+    }
+  }
+  if (align === 'end') {
+    if (position === 'top' || position === 'bottom') {
+      const fits =
+        window.innerWidth - triggerRect.right - popoverRect.width >= 0;
+      if (!fits) {
+        fitAlign = 'start';
+      }
+    }
+    if (position === 'left' || position === 'right') {
+      const fits = triggerRect.top - popoverRect.height >= 0;
+      if (!fits) {
+        fitAlign = 'start';
+      }
+    }
+  }
+  if (align === undefined || align === 'center') {
+    if (position === 'top' || position === 'bottom') {
+      const fitsStart = triggerRect.right < popoverRect.width;
+      if (fitsStart) {
+        fitAlign = 'start';
+      }
+
+      const fitsEnd = triggerRect.left > window.innerWidth - popoverRect.width;
+      if (fitsEnd) {
+        fitAlign = 'end';
+      }
+    }
+    if (position === 'left' || position === 'right') {
+      const fitsStart = triggerRect.bottom < popoverRect.height;
+      if (fitsStart) {
+        fitAlign = 'start';
+      }
+      const fitsEnd = window.innerHeight - triggerRect.top < popoverRect.height;
+      if (fitsEnd) {
+        fitAlign = 'end';
+      }
+    }
+  }
+
+  const fitPlacement = `${fitPosition}${
+    fitAlign ? `-${fitAlign}` : ''
+  }` as PopoverPlacement;
+
+  return fitPlacement;
 }

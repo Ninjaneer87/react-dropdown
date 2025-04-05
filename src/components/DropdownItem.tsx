@@ -40,12 +40,12 @@ function DropdownItem<T extends ElementType = 'div'>(
     shouldCloseOnSelection ?? dropdownContext.shouldCloseOnSelection;
 
   function handleClick() {
-    if (closeOnSelection) {
-      handleClose();
-    }
-
     if (onClick) {
       onClick();
+    }
+
+    if (closeOnSelection) {
+      handleClose();
     }
   }
 
