@@ -1,18 +1,8 @@
 import { ComponentPropsWithRef, ElementType } from 'react';
 
-export type PopoverPlacement =
-  | 'top-start'
-  | 'top'
-  | 'top-end'
-  | 'right-start'
-  | 'right'
-  | 'right-end'
-  | 'bottom-start'
-  | 'bottom'
-  | 'bottom-end'
-  | 'left-start'
-  | 'left'
-  | 'left-end';
+export type PopoverPosition = 'top' | 'bottom' | 'left' | 'right';
+export type PopoverAlign = 'start' | 'end' | 'center';
+export type PopoverPlacement = `${PopoverPosition}-${PopoverAlign}`;
 
 export type Backdrop = 'transparent' | 'opaque' | 'blur';
 
@@ -32,6 +22,9 @@ export type PopoverProps = {
   onClose?: () => void;
   onBlur?: () => void;
   onToggle?: (isOpen: boolean) => void;
+  isChild?: boolean;
+  fullWidth?: boolean;
+  openOnHover?: boolean;
 };
 
 export type PopoverTriggerProps = {
@@ -55,24 +48,10 @@ export type PopoverComposition = {
 };
 
 export type DropdownProps = {
-  children: React.ReactNode;
-  trigger?: React.ReactNode;
-  shouldBlockScroll?: boolean;
-  shouldCloseOnBlur?: boolean;
-  shouldCloseOnEsc?: boolean;
-  shouldCloseOnScroll?: boolean;
   shouldCloseOnSelection?: boolean;
-  backdrop?: 'transparent' | 'opaque' | 'blur';
-  placement?: PopoverPlacement;
-  isDisabled?: boolean;
   caret?: React.ReactNode;
-  isOpen?: boolean;
   showCaret?: boolean;
-  onOpen?: () => void;
-  onClose?: () => void;
-  onBlur?: () => void;
-  onToggle?: (isOpen: boolean) => void;
-};
+} & PopoverProps;
 
 export type DropdownMenuProps = {
   children: React.ReactNode;

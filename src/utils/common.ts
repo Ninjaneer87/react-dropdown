@@ -1,5 +1,5 @@
 import { CSSProperties } from 'react';
-import { PopoverPlacement } from '../types';
+import { PopoverAlign, PopoverPlacement, PopoverPosition } from '../types';
 
 export type Coords = {
   top?: CSSProperties['width'];
@@ -12,11 +12,14 @@ export function createPositionFromPlacement(
   placement: PopoverPlacement,
   triggerRect: DOMRect,
 ): Coords {
-  const [position, align] = placement.split('-');
+  const [position, align] = placement.split('-') as [
+    PopoverPosition,
+    PopoverAlign,
+  ];
 
   let top, left, bottom, right, translateY, translateX: CSSProperties['width'];
 
-  // Coords
+  //! Position
   // Top
   if (position === 'top') {
     top = triggerRect.top;
@@ -36,7 +39,7 @@ export function createPositionFromPlacement(
     left = triggerRect.right;
   }
 
-  // Align
+  //! Align
   // Start
   if (align === 'start') {
     if (position === 'top' || position === 'bottom') {
@@ -58,7 +61,7 @@ export function createPositionFromPlacement(
     }
   }
   // Center
-  if (align === undefined) {
+  if (align === 'center') {
     if (position === 'top' || position === 'bottom') {
       left = triggerRect.right - triggerRect.width / 2;
       translateX = '-50%';
@@ -86,20 +89,20 @@ export function createChildPositionFromPlacement(
 
   let top, left, bottom, right, translateY, translateX: CSSProperties['width'];
 
+  //! Position
+  // Left
   if (position === 'left') {
-    // Coords
-    // Left
     left = triggerRect.left;
     translateX = '-100%';
   }
-  // Right
+  // Right (top and bottom become right)
   if (position === 'top' || position === 'bottom' || position === 'right') {
     left = triggerRect.right;
   }
 
-  // Align
+  //! Align
   // Start
-  if (!align || align === 'start') {
+  if (align === 'start') {
     if (position === 'left' || position === 'right') {
       top = triggerRect.top;
     }
@@ -110,6 +113,11 @@ export function createChildPositionFromPlacement(
       top = triggerRect.bottom;
       translateY = '-100%';
     }
+  }
+  // Center
+  if (align === 'center') {
+    top = triggerRect.bottom - triggerRect.height / 2;
+    translateY = '-50%';
   }
 
   return {
@@ -132,14 +140,18 @@ export function buildPlacement(
 
   const [position, align] = placement.split('-');
 
+  //! POSITION FITS CHECK
   let fitPosition = position;
 
+  // Fits top check
   if (position === 'top') {
     const fits = triggerRect.top - popoverRect.height >= 0;
     if (!fits) {
       fitPosition = 'bottom';
     }
   }
+
+  // Fits bottom check
   if (position === 'bottom') {
     const fits =
       window.innerHeight - triggerRect.bottom - popoverRect.height >= 0;
@@ -147,12 +159,16 @@ export function buildPlacement(
       fitPosition = 'top';
     }
   }
+
+  // Fits left check
   if (position === 'left') {
     const fits = triggerRect.left - popoverRect.width >= 0;
     if (!fits) {
       fitPosition = 'right';
     }
   }
+
+  // Fits right check
   if (position === 'right') {
     const fits = window.innerWidth - triggerRect.right - popoverRect.width >= 0;
     if (!fits) {
@@ -160,7 +176,10 @@ export function buildPlacement(
     }
   }
 
+  //! ALIGN FITS CHECK
   let fitAlign = align;
+
+  // Fits start check
   if (align === 'start') {
     if (position === 'top' || position === 'bottom') {
       const fits = triggerRect.left - popoverRect.width >= 0;
@@ -176,6 +195,8 @@ export function buildPlacement(
       }
     }
   }
+
+  // Fits end check
   if (align === 'end') {
     if (position === 'top' || position === 'bottom') {
       const fits =
@@ -191,7 +212,9 @@ export function buildPlacement(
       }
     }
   }
-  if (align === undefined || align === 'center') {
+
+  // Fits center check
+  if (align === undefined) {
     if (position === 'top' || position === 'bottom') {
       const fitsStart = triggerRect.right < popoverRect.width;
       if (fitsStart) {

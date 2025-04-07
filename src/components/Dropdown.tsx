@@ -1,8 +1,5 @@
-import React, { ReactNode, useRef, useState } from 'react';
-import {
-  DropdownContext,
-  useDropdownContext,
-} from '../context/DropdownContext';
+import React, { ReactNode, useState } from 'react';
+import { DropdownContext } from '../context/DropdownContext';
 import DropdownMenu from './DropdownMenu';
 import DropdownHeader from './DropdownHeader';
 import DropdownFooter from './DropdownFooter';
@@ -14,9 +11,10 @@ import { DropdownComposition, DropdownProps } from '../types';
 import Popover from './Popover';
 
 const defaultRootCaret = <span className="shrink-0 text-2xl">&#9662;</span>;
-const defaultChildCaret = <span className="shrink-0 text-2xl">&#9656;</span>;
+// const defaultChildCaret = <span className="shrink-0 text-2xl">&#9656;</span>;
 
 const Dropdown = ({
+  caret,
   children,
   trigger,
   shouldBlockScroll = true,
@@ -25,25 +23,21 @@ const Dropdown = ({
   shouldCloseOnEsc = true,
   shouldCloseOnSelection = true,
   backdrop = 'blur',
-  placement = 'bottom',
+  placement = 'bottom-center',
   showCaret = false,
-  caret,
   isDisabled,
   isOpen: controlledIsOpen,
   onOpen,
   onClose,
   onBlur,
   onToggle,
+  isChild = false,
+  fullWidth = false,
+  openOnHover,
 }: DropdownProps & DropdownComposition) => {
-  const dropdownContext = useDropdownContext();
-  const isRootDropdown = dropdownContext === null;
-
-  const childDropdownRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [isHoverOpen, setIsHoverOpen] = useState(false);
 
   const open = controlledIsOpen ?? isOpen;
-  const isExpanded = open || isHoverOpen;
 
   let dropdownTrigger: ReactNode | null = trigger ?? null;
   let dropdownMenu: ReactNode | null = null;
@@ -91,89 +85,51 @@ const Dropdown = ({
     throw new Error('Dropdown component requires a DropdownMenu');
   }
 
-  // Root dropdown
-  if (isRootDropdown) {
-    return (
-      <DropdownContext.Provider value={{ shouldCloseOnSelection }}>
-        <Popover
-          shouldBlockScroll={shouldBlockScroll}
-          shouldCloseOnScroll={shouldCloseOnScroll}
-          shouldCloseOnBlur={shouldCloseOnBlur}
-          shouldCloseOnEsc={shouldCloseOnEsc}
-          backdrop={backdrop}
-          placement={placement}
-          isDisabled={isDisabled}
-          isOpen={open}
-          onOpen={() => {
-            setIsOpen(true);
-            if (onOpen) onOpen();
-          }}
-          onClose={() => {
-            setIsOpen(false);
-            if (onClose) onClose();
-          }}
-          onBlur={() => {
-            if (onBlur) onBlur();
-          }}
-          onToggle={(isOpen) => {
-            setIsOpen(isOpen);
-            if (onToggle) onToggle(isOpen);
-          }}
-        >
-          <Popover.Trigger>
-            {dropdownTrigger} {showCaret && (caret ?? defaultRootCaret)}
-          </Popover.Trigger>
+  const dropdownJSX = (
+    <Popover
+      openOnHover={openOnHover}
+      isChild={isChild}
+      fullWidth={fullWidth}
+      shouldBlockScroll={!isChild && shouldBlockScroll}
+      shouldCloseOnScroll={!isChild && shouldCloseOnScroll}
+      shouldCloseOnBlur={!isChild && shouldCloseOnBlur}
+      shouldCloseOnEsc={!isChild && shouldCloseOnEsc}
+      backdrop={isChild ? undefined : backdrop}
+      placement={placement}
+      isDisabled={isDisabled}
+      isOpen={open}
+      onOpen={() => {
+        setIsOpen(true);
+        if (onOpen) onOpen();
+      }}
+      onClose={() => {
+        setIsOpen(false);
+        if (onClose) onClose();
+      }}
+      onBlur={() => {
+        if (onBlur) onBlur();
+      }}
+      onToggle={(isOpen) => {
+        setIsOpen(isOpen);
+        if (onToggle) onToggle(isOpen);
+      }}
+    >
+      <Popover.Trigger>
+        {dropdownTrigger} {showCaret && (caret ?? defaultRootCaret)}
+      </Popover.Trigger>
 
-          <Popover.Content>{dropdownMenu}</Popover.Content>
-        </Popover>
-      </DropdownContext.Provider>
-    );
+      <Popover.Content>{dropdownMenu}</Popover.Content>
+    </Popover>
+  );
+
+  if (isChild) {
+    return dropdownJSX;
   }
 
-  // Nested dropdown
   return (
-    <div
-      onMouseEnter={() => setIsHoverOpen(true)}
-      onMouseLeave={() => setIsHoverOpen(false)}
-      className="relative w-full"
-      ref={childDropdownRef}
-    >
-      <Popover
-        shouldBlockScroll={false}
-        shouldCloseOnScroll={false}
-        shouldCloseOnBlur={false}
-        shouldCloseOnEsc={false}
-        placement={placement}
-        isDisabled={isDisabled}
-        isOpen={isExpanded}
-        onOpen={() => {
-          setIsOpen(true);
-          if (onOpen) onOpen();
-        }}
-        onClose={() => {
-          setIsOpen(false);
-          if (onClose) onClose();
-        }}
-        onBlur={() => {
-          if (onBlur) onBlur();
-        }}
-        onToggle={(isOpen) => {
-          setIsOpen(isOpen);
-          if (onToggle) onToggle(isOpen);
-        }}
-      >
-        <Popover.Trigger>
-          <Dropdown.Item
-            isHighlighted={isExpanded}
-            shouldCloseOnSelection={false}
-          >
-            {dropdownTrigger} {showCaret && (caret ?? defaultChildCaret)}
-          </Dropdown.Item>
-        </Popover.Trigger>
-
-        <Popover.Content>{dropdownMenu}</Popover.Content>
-      </Popover>
-    </div>
+    <DropdownContext.Provider value={{ shouldCloseOnSelection }}>
+      {dropdownJSX}
+    </DropdownContext.Provider>
   );
 };
 
