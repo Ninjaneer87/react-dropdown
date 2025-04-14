@@ -1,5 +1,5 @@
-import { PopoverContentProps } from '../types';
-import { usePopoverContext } from '../context/PopoverContext';
+import { PopoverContentProps } from '../../types';
+import { usePopoverContext } from '../../context/PopoverContext';
 
 function PopoverContent({ children }: PopoverContentProps) {
   const popoverContext = usePopoverContext();

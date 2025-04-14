@@ -1,5 +1,5 @@
-import { PopoverTriggerProps } from '../types';
-import { usePopoverContext } from '../context/PopoverContext';
+import { PopoverTriggerProps } from '../../types';
+import { usePopoverContext } from '../../context/PopoverContext';
 
 function PopoverTrigger({ children }: PopoverTriggerProps) {
   const popoverContext = usePopoverContext();

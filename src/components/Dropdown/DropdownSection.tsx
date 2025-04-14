@@ -1,6 +1,6 @@
-import { useDropdownContext } from '../context/DropdownContext';
-import { useDropdownMenuContext } from '../context/DropdownMenuContext';
-import { DropdownSectionProps } from '../types';
+import { useDropdownContext } from '../../context/DropdownContext';
+import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
+import { DropdownSectionProps } from '../../types';
 
 function DropdownSection({ children, scrolling }: DropdownSectionProps) {
   const dropdownContext = useDropdownContext();

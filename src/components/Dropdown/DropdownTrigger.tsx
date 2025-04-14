@@ -1,5 +1,5 @@
-import { useDropdownContext } from '../context/DropdownContext';
-import { DropdownTriggerProps } from '../types';
+import { useDropdownContext } from '../../context/DropdownContext';
+import { DropdownTriggerProps } from '../../types';
 
 function DropdownTrigger({ children }: DropdownTriggerProps) {
   const dropdownContext = useDropdownContext();

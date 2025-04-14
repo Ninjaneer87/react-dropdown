@@ -1,8 +1,8 @@
 import { ElementType } from 'react';
-import { useDropdownContext } from '../context/DropdownContext';
-import { useDropdownMenuContext } from '../context/DropdownMenuContext';
-import { DropdownItemProps } from '../types';
-import { usePopoverContext } from '../context/PopoverContext';
+import { useDropdownContext } from '../../context/DropdownContext';
+import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
+import { DropdownItemProps } from '../../types';
+import { usePopoverContext } from '../../context/PopoverContext';
 
 function DropdownItem<T extends ElementType = 'div'>(
   props: DropdownItemProps<T>,
@@ -14,6 +14,8 @@ function DropdownItem<T extends ElementType = 'div'>(
     ref,
     as: Component = 'div',
     shouldCloseOnSelection,
+    disabled,
+    showDisabledStyles = disabled,
     ...rest
   } = props;
   const dropdownContext = useDropdownContext();
@@ -40,6 +42,8 @@ function DropdownItem<T extends ElementType = 'div'>(
     shouldCloseOnSelection ?? dropdownContext.shouldCloseOnSelection;
 
   function handleClick() {
+    if (disabled) return;
+
     if (onClick) {
       onClick();
     }
@@ -50,6 +54,8 @@ function DropdownItem<T extends ElementType = 'div'>(
   }
 
   function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (disabled) return;
+
     if (onClick && (event.key === 'Enter' || event.key === ' ')) {
       event.preventDefault();
       handleClick();
@@ -60,10 +66,14 @@ function DropdownItem<T extends ElementType = 'div'>(
     <Component
       {...rest}
       ref={ref}
+      data-dropdown-item
       tabIndex={0}
       onClick={handleClick}
       onKeyDown={onKeyDown}
+      aria-disabled
       className={`p-2 ${
+        disabled && showDisabledStyles ? 'opacity-60 pointer-events-none' : ''
+      } ${
         isHighlighted ? 'bg-gray-600' : ''
       } hover:bg-gray-500 focus-visible:bg-gray-500 rounded-lg transition-all my-2 w-full inline-flex cursor-pointer items-center gap-4`}
     >

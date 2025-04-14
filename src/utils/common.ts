@@ -85,7 +85,10 @@ export function createChildPositionFromPlacement(
   placement: PopoverPlacement,
   triggerRect: DOMRect,
 ): Coords {
-  const [position, align] = placement.split('-');
+  const [position, align] = placement.split('-') as [
+    PopoverPosition,
+    PopoverAlign,
+  ];
 
   let top, left, bottom, right, translateY, translateX: CSSProperties['width'];
 
@@ -138,7 +141,10 @@ export function buildPlacement(
     return placement;
   }
 
-  const [position, align] = placement.split('-');
+  const [position, align] = placement.split('-') as [
+    PopoverPosition,
+    PopoverAlign,
+  ];
 
   //! POSITION FITS CHECK
   let fitPosition = position;
@@ -214,7 +220,7 @@ export function buildPlacement(
   }
 
   // Fits center check
-  if (align === undefined) {
+  if (align === 'center') {
     if (position === 'top' || position === 'bottom') {
       const fitsStart = triggerRect.right < popoverRect.width;
       if (fitsStart) {

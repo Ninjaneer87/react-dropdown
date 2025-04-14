@@ -1,6 +1,6 @@
-import { useDropdownContext } from '../context/DropdownContext';
-import { useDropdownMenuContext } from '../context/DropdownMenuContext';
-import { DropdownFooterProps } from '../types';
+import { useDropdownContext } from '../../context/DropdownContext';
+import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
+import { DropdownFooterProps } from '../../types';
 
 function DropdownFooter({ children, isSticky }: DropdownFooterProps) {
   const dropdownContext = useDropdownContext();

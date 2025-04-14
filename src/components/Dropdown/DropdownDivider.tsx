@@ -1,5 +1,5 @@
-import { useDropdownContext } from '../context/DropdownContext';
-import { useDropdownMenuContext } from '../context/DropdownMenuContext';
+import { useDropdownContext } from '../../context/DropdownContext';
+import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
 
 function DropdownDivider() {
   const dropdownContext = useDropdownContext();

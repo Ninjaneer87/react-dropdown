@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from 'react';
-import { DropdownContext } from '../context/DropdownContext';
+import { DropdownContext } from '../../context/DropdownContext';
 import DropdownMenu from './DropdownMenu';
 import DropdownHeader from './DropdownHeader';
 import DropdownFooter from './DropdownFooter';
@@ -7,8 +7,8 @@ import DropdownSection from './DropdownSection';
 import DropdownItem from './DropdownItem';
 import DropdownTrigger from './DropdownTrigger';
 import DropdownDivider from './DropdownDivider';
-import { DropdownComposition, DropdownProps } from '../types';
-import Popover from './Popover';
+import { DropdownComposition, DropdownProps } from '../../types';
+import Popover from '../Popover';
 
 const defaultRootCaret = <span className="shrink-0 text-2xl">&#9662;</span>;
 // const defaultChildCaret = <span className="shrink-0 text-2xl">&#9656;</span>;

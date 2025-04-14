@@ -1,22 +1,20 @@
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { PopoverContext } from '../context/PopoverContext';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import { PopoverContext } from '../../context/PopoverContext';
 import PopoverTrigger from './PopoverTrigger';
-import { PopoverComposition, PopoverProps } from '../types';
-import { useDelayUnmount } from '../hooks/useDelayUnmount';
+import { PopoverComposition, PopoverProps } from '../../types';
+import { useDelayUnmount } from '../../hooks/useDelayUnmount';
 import PopoverContent from './PopoverContent';
 import {
   createPositionFromPlacement,
   Coords,
   createChildPositionFromPlacement,
   buildPlacement,
-} from '../utils/common';
-import ClientPortal from './ClientPortal';
+} from '../../utils/common';
+import ClientPortal from '../ClientPortal';
+import { useWindowResize } from '../../hooks/useWindowResize';
+import { useDebouncedCallback } from '../../hooks/useDebouncedCallback';
+import useFocusTrap from '../../hooks/useFocusTrap';
+import FocusTrapper from '../FocusTrapper';
 
 const Popover = ({
   children,
@@ -51,6 +49,9 @@ const Popover = ({
 
   let popoverTrigger: ReactNode | null = trigger ?? null;
   let popoverContent: ReactNode | null = null;
+
+  const { firstFocusableItemRef, focusContainerRef, lastFocusableItemRef } =
+    useFocusTrap(open);
 
   // Validate children
   React.Children.forEach(children, (child) => {
@@ -95,18 +96,26 @@ const Popover = ({
     throw new Error('Popover component requires a PopoverContent');
   }
 
+  const { callback: debouncedSetMenuCoords } = useDebouncedCallback(
+    setMenuCoords,
+    100,
+  );
+
+  useWindowResize(debouncedSetMenuCoords);
+
   // Handle onOpen
   useEffect(() => {
     if (!isOpen || !onOpen) return;
 
     onOpen();
+    console.log(window.innerHeight);
   }, [isOpen]);
 
   // Handle onBlur
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const hasPopoverParent = (event.target as Element)?.closest(
-        '.popover-menu',
+        '[data-popover-menu]',
       );
 
       if (!hasPopoverParent) {
@@ -122,25 +131,17 @@ const Popover = ({
     };
   }, [onBlur, shouldCloseOnBlur]);
 
-  // Handle onClose
-  const handleClose = useCallback(() => {
-    if (isDisabled) return;
-
-    if (onClose) {
-      onClose();
-    }
-
-    setIsOpen(false);
-    setIsHoverOpen(false);
-  }, [isDisabled]);
-
   // Handle position and scroll
   useEffect(() => {
+    const currentBodyOverflowY = window.getComputedStyle(
+      document.body,
+    ).overflowY;
+
     if (isExpanded) {
       setMenuCoords();
 
       if (shouldBlockScroll) {
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflowY = 'hidden';
       }
     }
 
@@ -150,16 +151,30 @@ const Popover = ({
       if (!isExpanded) return;
       setMenuCoords();
     }
+
     document.addEventListener('scroll', handleScroll);
 
     return () => {
       document.removeEventListener('scroll', handleScroll);
 
       if (isExpanded && shouldBlockScroll) {
-        document.body.style.overflow = 'auto';
+        document.body.style.overflowY = currentBodyOverflowY;
       }
     };
-  }, [isExpanded, shouldBlockScroll, shouldCloseOnScroll, handleClose]);
+  }, [isExpanded, shouldBlockScroll, shouldCloseOnScroll]);
+
+  // Handle onClose
+  function handleClose() {
+    if (isDisabled) return;
+
+    if (onClose) {
+      onClose();
+    }
+
+    setIsOpen(false);
+    setIsHoverOpen(false);
+    popoverTriggerRef.current?.focus();
+  }
 
   function setMenuCoords() {
     if (!popoverTriggerRef.current || !popoverMenuRef.current) return;
@@ -248,13 +263,21 @@ const Popover = ({
         <ClientPortal>
           {(isMounted || isExpanded) && (
             <div
-              className={`popover-menu fixed z-10 ${
+              data-popover-menu
+              className={`fixed z-10 ${
                 isExpanded ? 'scale-in' : 'scale-out'
               } transition-opacity`}
               style={popoverContentCoords}
-              ref={popoverMenuRef}
+              ref={(node) => {
+                if (!node) return;
+
+                popoverMenuRef.current = node;
+                focusContainerRef.current = node;
+              }}
             >
+              <FocusTrapper ref={firstFocusableItemRef} />
               {popoverContent}
+              <FocusTrapper ref={lastFocusableItemRef} />
             </div>
           )}
         </ClientPortal>

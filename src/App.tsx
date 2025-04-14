@@ -6,6 +6,17 @@ function App() {
       <h1 className="py-4 text-center">Title</h1>
       <hr className="mb-16" />
       <div className="flex justify-center items-center flex-col min-h-[100vh]">
+        <button
+          onClick={() => {
+            const currentBodyOverflowY = window.getComputedStyle(
+              document.body,
+            ).overflowY;
+            document.body.style.overflowY =
+              currentBodyOverflowY === 'hidden' ? 'auto' : 'hidden';
+          }}
+        >
+          Toggle OverflowY
+        </button>
         <Dropdown backdrop="blur" placement="bottom-center">
           <Dropdown.Trigger>
             <button className="cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
@@ -21,7 +32,7 @@ function App() {
             <Dropdown.Section scrolling>
               <Dropdown.Section>
                 <Dropdown.Header>Section 1</Dropdown.Header>
-                <Dropdown.Item>Item 1</Dropdown.Item>
+                <Dropdown.Item disabled>Item 1</Dropdown.Item>
                 <Dropdown.Item>Item 2</Dropdown.Item>
                 <Dropdown.Item>Item 3</Dropdown.Item>
               </Dropdown.Section>
@@ -33,7 +44,9 @@ function App() {
                 </Dropdown.Item>
                 <Dropdown placement="left-center" isChild>
                   <Dropdown.Trigger>
-                    <Dropdown.Item  shouldCloseOnSelection={false}>Nested 1</Dropdown.Item>
+                    <Dropdown.Item shouldCloseOnSelection={false}>
+                      Nested 1
+                    </Dropdown.Item>
                   </Dropdown.Trigger>
 
                   <Dropdown.Menu>
@@ -43,7 +56,7 @@ function App() {
                       <Dropdown.Item>Item 2</Dropdown.Item>
                       <Dropdown.Item>Item 3</Dropdown.Item>
 
-                      <Dropdown placement="left-end" isChild>
+                      <Dropdown placement="left-center" isChild>
                         <Dropdown.Trigger>
                           <Dropdown.Item shouldCloseOnSelection={false}>
                             Nested 2

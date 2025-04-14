@@ -1,9 +1,9 @@
-import { useDropdownContext } from '../context/DropdownContext';
+import { useDropdownContext } from '../../context/DropdownContext';
 import {
   DropdownMenuContext,
   useDropdownMenuContext,
-} from '../context/DropdownMenuContext';
-import { DropdownMenuProps } from '../types';
+} from '../../context/DropdownMenuContext';
+import { DropdownMenuProps } from '../../types';
 
 const menuClassName =
   'bg-gray-700 rounded-2xl min-w-40 relative';
