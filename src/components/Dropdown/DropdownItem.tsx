@@ -2,7 +2,7 @@ import { ElementType } from 'react';
 import { useDropdownContext } from '../../context/DropdownContext';
 import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
 import { DropdownItemProps } from '../../types';
-import { usePopoverContext } from '../../context/PopoverContext';
+import { usePopoverRootContext } from '../../context/PopoverRootContext';
 
 function DropdownItem<T extends ElementType = 'div'>(
   props: DropdownItemProps<T>,
@@ -20,7 +20,7 @@ function DropdownItem<T extends ElementType = 'div'>(
   } = props;
   const dropdownContext = useDropdownContext();
   const dropdownMenuContext = useDropdownMenuContext();
-  const popoverContext = usePopoverContext();
+  const popoverRootContext = usePopoverRootContext();
 
   if (!dropdownContext) {
     throw new Error('DropdownItem should be used within a Dropdown component');
@@ -32,11 +32,11 @@ function DropdownItem<T extends ElementType = 'div'>(
     );
   }
 
-  if (!popoverContext) {
+  if (!popoverRootContext) {
     throw new Error('DropdownItem should be used within a Popover component');
   }
 
-  const { handleClose } = popoverContext;
+  const { handleCloseRoot } = popoverRootContext;
 
   const closeOnSelection =
     shouldCloseOnSelection ?? dropdownContext.shouldCloseOnSelection;
@@ -49,16 +49,20 @@ function DropdownItem<T extends ElementType = 'div'>(
     }
 
     if (closeOnSelection) {
-      handleClose();
+      handleCloseRoot();
     }
   }
 
   function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
     if (disabled) return;
 
-    if (onClick && (event.key === 'Enter' || event.key === ' ')) {
+    if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      handleClick();
+      if (onClick) handleClick();
+
+      if (closeOnSelection) {
+        handleCloseRoot();
+      }
     }
   }
 

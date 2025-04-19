@@ -90,11 +90,12 @@ const Dropdown = ({
       openOnHover={openOnHover}
       isChild={isChild}
       fullWidth={fullWidth}
-      shouldBlockScroll={!isChild && shouldBlockScroll}
-      shouldCloseOnScroll={!isChild && shouldCloseOnScroll}
-      shouldCloseOnBlur={!isChild && shouldCloseOnBlur}
-      shouldCloseOnEsc={!isChild && shouldCloseOnEsc}
-      backdrop={isChild ? undefined : backdrop}
+      shouldBlockScroll={shouldBlockScroll}
+      shouldCloseOnScroll={shouldCloseOnScroll}
+      shouldCloseOnBlur={shouldCloseOnBlur}
+      shouldCloseOnEsc={shouldCloseOnEsc}
+      backdrop={backdrop}
+      focusTriggerOnClose
       placement={placement}
       isDisabled={isDisabled}
       isOpen={open}
@@ -121,10 +122,6 @@ const Dropdown = ({
       <Popover.Content>{dropdownMenu}</Popover.Content>
     </Popover>
   );
-
-  if (isChild) {
-    return dropdownJSX;
-  }
 
   return (
     <DropdownContext.Provider value={{ shouldCloseOnSelection }}>

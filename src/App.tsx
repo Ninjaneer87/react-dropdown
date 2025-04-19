@@ -5,7 +5,7 @@ function App() {
     <>
       <h1 className="py-4 text-center">Title</h1>
       <hr className="mb-16" />
-      <div className="flex justify-center items-center flex-col min-h-[100vh]">
+      <div className="flex justify-center items-center flex-col min-h-[200vh]">
         <button
           onClick={() => {
             const currentBodyOverflowY = window.getComputedStyle(

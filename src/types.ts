@@ -25,6 +25,7 @@ export type PopoverProps = {
   isChild?: boolean;
   fullWidth?: boolean;
   openOnHover?: boolean;
+  focusTriggerOnClose?: boolean;
 };
 
 export type PopoverTriggerProps = {
