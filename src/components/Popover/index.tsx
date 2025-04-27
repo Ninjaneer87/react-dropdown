@@ -206,6 +206,7 @@ const Popover = ({
       event.preventDefault();
       handleToggle();
     }
+
     if (event.key === 'Escape' && shouldCloseOnEsc) {
       handleClose();
     }
@@ -215,6 +216,7 @@ const Popover = ({
     if (event.key === 'Escape' && shouldCloseOnEsc) {
       handleClose();
     }
+
     if (event.key === ' ') {
       event.preventDefault();
     }
@@ -247,12 +249,18 @@ const Popover = ({
             e.stopPropagation();
           }}
           {...(openOnHover && {
-            onMouseEnter: () => setIsHoverOpen(true),
-            onMouseLeave: () => setIsHoverOpen(false),
+            onMouseEnter: () => {
+              setIsHoverOpen(true);
+            },
+            onMouseLeave: () => {
+              setIsHoverOpen(false);
+              popoverTriggerRef.current?.focus();
+            },
           })}
         >
           <div
             onClick={handleToggle}
+            data-trigger-open={isExpanded}
             tabIndex={isChild ? -1 : 0}
             onKeyDown={onTriggerKeyDown}
             className="flex items-center gap-2 cursor-pointer grow w-full"

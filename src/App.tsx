@@ -43,11 +43,7 @@ function App() {
                   Item 1
                 </Dropdown.Item>
                 <Dropdown placement="left-center" isChild>
-                  <Dropdown.Trigger>
-                    <Dropdown.Item shouldCloseOnSelection={false}>
-                      Nested 1
-                    </Dropdown.Item>
-                  </Dropdown.Trigger>
+                  <Dropdown.Trigger>Nested 1</Dropdown.Trigger>
 
                   <Dropdown.Menu>
                     <Dropdown.Header>Header</Dropdown.Header>
@@ -57,11 +53,44 @@ function App() {
                       <Dropdown.Item>Item 3</Dropdown.Item>
 
                       <Dropdown placement="left-center" isChild>
-                        <Dropdown.Trigger>
-                          <Dropdown.Item shouldCloseOnSelection={false}>
-                            Nested 2
-                          </Dropdown.Item>
-                        </Dropdown.Trigger>
+                        <Dropdown.Trigger>Nested 2</Dropdown.Trigger>
+
+                        <Dropdown.Menu>
+                          <Dropdown.Header>Header</Dropdown.Header>
+                          <Dropdown.Section>
+                            <Dropdown.Item>Item 1</Dropdown.Item>
+                            <Dropdown.Item>Item 2</Dropdown.Item>
+                            <Dropdown.Item>Item 3</Dropdown.Item>
+                          </Dropdown.Section>
+
+                          <Dropdown.Section>
+                            <Dropdown.Item>Item 1</Dropdown.Item>
+                            <Dropdown.Item>Item 2</Dropdown.Item>
+                            <Dropdown.Item>Item 3</Dropdown.Item>
+                          </Dropdown.Section>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </Dropdown.Section>
+
+                    <Dropdown.Section>
+                      <Dropdown.Item>Item 1</Dropdown.Item>
+                      <Dropdown.Item>Item 2</Dropdown.Item>
+                      <Dropdown.Item>Item 3</Dropdown.Item>
+                    </Dropdown.Section>
+                  </Dropdown.Menu>
+                </Dropdown>
+                <Dropdown placement="left-center" isChild>
+                  <Dropdown.Trigger>Nested 1</Dropdown.Trigger>
+
+                  <Dropdown.Menu>
+                    <Dropdown.Header>Header</Dropdown.Header>
+                    <Dropdown.Section>
+                      <Dropdown.Item>Item 1</Dropdown.Item>
+                      <Dropdown.Item>Item 2</Dropdown.Item>
+                      <Dropdown.Item>Item 3</Dropdown.Item>
+
+                      <Dropdown placement="left-center" isChild>
+                        <Dropdown.Trigger>Nested 2</Dropdown.Trigger>
 
                         <Dropdown.Menu>
                           <Dropdown.Header>Header</Dropdown.Header>
@@ -93,7 +122,12 @@ function App() {
             </Dropdown.Section>
 
             <Dropdown.Divider />
-            <Dropdown.Footer>Footer</Dropdown.Footer>
+            <Dropdown.Footer>
+              <div className="flex justify-between">
+                <button>Cancel</button>
+                <button>Save</button>
+              </div>
+            </Dropdown.Footer>
           </Dropdown.Menu>
         </Dropdown>
       </div>

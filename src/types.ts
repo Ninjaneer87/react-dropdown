@@ -80,6 +80,8 @@ export type DropdownItemProps<T extends ElementType = 'div'> = {
   shouldCloseOnSelection?: boolean;
   disabled?: boolean;
   showDisabledStyles?: boolean;
+  startContent?: React.ReactNode;
+  endContent?: React.ReactNode;
   as?: T;
 } & Omit<ComponentPropsWithRef<T>, 'children'>;
 

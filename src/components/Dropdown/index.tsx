@@ -10,9 +10,10 @@ import DropdownDivider from './DropdownDivider';
 import { DropdownComposition, DropdownProps } from '../../types';
 import Popover from '../Popover';
 
-const defaultRootCaret = <span className="shrink-0 text-2xl">&#9662;</span>;
-// const defaultChildCaret = <span className="shrink-0 text-2xl">&#9656;</span>;
-
+const defaultRootCaret = <span className="shrink-0 scale-x-[2]">&#9662;</span>;
+const defaultChildCaret = (
+  <span className="shrink-0 scale-x-[1] scale-y-[1.4]">&#9656;</span>
+);
 const Dropdown = ({
   caret,
   children,
@@ -24,7 +25,6 @@ const Dropdown = ({
   shouldCloseOnSelection = true,
   backdrop = 'blur',
   placement = 'bottom-center',
-  showCaret = false,
   isDisabled,
   isOpen: controlledIsOpen,
   onOpen,
@@ -33,6 +33,7 @@ const Dropdown = ({
   onToggle,
   isChild = false,
   fullWidth = false,
+  showCaret = isChild,
   openOnHover,
 }: DropdownProps & DropdownComposition) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -85,6 +86,10 @@ const Dropdown = ({
     throw new Error('Dropdown component requires a DropdownMenu');
   }
 
+  const triggerCaretContent = showCaret
+    ? caret ?? (isChild ? defaultChildCaret : defaultRootCaret)
+    : null;
+
   const dropdownJSX = (
     <Popover
       openOnHover={openOnHover}
@@ -116,7 +121,17 @@ const Dropdown = ({
       }}
     >
       <Popover.Trigger>
-        {dropdownTrigger} {showCaret && (caret ?? defaultRootCaret)}
+        {isChild ? (
+          <Dropdown.Item
+            shouldCloseOnSelection={false}
+            isHighlighted={isOpen}
+            endContent={triggerCaretContent}
+          >
+            {dropdownTrigger}
+          </Dropdown.Item>
+        ) : (
+          dropdownTrigger
+        )}
       </Popover.Trigger>
 
       <Popover.Content>{dropdownMenu}</Popover.Content>

@@ -29,7 +29,7 @@ function useFocusTrap(isActive: boolean) {
       }
     }
 
-    firstFocusableItemRef.current?.focus(); // Auto-focus first element when mounted
+    // firstFocusableItemRef.current?.focus(); // Auto-focus first element when mounted
 
     document.addEventListener('keydown', trapFocus);
 

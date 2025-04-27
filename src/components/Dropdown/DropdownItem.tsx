@@ -16,6 +16,8 @@ function DropdownItem<T extends ElementType = 'div'>(
     shouldCloseOnSelection,
     disabled,
     showDisabledStyles = disabled,
+    startContent,
+    endContent,
     ...rest
   } = props;
   const dropdownContext = useDropdownContext();
@@ -63,6 +65,8 @@ function DropdownItem<T extends ElementType = 'div'>(
       if (closeOnSelection) {
         handleCloseRoot();
       }
+
+      return;
     }
   }
 
@@ -71,17 +75,26 @@ function DropdownItem<T extends ElementType = 'div'>(
       {...rest}
       ref={ref}
       data-dropdown-item
-      tabIndex={0}
+      tabIndex={disabled ? -1 : 0}
+      aria-disabled={disabled}
+      disabled={disabled}
       onClick={handleClick}
       onKeyDown={onKeyDown}
-      aria-disabled
       className={`p-2 ${
         disabled && showDisabledStyles ? 'opacity-60 pointer-events-none' : ''
       } ${
         isHighlighted ? 'bg-gray-600' : ''
-      } hover:bg-gray-500 focus-visible:bg-gray-500 rounded-lg transition-all my-2 w-full inline-flex cursor-pointer items-center gap-4`}
+      } hover:bg-gray-500 focus-visible:bg-gray-500 focus-within:bg-gray-500 rounded-lg transition-all my-2 w-full inline-flex cursor-pointer items-center gap-2`}
     >
-      {children}
+      {startContent && (
+        <span className="shrink-0 inline-flex">{startContent}</span>
+      )}
+
+      <span className="shrink-0 grow inline-flex">{children}</span>
+
+      {endContent && (
+        <span className="ml-auto shrink-0 inline-flex">{endContent}</span>
+      )}
     </Component>
   );
 }
