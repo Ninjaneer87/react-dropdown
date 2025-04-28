@@ -50,6 +50,8 @@ function DropdownMenu({ children }: DropdownMenuProps) {
   }
 
   function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    event.stopPropagation();
+
     if (event.key === 'Escape') {
       event.stopPropagation();
       handleClose();
@@ -59,9 +61,6 @@ function DropdownMenu({ children }: DropdownMenuProps) {
 
     if (event.key === 'ArrowUp') {
       event.preventDefault();
-
-      const hasChildMenuOpen = checkHasChildMenuOpen();
-      if (hasChildMenuOpen) return;
 
       if (focusedIndex === undefined) {
         focusItem(dropdownItemsLength - 1);
@@ -86,9 +85,6 @@ function DropdownMenu({ children }: DropdownMenuProps) {
     if (event.key === 'ArrowDown') {
       event.preventDefault();
 
-      const hasChildMenuOpen = checkHasChildMenuOpen();
-      if (hasChildMenuOpen) return;
-
       if (focusedIndex === undefined) {
         focusItem(0);
         setFocusedIndex(0);
@@ -104,14 +100,6 @@ function DropdownMenu({ children }: DropdownMenuProps) {
 
       return;
     }
-  }
-
-  function checkHasChildMenuOpen() {
-    const menuElement = menuRef.current;
-    if (!menuElement) {
-      return false;
-    }
-    return !!menuElement.querySelector('[data-trigger-open="true"]');
   }
 
   return (
