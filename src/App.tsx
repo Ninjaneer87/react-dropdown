@@ -17,7 +17,7 @@ function App() {
         >
           Toggle OverflowY
         </button>
-        <Dropdown placement="bottom-end" shouldBlockScroll={false} shouldCloseOnScroll={false}>
+        <Dropdown placement="bottom-end" shouldBlockScroll={false} shouldCloseOnScroll={false} shouldFlip={false}>
           <Dropdown.Trigger>
             <button className="cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
               DropdownTrigger

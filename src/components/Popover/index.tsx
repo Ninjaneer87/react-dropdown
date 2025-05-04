@@ -196,12 +196,9 @@ const Popover = ({
 
     const triggerRect = popoverTriggerRef.current.getBoundingClientRect();
     const popoverRect = popoverMenuRef.current.getBoundingClientRect();
-    const fitPlacement = buildPlacement(
-      placement,
-      offset,
-      triggerRect,
-      popoverRect,
-    );
+    const fitPlacement = shouldFlip
+      ? buildPlacement(placement, offset, triggerRect, popoverRect)
+      : placement;
     const coords = createPositionFromPlacement(
       fitPlacement,
       contentOffset,

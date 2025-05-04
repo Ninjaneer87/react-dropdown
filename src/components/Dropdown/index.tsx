@@ -18,6 +18,7 @@ const Dropdown = ({
   caret,
   children,
   trigger,
+  shouldFlip = true,
   shouldBlockScroll = true,
   shouldCloseOnScroll = !shouldBlockScroll,
   shouldCloseOnBlur = true,
@@ -95,6 +96,7 @@ const Dropdown = ({
       openOnHover={openOnHover}
       isChild={isChild}
       fullWidth={fullWidth}
+      shouldFlip={shouldFlip}
       shouldBlockScroll={shouldBlockScroll}
       shouldCloseOnScroll={shouldCloseOnScroll}
       shouldCloseOnBlur={shouldCloseOnBlur}
