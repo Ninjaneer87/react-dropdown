@@ -7,21 +7,24 @@ export type PopoverPlacement = `${PopoverPosition}-${PopoverAlign}`;
 export type Backdrop = 'transparent' | 'opaque' | 'blur';
 
 export type PopoverProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   trigger?: React.ReactNode;
+  content?: React.ReactNode;
+  shouldFlip?: boolean;
   shouldBlockScroll?: boolean;
   shouldCloseOnBlur?: boolean;
   shouldCloseOnEsc?: boolean;
   shouldCloseOnScroll?: boolean;
   backdrop?: Backdrop;
   placement?: PopoverPlacement;
+  offset?: number;
   isDisabled?: boolean;
   isOpen?: boolean;
   showArrow?: boolean;
   onOpen?: () => void;
   onClose?: () => void;
   onBlur?: () => void;
-  onToggle?: (isOpen: boolean) => void;
+  onOpenChange?: (isOpen: boolean) => void;
   isChild?: boolean;
   fullWidth?: boolean;
   openOnHover?: boolean;
@@ -52,7 +55,7 @@ export type DropdownProps = {
   shouldCloseOnSelection?: boolean;
   caret?: React.ReactNode;
   showCaret?: boolean;
-} & PopoverProps;
+} & Omit<PopoverProps, 'content'>;
 
 export type DropdownMenuProps = {
   children: React.ReactNode;
@@ -72,6 +75,7 @@ export type DropdownFooterProps = {
 export type DropdownSectionProps = {
   children: React.ReactNode;
   scrolling?: boolean;
+  title?: React.ReactNode;
 };
 
 export type DropdownItemProps<T extends ElementType = 'div'> = {

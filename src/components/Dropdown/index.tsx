@@ -23,14 +23,14 @@ const Dropdown = ({
   shouldCloseOnBlur = true,
   shouldCloseOnEsc = true,
   shouldCloseOnSelection = true,
-  backdrop = 'blur',
+  backdrop,
   placement = 'bottom-center',
   isDisabled,
   isOpen: controlledIsOpen,
   onOpen,
   onClose,
   onBlur,
-  onToggle,
+  onOpenChange,
   isChild = false,
   fullWidth = false,
   showCaret = isChild,
@@ -115,9 +115,9 @@ const Dropdown = ({
       onBlur={() => {
         if (onBlur) onBlur();
       }}
-      onToggle={(isOpen) => {
+      onOpenChange={(isOpen) => {
         setIsOpen(isOpen);
-        if (onToggle) onToggle(isOpen);
+        if (onOpenChange) onOpenChange(isOpen);
       }}
     >
       <Popover.Trigger>

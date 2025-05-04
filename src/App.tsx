@@ -5,7 +5,7 @@ function App() {
     <>
       <h1 className="py-4 text-center">Title</h1>
       <hr className="mb-16" />
-      <div className="flex justify-center items-center flex-col min-h-[200vh]">
+      <div className="flex justify-center items-center flex-col min-h-[200vh] min-w-[200vw]">
         <button
           onClick={() => {
             const currentBodyOverflowY = window.getComputedStyle(
@@ -17,7 +17,7 @@ function App() {
         >
           Toggle OverflowY
         </button>
-        <Dropdown backdrop="blur" placement="bottom-center">
+        <Dropdown placement="bottom-end" shouldBlockScroll={false} shouldCloseOnScroll={false}>
           <Dropdown.Trigger>
             <button className="cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
               DropdownTrigger
@@ -30,15 +30,15 @@ function App() {
             <Dropdown.Divider />
 
             <Dropdown.Section scrolling>
-              <Dropdown.Section>
-                <Dropdown.Header>Section 1</Dropdown.Header>
+              <Dropdown.Section title="Section 1">
                 <Dropdown.Item disabled>Item 1</Dropdown.Item>
                 <Dropdown.Item>Item 2</Dropdown.Item>
                 <Dropdown.Item>Item 3</Dropdown.Item>
               </Dropdown.Section>
 
-              <Dropdown.Section>
-                <Dropdown.Header>Section 2</Dropdown.Header>
+              <Dropdown.Divider />
+
+              <Dropdown.Section title="Section 2">
                 <Dropdown.Item onClick={() => console.log('Item 1 clicked')}>
                   Item 1
                 </Dropdown.Item>
@@ -122,6 +122,7 @@ function App() {
             </Dropdown.Section>
 
             <Dropdown.Divider />
+
             <Dropdown.Footer>
               <div className="flex justify-between">
                 <button>Cancel</button>

@@ -2,7 +2,7 @@ import React, { ComponentPropsWithRef } from 'react';
 import { usePopoverContext } from '../../context/PopoverContext';
 
 type Props = ComponentPropsWithRef<'div'>;
-const FocusTrapper = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
+const PopoverFocusTrapper = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
   const popoverContext = usePopoverContext();
   if (!popoverContext) {
     throw new Error('DropdownMenu should be used within a Popover component');
@@ -28,6 +28,6 @@ const FocusTrapper = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
   );
 });
 
-FocusTrapper.displayName = 'FocusTrapper';
+PopoverFocusTrapper.displayName = 'PopoverFocusTrapper';
 
-export default FocusTrapper;
+export default PopoverFocusTrapper;

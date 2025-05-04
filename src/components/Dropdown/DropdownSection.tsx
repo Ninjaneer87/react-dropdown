@@ -2,7 +2,7 @@ import { useDropdownContext } from '../../context/DropdownContext';
 import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
 import { DropdownSectionProps } from '../../types';
 
-function DropdownSection({ children, scrolling }: DropdownSectionProps) {
+function DropdownSection({ children, scrolling, title }: DropdownSectionProps) {
   const dropdownContext = useDropdownContext();
   const dropdownMenuContext = useDropdownMenuContext();
 
@@ -24,6 +24,11 @@ function DropdownSection({ children, scrolling }: DropdownSectionProps) {
         scrolling ? 'max-h-[200px] overflow-y-auto ' : ''
       }`}
     >
+      {title && (
+        <div className="py-2 text-sm font-semibold text-gray-400">
+          {title}
+        </div>
+      )}
       {children}
     </div>
   );

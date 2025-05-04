@@ -12,7 +12,7 @@ import {
 import ClientPortal from '../ClientPortal';
 import { useWindowResize } from '../../hooks/useWindowResize';
 import useFocusTrap from '../../hooks/useFocusTrap';
-import FocusTrapper from '../FocusTrapper';
+import PopoverFocusTrapper from './PopoverFocusTrapper';
 import {
   PopoverRootContext,
   usePopoverRootContext,
@@ -22,6 +22,8 @@ import usePreventBodyScroll from '../../hooks/usePreventBodyScroll';
 const Popover = ({
   children,
   trigger,
+  content,
+  shouldFlip = true,
   shouldBlockScroll = true,
   shouldCloseOnScroll = !shouldBlockScroll,
   shouldCloseOnBlur = true,
@@ -29,13 +31,14 @@ const Popover = ({
   backdrop,
   isChild = false,
   placement = isChild ? 'right-start' : 'bottom-center',
+  offset = 32,
   // showArrow = false,
   isDisabled,
   isOpen: controlledIsOpen,
   onOpen,
   onClose,
   onBlur,
-  onToggle,
+  onOpenChange,
   openOnHover = isChild,
   fullWidth = false,
   focusTriggerOnClose = true,
@@ -44,19 +47,21 @@ const Popover = ({
   const popoverTriggerRef = useRef<HTMLDivElement>(null);
   const popoverRootContext = usePopoverRootContext();
   const { isRootOpen } = popoverRootContext || {};
+  const isRootPopover = !popoverRootContext;
 
   const [isOpen, setIsOpen] = useState(false);
   const [isHoverOpen, setIsHoverOpen] = useState(false);
   const [popoverContentCoords, setPopoverContentCoords] = useState<Coords>({});
   const open = controlledIsOpen ?? isOpen;
   const isExpanded = open || isHoverOpen;
+  const contentOffset = isChild ? offset + 8 : offset;
 
   const isMounted = useDelayUnmount(isExpanded, 150);
 
-  const isRootExpanded = isExpanded && (!popoverRootContext || !!isRootOpen);
+  const isRootExpanded = isExpanded && (isRootPopover || !!isRootOpen);
 
   let popoverTrigger: ReactNode | null = trigger ?? null;
-  let popoverContent: ReactNode | null = null;
+  let popoverContent: ReactNode | null = content ?? null;
 
   const { firstFocusableItemRef, focusContainerRef, lastFocusableItemRef } =
     useFocusTrap(open);
@@ -79,7 +84,9 @@ const Popover = ({
 
       case PopoverContent: {
         if (popoverContent) {
-          throw new Error('Popover component can have only one PopoverContent');
+          throw new Error(
+            'Popover component can have only one PopoverContent or a "content" prop, not both',
+          );
         }
 
         popoverContent = child;
@@ -105,7 +112,7 @@ const Popover = ({
   }
 
   useWindowResize(setMenuCoords);
-  usePreventBodyScroll(isRootExpanded && shouldBlockScroll);
+  usePreventBodyScroll(isRootExpanded && isRootPopover && shouldBlockScroll);
 
   // Handle onOpen
   useEffect(() => {
@@ -173,12 +180,12 @@ const Popover = ({
     }
   }
 
-  // Handle onToggle
+  // Handle onOpenChange
   function handleToggle() {
     if (isDisabled) return;
 
-    if (onToggle) {
-      onToggle(!open);
+    if (onOpenChange) {
+      onOpenChange(!open);
     }
 
     setIsOpen((prev) => !prev);
@@ -188,9 +195,18 @@ const Popover = ({
     if (!popoverTriggerRef.current || !popoverMenuRef.current) return;
 
     const triggerRect = popoverTriggerRef.current.getBoundingClientRect();
-    const popoverRect = popoverMenuRef.current?.getBoundingClientRect();
-    const fitPlacement = buildPlacement(placement, triggerRect, popoverRect);
-    const coords = createPositionFromPlacement(fitPlacement, triggerRect);
+    const popoverRect = popoverMenuRef.current.getBoundingClientRect();
+    const fitPlacement = buildPlacement(
+      placement,
+      offset,
+      triggerRect,
+      popoverRect,
+    );
+    const coords = createPositionFromPlacement(
+      fitPlacement,
+      contentOffset,
+      triggerRect,
+    );
 
     setPopoverContentCoords(coords);
   }
@@ -229,7 +245,7 @@ const Popover = ({
           {isMounted && !!backdrop && (
             <div
               className={`fixed z-0 inset-0 ${
-                backdrop !== 'transparent' ? 'bg-black/10' : ''
+                backdrop !== 'transparent' ? 'bg-black/30' : ''
               } ${backdrop === 'blur' ? 'backdrop-blur-xs' : ''} ${
                 isRootExpanded ? 'fade-in' : 'fade-out'
               }`}
@@ -261,7 +277,7 @@ const Popover = ({
           <div
             onClick={handleToggle}
             data-trigger-open={isExpanded}
-            tabIndex={isChild ? -1 : 0}
+            tabIndex={isChild || isDisabled ? -1 : 0}
             onKeyDown={onTriggerKeyDown}
             className="flex items-center gap-2 cursor-pointer grow w-full"
             ref={popoverTriggerRef}
@@ -284,9 +300,9 @@ const Popover = ({
                   focusContainerRef.current = node;
                 }}
               >
-                <FocusTrapper ref={firstFocusableItemRef} />
+                <PopoverFocusTrapper ref={firstFocusableItemRef} />
                 {popoverContent}
-                <FocusTrapper ref={lastFocusableItemRef} />
+                <PopoverFocusTrapper ref={lastFocusableItemRef} />
               </div>
             )}
           </ClientPortal>
