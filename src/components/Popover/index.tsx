@@ -42,9 +42,15 @@ const Popover = ({
   openOnHover = isChild,
   fullWidth = false,
   focusTriggerOnClose = true,
+  delayShow = 0,
+  delayHide = 0,
+  hoverableContent = true,
 }: PopoverProps & PopoverComposition) => {
   const popoverMenuRef = useRef<HTMLDivElement>(null);
   const popoverTriggerRef = useRef<HTMLDivElement>(null);
+  const showDelayRef = useRef<number | null>(null);
+  const hideDelayRef = useRef<number | null>(null);
+
   const popoverRootContext = usePopoverRootContext();
   const { isRootOpen } = popoverRootContext || {};
   const isRootPopover = !popoverRootContext;
@@ -142,7 +148,7 @@ const Popover = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [onBlur, shouldCloseOnBlur]);
+  }, [shouldCloseOnBlur, isExpanded, isDisabled]);
 
   // Handle position and scroll
   useEffect(() => {
@@ -235,6 +241,32 @@ const Popover = ({
     }
   }
 
+  function handleMouseEnter(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    e.stopPropagation();
+
+    if (showDelayRef.current) clearTimeout(showDelayRef.current);
+    if (hideDelayRef.current) clearTimeout(hideDelayRef.current);
+
+    showDelayRef.current = setTimeout(() => {
+      setIsHoverOpen(true);
+    }, delayShow);
+  }
+
+  function handleMouseLeave(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    e.stopPropagation();
+
+    if (showDelayRef.current) clearTimeout(showDelayRef.current);
+    if (hideDelayRef.current) clearTimeout(hideDelayRef.current);
+
+    hideDelayRef.current = setTimeout(() => {
+      setIsHoverOpen(false);
+
+      if (focusTriggerOnClose) {
+        popoverTriggerRef.current?.focus();
+      }
+    }, delayHide);
+  }
+
   const popoverJSX = (
     <PopoverContext.Provider value={{ isOpen: isExpanded, handleClose }}>
       <>
@@ -261,15 +293,11 @@ const Popover = ({
             e.preventDefault();
             e.stopPropagation();
           }}
-          {...(openOnHover && {
-            onMouseEnter: () => {
-              setIsHoverOpen(true);
-            },
-            onMouseLeave: () => {
-              setIsHoverOpen(false);
-              popoverTriggerRef.current?.focus();
-            },
-          })}
+          {...(openOnHover &&
+            hoverableContent && {
+              onMouseEnter: handleMouseEnter,
+              onMouseLeave: handleMouseLeave,
+            })}
         >
           <div
             onClick={handleToggle}
@@ -278,6 +306,11 @@ const Popover = ({
             onKeyDown={onTriggerKeyDown}
             className="flex items-center gap-2 cursor-pointer grow w-full"
             ref={popoverTriggerRef}
+            {...(openOnHover &&
+              !hoverableContent && {
+                onMouseEnter: handleMouseEnter,
+                onMouseLeave: handleMouseLeave,
+              })}
           >
             {popoverTrigger}
           </div>

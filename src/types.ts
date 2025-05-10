@@ -29,6 +29,9 @@ export type PopoverProps = {
   fullWidth?: boolean;
   openOnHover?: boolean;
   focusTriggerOnClose?: boolean;
+  delayShow?: number;
+  delayHide?: number;
+  hoverableContent?: boolean;
 };
 
 export type PopoverTriggerProps = {
@@ -55,7 +58,7 @@ export type DropdownProps = {
   shouldCloseOnSelection?: boolean;
   caret?: React.ReactNode;
   showCaret?: boolean;
-} & Omit<PopoverProps, 'content'>;
+} & Omit<PopoverProps, 'content' | 'delayShow' | 'delayHide'>;
 
 export type DropdownMenuProps = {
   children: React.ReactNode;

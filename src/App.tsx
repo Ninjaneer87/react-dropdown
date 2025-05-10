@@ -1,4 +1,5 @@
 import Dropdown from './components/Dropdown';
+import Popover from './components/Popover';
 
 function App() {
   return (
@@ -17,7 +18,12 @@ function App() {
         >
           Toggle OverflowY
         </button>
-        <Dropdown placement="bottom-end" shouldBlockScroll={false} shouldCloseOnScroll={false} shouldFlip={false}>
+        <Dropdown
+          placement="bottom-end"
+          shouldBlockScroll={false}
+          shouldCloseOnScroll={false}
+          shouldFlip={false}
+        >
           <Dropdown.Trigger>
             <button className="cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
               DropdownTrigger
@@ -131,6 +137,37 @@ function App() {
             </Dropdown.Footer>
           </Dropdown.Menu>
         </Dropdown>
+
+        <Popover
+          placement="bottom-center"
+          shouldBlockScroll={false}
+          shouldCloseOnScroll={false}
+          // shouldFlip={false}
+          shouldCloseOnBlur
+          openOnHover
+          delayHide={500}
+          delayShow={500}
+          focusTriggerOnClose={false}
+          hoverableContent={false}
+        >
+          <Popover.Trigger>
+            <button className="cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
+              PopoverTrigger
+            </button>
+          </Popover.Trigger>
+          <Popover.Content>
+            <div className="flex flex-col gap-2">
+              <h1 className="text-2xl">Popover Content</h1>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Quisquam , voluptatibus, blanditiis, exercitationem, doloribus
+                voluptatibus, blanditiis, exercitationem, doloribus
+                voluptatibus, blanditiis, exercitationem, doloribus
+                voluptatibus, blanditiis, exercitationem, doloribus
+              </p>
+            </div>
+          </Popover.Content>
+        </Popover>
       </div>
     </>
   );
