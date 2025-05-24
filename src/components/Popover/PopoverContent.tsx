@@ -8,11 +8,7 @@ function PopoverContent({ children }: PopoverContentProps) {
     throw new Error('PopoverContent should be used within a Popover component');
   }
 
-  return (
-    <div className="p-2 bg-gray-700 rounded-2xl min-w-40 relative">
-      {children}
-    </div>
-  );
+  return children;
 }
 
 export default PopoverContent;

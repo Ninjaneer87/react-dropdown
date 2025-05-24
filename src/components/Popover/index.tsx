@@ -8,6 +8,7 @@ import {
   createPositionFromPlacement,
   Coords,
   buildPlacement,
+  growContentPosition,
 } from '../../utils/common';
 import ClientPortal from '../ClientPortal';
 import { useWindowResize } from '../../hooks/useWindowResize';
@@ -45,6 +46,7 @@ const Popover = ({
   delayShow = 0,
   delayHide = 0,
   hoverableContent = true,
+  growContent = false,
 }: PopoverProps & PopoverComposition) => {
   const popoverMenuRef = useRef<HTMLDivElement>(null);
   const popoverTriggerRef = useRef<HTMLDivElement>(null);
@@ -134,7 +136,7 @@ const Popover = ({
       if (!isExpanded) return;
 
       const hasPopoverParent = (event.target as Element)?.closest(
-        '[data-popover-menu]',
+        '[data-popover-content]',
       );
 
       if (!hasPopoverParent) {
@@ -202,6 +204,15 @@ const Popover = ({
 
     const triggerRect = popoverTriggerRef.current.getBoundingClientRect();
     const popoverRect = popoverMenuRef.current.getBoundingClientRect();
+
+    if (growContent) {
+      const coords = growContentPosition(placement, offset, triggerRect);
+      console.log({ coords });
+      setPopoverContentCoords(coords);
+
+      return;
+    }
+
     const fitPlacement = shouldFlip
       ? buildPlacement(placement, offset, triggerRect, popoverRect)
       : placement;
@@ -209,6 +220,7 @@ const Popover = ({
       fitPlacement,
       contentOffset,
       triggerRect,
+      popoverRect,
     );
 
     setPopoverContentCoords(coords);
@@ -241,8 +253,8 @@ const Popover = ({
     }
   }
 
-  function handleMouseEnter(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    e.stopPropagation();
+  function handleMouseEnter() {
+    if (isDisabled) return;
 
     if (showDelayRef.current) clearTimeout(showDelayRef.current);
     if (hideDelayRef.current) clearTimeout(hideDelayRef.current);
@@ -252,8 +264,8 @@ const Popover = ({
     }, delayShow);
   }
 
-  function handleMouseLeave(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    e.stopPropagation();
+  function handleMouseLeave() {
+    if (isDisabled) return;
 
     if (showDelayRef.current) clearTimeout(showDelayRef.current);
     if (hideDelayRef.current) clearTimeout(hideDelayRef.current);
@@ -262,7 +274,7 @@ const Popover = ({
       setIsHoverOpen(false);
 
       if (focusTriggerOnClose) {
-        popoverTriggerRef.current?.focus();
+        popoverTriggerRef.current?.focus({ preventScroll: true });
       }
     }, delayHide);
   }
@@ -304,7 +316,9 @@ const Popover = ({
             data-trigger-open={isExpanded}
             tabIndex={isChild || isDisabled ? -1 : 0}
             onKeyDown={onTriggerKeyDown}
-            className="flex items-center gap-2 cursor-pointer grow w-full"
+            className={`flex items-center gap-2 ${
+              !isDisabled ? 'cursor-pointer' : ''
+            } grow w-full`}
             ref={popoverTriggerRef}
             {...(openOnHover &&
               !hoverableContent && {
@@ -318,10 +332,10 @@ const Popover = ({
           <ClientPortal>
             {(isMounted || isExpanded) && (
               <div
-                data-popover-menu
+                data-popover-content
                 className={`fixed z-10 ${
                   isRootExpanded ? 'scale-in' : 'scale-out'
-                } transition-opacity`}
+                } transition-opacity p-2 bg-gray-700 rounded-2xl`}
                 style={popoverContentCoords}
                 ref={(node) => {
                   if (!node) return;

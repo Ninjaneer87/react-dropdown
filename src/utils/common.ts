@@ -6,26 +6,70 @@ export type Coords = {
   left?: CSSProperties['width'];
   bottom?: CSSProperties['width'];
   right?: CSSProperties['width'];
-  translate?: CSSProperties['translate'];
 };
+
+export function growContentPosition(
+  placement: PopoverPlacement,
+  offset: number,
+  triggerRect: DOMRect,
+): Coords {
+  const [position] = placement.split('-') as [PopoverPosition, PopoverAlign];
+
+  let top, left, bottom, right: CSSProperties['width'];
+
+  //! Position
+  // Top
+  if (position === 'top') {
+    bottom = window.innerHeight - triggerRect.top + offset;
+    left = 0;
+    right = 0;
+  }
+  // Bottom
+  if (position === 'bottom') {
+    top = triggerRect.bottom + offset;
+    left = 0;
+    right = 0;
+  }
+  // Left
+  if (position === 'left') {
+    right = window.innerWidth - triggerRect.left + offset;
+    top = 0;
+    bottom = 0;
+    left = 0;
+  }
+  // Right
+  if (position === 'right') {
+    left = triggerRect.right + offset;
+    top = 0;
+    bottom = 0;
+    right = 0;
+  }
+
+  return {
+    ...(top !== undefined && { top }),
+    ...(left !== undefined && { left }),
+    ...(bottom !== undefined && { bottom }),
+    ...(right !== undefined && { right }),
+  };
+}
 
 export function createPositionFromPlacement(
   placement: PopoverPlacement,
   offset: number,
   triggerRect: DOMRect,
+  popoverRect: DOMRect | undefined,
 ): Coords {
   const [position, align] = placement.split('-') as [
     PopoverPosition,
     PopoverAlign,
   ];
 
-  let top, left, bottom, right, translateY, translateX: CSSProperties['width'];
+  let top, left, bottom, right: CSSProperties['width'];
 
   //! Position
   // Top
   if (position === 'top') {
-    top = triggerRect.top;
-    translateY = `calc(-100% - ${offset}px)`;
+    bottom = window.innerHeight - triggerRect.top + offset;
   }
   // Bottom
   if (position === 'bottom') {
@@ -33,8 +77,7 @@ export function createPositionFromPlacement(
   }
   // Left
   if (position === 'left') {
-    left = triggerRect.left;
-    translateX = `calc(-100% - ${offset}px)`;
+    right = window.innerWidth - triggerRect.left + offset;
   }
   // Right
   if (position === 'right') {
@@ -54,23 +97,25 @@ export function createPositionFromPlacement(
   // End
   if (align === 'end') {
     if (position === 'top' || position === 'bottom') {
-      left = triggerRect.right;
-      translateX = '-100%';
+      right = window.innerWidth - triggerRect.right;
     }
     if (position === 'left' || position === 'right') {
-      top = triggerRect.bottom;
-      translateY = '-100%';
+      bottom = window.innerHeight - triggerRect.bottom;
     }
   }
   // Center
   if (align === 'center') {
     if (position === 'top' || position === 'bottom') {
-      left = triggerRect.right - triggerRect.width / 2;
-      translateX = '-50%';
+      left =
+        triggerRect.right -
+        triggerRect.width / 2 -
+        (popoverRect?.width ?? 1) / 2;
     }
     if (position === 'left' || position === 'right') {
-      top = triggerRect.bottom - triggerRect.height / 2;
-      translateY = '-50%';
+      top =
+        triggerRect.bottom -
+        triggerRect.height / 2 -
+        (popoverRect?.height ?? 1) / 2;
     }
   }
 
@@ -79,7 +124,6 @@ export function createPositionFromPlacement(
     ...(left !== undefined && { left }),
     ...(bottom !== undefined && { bottom }),
     ...(right !== undefined && { right }),
-    translate: `${translateX ?? '0px'} ${translateY ?? '0px'}`,
   };
 }
 
@@ -139,41 +183,41 @@ export function buildPlacement(
   let fitAlign = align;
 
   // Fits start check
-  if (align === 'start') {
+  if (fitAlign === 'start') {
     if (position === 'top' || position === 'bottom') {
       const fits =
         window.innerWidth - triggerRect.left - popoverRect.width >= 0;
       if (!fits) {
-        fitAlign = 'end';
+        fitAlign = 'center';
       }
     }
     if (position === 'left' || position === 'right') {
       const fits =
         window.innerHeight - triggerRect.top - popoverRect.height >= 0;
       if (!fits) {
-        fitAlign = 'end';
+        fitAlign = 'center';
       }
     }
   }
 
   // Fits end check
-  if (align === 'end') {
+  if (fitAlign === 'end') {
     if (position === 'top' || position === 'bottom') {
       const fits = triggerRect.right - popoverRect.width >= 0;
       if (!fits) {
-        fitAlign = 'start';
+        fitAlign = 'center';
       }
     }
     if (position === 'left' || position === 'right') {
       const fits = triggerRect.bottom - popoverRect.height >= 0;
       if (!fits) {
-        fitAlign = 'start';
+        fitAlign = 'center';
       }
     }
   }
 
   // Fits center check
-  if (align === 'center') {
+  if (fitAlign === 'center') {
     if (position === 'top' || position === 'bottom') {
       const overflowsOnStart =
         triggerRect.right - triggerRect.width / 2 < popoverRect.width / 2;
@@ -205,9 +249,7 @@ export function buildPlacement(
     }
   }
 
-  const fitPlacement = `${fitPosition}${
-    fitAlign ? `-${fitAlign}` : ''
-  }` as PopoverPlacement;
+  const fitPlacement = `${fitPosition}-${fitAlign}` as PopoverPlacement;
 
   return fitPlacement;
 }

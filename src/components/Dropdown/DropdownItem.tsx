@@ -84,7 +84,7 @@ function DropdownItem<T extends ElementType = 'div'>(
         disabled && showDisabledStyles ? 'opacity-60 pointer-events-none' : ''
       } ${
         isHighlighted ? 'bg-gray-600' : ''
-      } hover:bg-gray-500 focus-visible:bg-gray-500 focus-within:bg-gray-500 rounded-lg transition-all my-2 w-full inline-flex cursor-pointer items-center gap-2`}
+      } hover:bg-gray-500 focus-visible:bg-gray-500 focus-within:bg-gray-500 rounded-lg transition-all my-2 w-full flex cursor-pointer items-center gap-2`}
     >
       {startContent && (
         <span className="shrink-0 inline-flex">{startContent}</span>

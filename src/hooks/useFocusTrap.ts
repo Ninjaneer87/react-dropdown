@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-function useFocusTrap(isActive: boolean) {
+function useFocusTrap(isActive: boolean, shouldAutoFocus = true) {
   const focusContainerRef = useRef<HTMLDivElement>(null);
   const firstFocusableItemRef = useRef<HTMLDivElement>(null);
   const lastFocusableItemRef = useRef<HTMLDivElement>(null);
@@ -29,7 +29,7 @@ function useFocusTrap(isActive: boolean) {
       }
     }
 
-    // firstFocusableItemRef.current?.focus(); // Auto-focus first element when mounted
+    if (shouldAutoFocus) firstFocusableItemRef.current?.focus(); // Auto-focus first element when mounted
 
     document.addEventListener('keydown', trapFocus);
 

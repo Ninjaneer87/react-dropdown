@@ -96,6 +96,7 @@ const Dropdown = ({
       openOnHover={openOnHover}
       isChild={isChild}
       delayHide={isChild ? 300 : 0}
+      delayShow={isChild ? 100 : 0}
       fullWidth={fullWidth}
       shouldFlip={shouldFlip}
       shouldBlockScroll={shouldBlockScroll}
@@ -129,6 +130,7 @@ const Dropdown = ({
             shouldCloseOnSelection={false}
             isHighlighted={isOpen}
             endContent={triggerCaretContent}
+            disabled={isDisabled}
           >
             {dropdownTrigger}
           </Dropdown.Item>

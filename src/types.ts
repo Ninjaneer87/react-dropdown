@@ -32,6 +32,7 @@ export type PopoverProps = {
   delayShow?: number;
   delayHide?: number;
   hoverableContent?: boolean;
+  growContent?: boolean;
 };
 
 export type PopoverTriggerProps = {

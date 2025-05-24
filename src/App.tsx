@@ -22,10 +22,11 @@ function App() {
           placement="bottom-end"
           shouldBlockScroll={false}
           shouldCloseOnScroll={false}
-          shouldFlip={false}
+          // shouldFlip={false}
+          // fullWidth
         >
           <Dropdown.Trigger>
-            <button className="cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
+            <button className="w-full cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
               DropdownTrigger
             </button>
           </Dropdown.Trigger>
@@ -37,7 +38,7 @@ function App() {
 
             <Dropdown.Section scrolling>
               <Dropdown.Section title="Section 1">
-                <Dropdown.Item disabled>Item 1</Dropdown.Item>
+                <Dropdown.Item>Andrej ksnm forgac</Dropdown.Item>
                 <Dropdown.Item>Item 2</Dropdown.Item>
                 <Dropdown.Item>Item 3</Dropdown.Item>
               </Dropdown.Section>
@@ -48,7 +49,7 @@ function App() {
                 <Dropdown.Item onClick={() => console.log('Item 1 clicked')}>
                   Item 1
                 </Dropdown.Item>
-                <Dropdown placement="left-center" isChild>
+                <Dropdown placement="left-center" isChild isDisabled>
                   <Dropdown.Trigger>Nested 1</Dropdown.Trigger>
 
                   <Dropdown.Menu>
@@ -139,14 +140,14 @@ function App() {
         </Dropdown>
 
         <Popover
-          placement="bottom-center"
+          placement="bottom-start"
           shouldBlockScroll={false}
           shouldCloseOnScroll={false}
-          // shouldFlip={false}
+          shouldFlip={false}
           shouldCloseOnBlur
           openOnHover
-          delayHide={500}
-          delayShow={500}
+          delayHide={300}
+          delayShow={300}
           focusTriggerOnClose={false}
           hoverableContent={false}
         >
@@ -168,6 +169,119 @@ function App() {
             </div>
           </Popover.Content>
         </Popover>
+
+        <div className="flex">
+          <Popover
+            placement="bottom-start"
+            growContent
+            shouldBlockScroll={false}
+            shouldCloseOnScroll={false}
+            shouldFlip={false}
+            shouldCloseOnBlur
+            openOnHover
+            delayHide={300}
+            delayShow={300}
+            focusTriggerOnClose={false}
+            // hoverableContent={false}
+          >
+            <Popover.Trigger>
+              <button className="cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
+                Fullscreen PopoverTrigger
+              </button>
+            </Popover.Trigger>
+            <Popover.Content>
+              <div className="flex flex-col gap-2">
+                <h1 className="text-2xl">Popover Content 1</h1>
+                <p>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Quisquam , voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus Lorem
+                  ipsum dolor sit amet consectetur adipisicing elit. Quisquam ,
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                </p>
+              </div>
+            </Popover.Content>
+          </Popover>
+
+          <Popover
+            placement="bottom-start"
+            growContent
+            shouldBlockScroll={false}
+            shouldCloseOnScroll={false}
+            shouldFlip={false}
+            shouldCloseOnBlur
+            openOnHover
+            delayHide={300}
+            delayShow={300}
+            focusTriggerOnClose={false}
+            // hoverableContent={false}
+          >
+            <Popover.Trigger>
+              <button className="cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
+                Fullscreen PopoverTrigger
+              </button>
+            </Popover.Trigger>
+            <Popover.Content>
+              <div className="flex flex-col gap-2">
+                <h1 className="text-2xl">Popover Content 2</h1>
+                <p>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Quisquam , voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus Lorem
+                  ipsum dolor sit amet consectetur adipisicing elit. Quisquam ,
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                </p>
+              </div>
+            </Popover.Content>
+          </Popover>
+
+          <Popover
+            placement="bottom-start"
+            growContent
+            shouldBlockScroll={false}
+            shouldCloseOnScroll={false}
+            shouldFlip={false}
+            shouldCloseOnBlur
+            openOnHover
+            delayHide={300}
+            delayShow={300}
+            focusTriggerOnClose={false}
+            // hoverableContent={false}
+          >
+            <Popover.Trigger>
+              <button className="cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
+                Fullscreen PopoverTrigger
+              </button>
+            </Popover.Trigger>
+            <Popover.Content>
+              <div className="flex flex-col gap-2">
+                <h1 className="text-2xl">Popover Content 3</h1>
+                <p>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Quisquam , voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus Lorem
+                  ipsum dolor sit amet consectetur adipisicing elit. Quisquam ,
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                  voluptatibus, blanditiis, exercitationem, doloribus
+                </p>
+              </div>
+            </Popover.Content>
+          </Popover>
+        </div>
       </div>
     </>
   );

@@ -5,7 +5,7 @@ import { usePopoverContext } from '../../context/PopoverContext';
 import { DropdownMenuProps } from '../../types';
 
 const menuClassName =
-  'bg-gray-700 rounded-2xl min-w-80 relative !outline-none !border-none';
+  'bg-gray-700 rounded-2xl w-full min-w-[200px] relative !outline-none !border-none';
 
 function DropdownMenu({ children }: DropdownMenuProps) {
   const dropdownContext = useDropdownContext();
