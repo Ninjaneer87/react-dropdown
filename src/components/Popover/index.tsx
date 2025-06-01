@@ -207,7 +207,6 @@ const Popover = ({
 
     if (growContent) {
       const coords = growContentPosition(placement, offset, triggerRect);
-      console.log({ coords });
       setPopoverContentCoords(coords);
 
       return;

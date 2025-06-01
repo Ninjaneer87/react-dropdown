@@ -36,6 +36,8 @@ const Dropdown = ({
   fullWidth = false,
   showCaret = isChild,
   openOnHover,
+  growContent,
+  offset,
 }: DropdownProps & DropdownComposition) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -108,6 +110,8 @@ const Dropdown = ({
       placement={placement}
       isDisabled={isDisabled}
       isOpen={open}
+      growContent={growContent}
+      offset={offset}
       onOpen={() => {
         setIsOpen(true);
         if (onOpen) onOpen();
