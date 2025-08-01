@@ -1,7 +1,41 @@
+import { useState } from 'react';
 import Dropdown from './components/Dropdown';
 import Popover from './components/Popover';
+import Select from './components/Select';
+
+const items = [
+  {
+    label: 'Option 1',
+    value: 'option-1',
+    extraProp: 'Extra prop',
+  },
+  {
+    label: 'Option 2',
+    value: 'option-2',
+    extraProp: 'Extra prop',
+    disabled: true,
+  },
+  {
+    label: 'Option 3',
+    value: 'option-3',
+    extraProp: 'Extra prop',
+  },
+  {
+    label: 'Option 4',
+    value: 'option-4',
+    extraProp: 'Extra prop',
+  },
+  {
+    label: 'Option 5',
+    value: 'option-5',
+    extraProp: 'Extra prop',
+  },
+];
 
 function App() {
+  const [selectedValue, setSelectedValue] = useState([items[0]]);
+
+  console.log({ selectedValue });
   return (
     <>
       <h1 className="py-4 text-center">Title</h1>
@@ -18,6 +52,57 @@ function App() {
         >
           Toggle OverflowY
         </button>
+        <button
+          onClick={() => {
+            setSelectedValue((prev) => [...new Set([...prev, items[1]])]);
+          }}
+        >
+          Change selected value
+        </button>
+
+        <Select
+          items={items}
+          // onSelectionChange={(value) => console.log(value)}
+          backdrop="blur"
+          defaultValue={selectedValue}
+          value={selectedValue}
+          onSelectionChange={(value) => {
+            console.log({ value });
+            setSelectedValue(value.selectedOptions);
+          }}
+        />
+
+        <Select
+          shouldCloseOnBlur={false}
+          onSelectionChange={(value) => {
+            console.log({ value });
+            setSelectedValue(value.selectedOptions);
+          }}
+          multiple
+          placeholder="Select with children"
+          onClose={() => console.log('onClose')}
+          // defaultValue={selectedValue}
+          value={selectedValue}
+        >
+          {items.map((item) => (
+            <Select.Item key={item.value} {...item}>
+              {item.label}
+            </Select.Item>
+          ))}
+        </Select>
+
+        <Select
+          items={items}
+          onSelectionChange={(value) => console.log(value)}
+          multiple
+          placeholder="Select with children function"
+        >
+          {(item) => (
+            <Select.Item key={item.value} {...item}>
+              {item.label}
+            </Select.Item>
+          )}
+        </Select>
         <Dropdown
           placement="bottom-end"
           shouldBlockScroll={false}

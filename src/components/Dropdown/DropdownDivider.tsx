@@ -1,5 +1,6 @@
 import { useDropdownContext } from '../../context/DropdownContext';
 import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
+import { divider } from '../../utils/elements';
 
 function DropdownDivider() {
   const dropdownContext = useDropdownContext();
@@ -17,7 +18,7 @@ function DropdownDivider() {
     );
   }
 
-  return <div className="h-[1px] bg-gray-400 w-full my-2" />;
+  return divider;
 }
 
 export default DropdownDivider;

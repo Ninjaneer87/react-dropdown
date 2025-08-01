@@ -32,7 +32,7 @@ const Popover = ({
   backdrop,
   isChild = false,
   placement = isChild ? 'right-start' : 'bottom-center',
-  offset = 32,
+  offset = 8,
   // showArrow = false,
   isDisabled,
   isOpen: controlledIsOpen,
@@ -194,6 +194,11 @@ const Popover = ({
 
     if (onOpenChange) {
       onOpenChange(!open);
+    }
+
+    if (open) {
+      handleClose();
+      return;
     }
 
     setIsOpen((prev) => !prev);

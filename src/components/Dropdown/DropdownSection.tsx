@@ -2,7 +2,12 @@ import { useDropdownContext } from '../../context/DropdownContext';
 import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
 import { DropdownSectionProps } from '../../types';
 
-function DropdownSection({ children, scrolling, title }: DropdownSectionProps) {
+function DropdownSection({
+  children,
+  scrolling,
+  title,
+  isStickyTitle = true,
+}: DropdownSectionProps) {
   const dropdownContext = useDropdownContext();
   const dropdownMenuContext = useDropdownMenuContext();
 
@@ -25,7 +30,11 @@ function DropdownSection({ children, scrolling, title }: DropdownSectionProps) {
       }`}
     >
       {title && (
-        <div className="py-2 text-sm font-semibold text-gray-400">
+        <div
+          className={`py-2 text-sm font-semibold text-gray-400 ${
+            isStickyTitle ? 'bg-inherit sticky top-0 z-10' : ''
+          }`}
+        >
           {title}
         </div>
       )}

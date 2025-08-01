@@ -1,5 +1,6 @@
 import { ComponentPropsWithRef, ElementType } from 'react';
 
+// !Popover types
 export type PopoverPosition = 'top' | 'bottom' | 'left' | 'right';
 export type PopoverAlign = 'start' | 'end' | 'center';
 export type PopoverPlacement = `${PopoverPosition}-${PopoverAlign}`;
@@ -55,11 +56,15 @@ export type PopoverComposition = {
   Content?: React.FC<PopoverContentProps>;
 };
 
+// !Dropdown types
 export type DropdownProps = {
   shouldCloseOnSelection?: boolean;
   caret?: React.ReactNode;
   showCaret?: boolean;
-} & Omit<PopoverProps, 'content' | 'delayShow' | 'delayHide'>;
+} & Omit<
+  PopoverProps,
+  'content' | 'delayShow' | 'delayHide' | 'hoverableContent'
+>;
 
 export type DropdownMenuProps = {
   children: React.ReactNode;
@@ -80,6 +85,7 @@ export type DropdownSectionProps = {
   children: React.ReactNode;
   scrolling?: boolean;
   title?: React.ReactNode;
+  isStickyTitle?: boolean;
 };
 
 export type DropdownItemProps<T extends ElementType = 'div'> = {
@@ -128,3 +134,75 @@ export type DropdownComposition = {
    */
   Divider?: React.FC;
 };
+
+// !Select types
+export type SelectProps<T extends OptionItem> = {
+  onSelectionChange: OnSelectionChange<T>;
+  multiple?: boolean;
+  caret?: React.ReactNode;
+  showCaret?: boolean;
+  topContent?: React.ReactNode;
+  bottomContent?: React.ReactNode;
+  items?: T[];
+  placeholder?: string;
+  value?: T[];
+  defaultValue?: T[];
+  renderOption?: (option: T) => React.ReactNode;
+  renderValue?: (items: T[]) => React.ReactNode;
+  children?: React.ReactNode | ((item: T) => React.ReactNode);
+} & Omit<
+  PopoverProps,
+  | 'content'
+  | 'delayShow'
+  | 'delayHide'
+  | 'hoverableContent'
+  | 'isChild'
+  | 'openOnHover'
+  | 'children'
+>;
+
+export type SelectItemProps<T extends OptionItem> = {
+  children: React.ReactNode;
+  isHighlighted?: boolean;
+  shouldCloseOnSelection?: boolean;
+  showDisabledStyles?: boolean;
+  startContent?: React.ReactNode;
+  endContent?: React.ReactNode;
+} & T;
+
+export type SelectTriggerProps = {
+  children: React.ReactNode;
+};
+
+export type SelectSectionProps = {
+  children: React.ReactNode;
+  title?: React.ReactNode;
+  isStickyTitle?: boolean;
+};
+
+export type SelectCompositionProps<T extends OptionItem> = {
+  /**
+   * SelectSection groups SelectItem components.
+   */
+  Section?: React.FC<SelectSectionProps>;
+  /**
+   * SelectItem is a clickable element that triggers the selection.
+   */
+  Item?: React.FC<SelectItemProps<T>>;
+  /**
+   * SelectDivider is a visual separator between sections.
+   */
+  Divider?: React.FC;
+};
+
+export type OptionItem = {
+  value: string | number;
+  label: string | number;
+  description?: string;
+  disabled?: boolean;
+};
+
+export type OnSelectionChange<T extends OptionItem> = (value: {
+  selectedOption: T;
+  selectedOptions: T[];
+}) => void;

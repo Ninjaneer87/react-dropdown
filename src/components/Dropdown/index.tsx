@@ -9,11 +9,8 @@ import DropdownTrigger from './DropdownTrigger';
 import DropdownDivider from './DropdownDivider';
 import { DropdownComposition, DropdownProps } from '../../types';
 import Popover from '../Popover';
+import { defaultChildCaret, defaultRootCaret } from '../../utils/elements';
 
-const defaultRootCaret = <span className="shrink-0 scale-x-[2]">&#9662;</span>;
-const defaultChildCaret = (
-  <span className="shrink-0 scale-x-[1] scale-y-[1.4]">&#9656;</span>
-);
 const Dropdown = ({
   caret,
   children,
