@@ -43,6 +43,7 @@ export function useKeyboardNavigation({ itemSelector }: Props) {
     if (items.length > 0) {
       const firstFocusableElement = items[index] as HTMLElement;
       firstFocusableElement.focus();
+      firstFocusableElement.scrollIntoView({ block: 'nearest' });
     }
   }
 
@@ -71,12 +72,6 @@ export function useKeyboardNavigation({ itemSelector }: Props) {
         const newIndex = prevIndex - 1;
         return newIndex < 0 ? itemsLength - 1 : newIndex;
       });
-
-      if (focusedIndex === undefined) {
-        focusItem(itemsLength - 1);
-      }
-
-      return;
     }
 
     if (event.key === 'ArrowDown') {
@@ -94,8 +89,6 @@ export function useKeyboardNavigation({ itemSelector }: Props) {
         const newIndex = prevIndex + 1;
         return newIndex < itemsLength ? newIndex : 0;
       });
-
-      return;
     }
   }
 

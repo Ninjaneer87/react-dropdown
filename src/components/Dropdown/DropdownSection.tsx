@@ -26,13 +26,13 @@ function DropdownSection({
   return (
     <div
       className={`bg-inherit ${
-        scrolling ? 'max-h-[200px] overflow-y-auto ' : ''
+        scrolling ? 'max-h-[200px] overflow-y-auto scroll-pt-12' : ''
       }`}
     >
       {title && (
         <div
-          className={`py-2 text-sm font-semibold text-gray-400 ${
-            isStickyTitle ? 'bg-inherit sticky top-0 z-10' : ''
+          className={`p-1 text-sm font-semibold text-gray-400 ${
+            isStickyTitle ? 'bg-gray-800 sticky top-0 z-10 rounded-sm' : ''
           }`}
         >
           {title}

@@ -40,7 +40,7 @@ function Select<T extends OptionItem>({
 }: SelectProps<T> & SelectCompositionProps<T>) {
   if (items && children && typeof children !== 'function') {
     throw new Error(
-      'Invalid items configuration. Use only "items" prop or "children", not both.',
+      'Invalid items configuration. Use only "items" prop (can be used with "children" as function) or only "children" as ReactNode, not both.',
     );
   }
 
@@ -130,7 +130,7 @@ function Select<T extends OptionItem>({
         <Popover.Content>
           {topContent && topContent}
           <SelectMenu>
-            <ul className="max-h-[200px] overflow-y-auto relative">
+            <ul className="max-h-[200px] overflow-y-auto relative  scroll-pt-12">
               {typeof children !== 'function' && children}
 
               {typeof children === 'function' &&
@@ -146,7 +146,8 @@ function Select<T extends OptionItem>({
                       `"Select" children function only accepts "SelectItem" as a root returned element`,
                     );
                   }
-                  return children(item);
+
+                  return renderedItem;
                 })}
 
               {!children &&

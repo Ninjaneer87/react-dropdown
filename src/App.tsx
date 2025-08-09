@@ -32,6 +32,21 @@ const items = [
   },
 ];
 
+const groups = [
+  {
+    title: 'Group 1',
+    items,
+  },
+  {
+    title: 'Group 2',
+    items,
+  },
+  {
+    title: 'Group 3',
+    items,
+  },
+];
+
 function App() {
   const [selectedValue, setSelectedValue] = useState([items[0]]);
 
@@ -62,10 +77,10 @@ function App() {
 
         <Select
           items={items}
-          // onSelectionChange={(value) => console.log(value)}
           backdrop="blur"
           defaultValue={selectedValue}
           value={selectedValue}
+          onClose={() => console.log('onClose')}
           onSelectionChange={(value) => {
             console.log({ value });
             setSelectedValue(value.selectedOptions);
@@ -73,7 +88,28 @@ function App() {
         />
 
         <Select
-          shouldCloseOnBlur={false}
+          onSelectionChange={(value) => {
+            console.log({ value });
+            setSelectedValue(value.selectedOptions);
+          }}
+          multiple
+          placeholder="Select with sections"
+          onClose={() => console.log('onClose')}
+          // defaultValue={selectedValue}
+          value={selectedValue}
+        >
+          {groups.map((group) => (
+            <Select.Section title={group.title}>
+              {group.items.map((item) => (
+                <Select.Item key={item.value} {...item}>
+                  {item.label}
+                </Select.Item>
+              ))}
+            </Select.Section>
+          ))}
+        </Select>
+
+        <Select
           onSelectionChange={(value) => {
             console.log({ value });
             setSelectedValue(value.selectedOptions);
@@ -96,6 +132,7 @@ function App() {
           onSelectionChange={(value) => console.log(value)}
           multiple
           placeholder="Select with children function"
+          onClose={() => console.log('onClose')}
         >
           {(item) => (
             <Select.Item key={item.value} {...item}>
