@@ -178,6 +178,7 @@ export type SelectSectionProps = {
   children: React.ReactNode;
   title?: React.ReactNode;
   isStickyTitle?: boolean;
+  showDivider?: boolean;
 };
 
 export type SelectCompositionProps<T extends OptionItem> = {

@@ -2,11 +2,13 @@ import React from 'react';
 import { useSelectContext } from '../../context/SelectContext';
 import { SelectSectionProps } from '../../types';
 import SelectItem from './SelectItem';
+import SelectDivider from './SelectDivider';
 
 function SelectSection({
   children,
   title,
   isStickyTitle = true,
+  showDivider = true,
 }: SelectSectionProps) {
   const dropdownContext = useSelectContext();
 
@@ -37,7 +39,10 @@ function SelectSection({
           {title}
         </div>
       )}
+
       <ul>{children}</ul>
+
+      {showDivider && <SelectDivider />}
     </li>
   );
 }

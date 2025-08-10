@@ -130,7 +130,7 @@ function Select<T extends OptionItem>({
         <Popover.Content>
           {topContent && topContent}
           <SelectMenu>
-            <ul className="max-h-[200px] overflow-y-auto relative  scroll-pt-12">
+            <ul className="max-h-[250px] overflow-y-auto relative  scroll-pt-12">
               {typeof children !== 'function' && children}
 
               {typeof children === 'function' &&

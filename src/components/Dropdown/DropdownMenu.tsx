@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react';
 import { useDropdownContext } from '../../context/DropdownContext';
 import { DropdownMenuContext } from '../../context/DropdownMenuContext';
 import { usePopoverContext } from '../../context/PopoverContext';

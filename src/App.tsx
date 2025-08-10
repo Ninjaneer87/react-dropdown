@@ -49,8 +49,6 @@ const groups = [
 
 function App() {
   const [selectedValue, setSelectedValue] = useState([items[0]]);
-
-  console.log({ selectedValue });
   return (
     <>
       <h1 className="py-4 text-center">Title</h1>
@@ -98,8 +96,12 @@ function App() {
           // defaultValue={selectedValue}
           value={selectedValue}
         >
-          {groups.map((group) => (
-            <Select.Section title={group.title}>
+          {groups.map((group, i) => (
+            <Select.Section
+              key={group.title}
+              title={group.title}
+              showDivider={i !== groups.length - 1}
+            >
               {group.items.map((item) => (
                 <Select.Item key={item.value} {...item}>
                   {item.label}

@@ -26,7 +26,7 @@ function DropdownSection({
   return (
     <div
       className={`bg-inherit ${
-        scrolling ? 'max-h-[200px] overflow-y-auto scroll-pt-12' : ''
+        scrolling ? 'max-h-[250px] overflow-y-auto scroll-pt-12' : ''
       }`}
     >
       {title && (
