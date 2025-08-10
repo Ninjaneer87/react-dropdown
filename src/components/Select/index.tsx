@@ -125,14 +125,38 @@ function Select<T extends OptionItem>({
           if (onOpenChange) onOpenChange(isOpen);
         }}
       >
-        <Popover.Trigger>{placeholder ?? trigger}</Popover.Trigger>
+        <Popover.Trigger>
+          {trigger ? (
+            trigger
+          ) : (
+            <div className="rounded-lg border p-2 flex items-center gap-2">
+              {placeholder ?? 'Select'}
+              <svg
+                aria-hidden="true"
+                fill="none"
+                focusable="false"
+                height="1em"
+                role="presentation"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.5"
+                viewBox="0 0 24 24"
+                width="1em"
+                data-open={open}
+                className="w-4 h-4 transition-transform duration-150 ease motion-reduce:transition-none data-[open=true]:rotate-180"
+              >
+                <path d="m6 9 6 6 6-6"></path>
+              </svg>
+            </div>
+          )}
+        </Popover.Trigger>
 
         <Popover.Content>
           {topContent && topContent}
           <SelectMenu>
             <ul className="max-h-[250px] overflow-y-auto relative  scroll-pt-12">
               {typeof children !== 'function' && children}
-
               {typeof children === 'function' &&
                 items &&
                 items.map((item) => {

@@ -95,6 +95,7 @@ function App() {
           onClose={() => console.log('onClose')}
           // defaultValue={selectedValue}
           value={selectedValue}
+          placement="bottom-center" 
         >
           {groups.map((group, i) => (
             <Select.Section
@@ -143,14 +144,14 @@ function App() {
           )}
         </Select>
         <Dropdown
-          placement="bottom-end"
+          placement="bottom-center"
           shouldBlockScroll={false}
           shouldCloseOnScroll={false}
           // shouldFlip={false}
           // fullWidth
         >
           <Dropdown.Trigger>
-            <button className="w-full cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
+            <button className="w-full cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
               DropdownTrigger
             </button>
           </Dropdown.Trigger>
@@ -276,7 +277,7 @@ function App() {
           hoverableContent={false}
         >
           <Popover.Trigger>
-            <button className="cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
+            <button className="cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
               PopoverTrigger
             </button>
           </Popover.Trigger>
@@ -309,7 +310,7 @@ function App() {
             // hoverableContent={false}
           >
             <Popover.Trigger>
-              <button className="cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
+              <button className="cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
                 Fullscreen PopoverTrigger
               </button>
             </Popover.Trigger>
@@ -346,7 +347,7 @@ function App() {
             // hoverableContent={false}
           >
             <Popover.Trigger>
-              <button className="cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
+              <button className="cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
                 Fullscreen PopoverTrigger
               </button>
             </Popover.Trigger>
@@ -383,7 +384,7 @@ function App() {
             // hoverableContent={false}
           >
             <Popover.Trigger>
-              <button className="cursor-pointer p-4 rounded-2xl border-solid border-[1px] bg-black">
+              <button className="cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
                 Fullscreen PopoverTrigger
               </button>
             </Popover.Trigger>

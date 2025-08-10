@@ -5,7 +5,7 @@ import { DropdownMenuProps } from '../../types';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 
 const menuClassName =
-  'bg-gray-700 rounded-2xl w-full min-w-[200px] relative !outline-none !border-none';
+  'bg-gray-700 rounded-lg w-full min-w-[200px] relative !outline-none !border-none';
 
 function DropdownMenu({ children }: DropdownMenuProps) {
   const dropdownContext = useDropdownContext();

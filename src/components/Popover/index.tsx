@@ -138,8 +138,11 @@ const Popover = ({
       const hasPopoverParent = (event.target as Element)?.closest(
         '[data-popover-content]',
       );
+      const hasTriggerParent = (event.target as Element)?.closest(
+        '[data-popover-trigger]',
+      );
 
-      if (!hasPopoverParent) {
+      if (!hasPopoverParent && !hasTriggerParent) {
         if (onBlur) onBlur();
         if (shouldCloseOnBlur) handleClose();
       }
@@ -224,7 +227,7 @@ const Popover = ({
       fitPlacement,
       contentOffset,
       triggerRect,
-      popoverRect,
+      popoverMenuRef.current,
     );
 
     setPopoverContentCoords(coords);
@@ -317,6 +320,7 @@ const Popover = ({
         >
           <div
             onClick={handleToggle}
+            data-popover-trigger
             data-trigger-open={isExpanded}
             tabIndex={isChild || isDisabled ? -1 : 0}
             onKeyDown={onTriggerKeyDown}
@@ -339,7 +343,7 @@ const Popover = ({
                 data-popover-content
                 className={`fixed z-10 ${
                   isRootExpanded ? 'scale-in' : 'scale-out'
-                } transition-opacity p-2 bg-gray-700 rounded-2xl`}
+                } transition-opacity p-2 bg-gray-700 rounded-lg`}
                 style={popoverContentCoords}
                 ref={(node) => {
                   if (!node) return;

@@ -57,7 +57,7 @@ export function createPositionFromPlacement(
   placement: PopoverPlacement,
   offset: number,
   triggerRect: DOMRect,
-  popoverRect: DOMRect | undefined,
+  popoverElement: HTMLDivElement | undefined,
 ): Coords {
   const [position, align] = placement.split('-') as [
     PopoverPosition,
@@ -105,17 +105,18 @@ export function createPositionFromPlacement(
   }
   // Center
   if (align === 'center') {
+    console.log(popoverElement?.clientWidth);
     if (position === 'top' || position === 'bottom') {
       left =
         triggerRect.right -
         triggerRect.width / 2 -
-        (popoverRect?.width ?? 1) / 2;
+        (popoverElement?.clientWidth ?? 1) / 2;
     }
     if (position === 'left' || position === 'right') {
       top =
         triggerRect.bottom -
         triggerRect.height / 2 -
-        (popoverRect?.height ?? 1) / 2;
+        (popoverElement?.clientHeight ?? 1) / 2;
     }
   }
 
