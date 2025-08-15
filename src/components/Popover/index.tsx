@@ -135,14 +135,14 @@ const Popover = ({
       if (isDisabled) return;
       if (!isExpanded) return;
 
-      const hasPopoverParent = (event.target as Element)?.closest(
-        '[data-popover-content]',
+      const hasClickedPopoverMenu = popoverMenuRef.current?.contains(
+        event.target as Element,
       );
-      const hasTriggerParent = (event.target as Element)?.closest(
-        '[data-popover-trigger]',
+      const hasClickedPopoverTrigger = popoverTriggerRef.current?.contains(
+        event.target as Element,
       );
 
-      if (!hasPopoverParent && !hasTriggerParent) {
+      if (!hasClickedPopoverMenu && !hasClickedPopoverTrigger) {
         if (onBlur) onBlur();
         if (shouldCloseOnBlur) handleClose();
       }

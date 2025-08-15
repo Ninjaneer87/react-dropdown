@@ -105,7 +105,6 @@ export function createPositionFromPlacement(
   }
   // Center
   if (align === 'center') {
-    console.log(popoverElement?.clientWidth);
     if (position === 'top' || position === 'bottom') {
       left =
         triggerRect.right -
