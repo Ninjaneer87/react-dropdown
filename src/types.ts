@@ -34,6 +34,12 @@ export type PopoverProps = {
   delayHide?: number;
   hoverableContent?: boolean;
   growContent?: boolean;
+  classNames?: {
+    base?: string;
+    trigger?: string;
+    backdrop?: string;
+    content?: string;
+  };
 };
 
 export type PopoverTriggerProps = {
@@ -61,9 +67,19 @@ export type DropdownProps = {
   shouldCloseOnSelection?: boolean;
   caret?: React.ReactNode;
   showCaret?: boolean;
+  classNames?: {
+    label?: string;
+    trigger?: string;
+    mainWrapper?: string;
+    innerWrapper?: string;
+    selectorIcon?: string;
+    value?: string;
+    listboxWrapper?: string;
+    listbox?: string;
+  };
 } & Omit<
   PopoverProps,
-  'content' | 'delayShow' | 'delayHide' | 'hoverableContent'
+  'content' | 'delayShow' | 'delayHide' | 'hoverableContent' | 'classNames'
 >;
 
 export type DropdownMenuProps = {
@@ -150,6 +166,73 @@ export type SelectProps<T extends OptionItem> = {
   renderOption?: (option: T) => React.ReactNode;
   renderValue?: (items: T[]) => React.ReactNode;
   children?: React.ReactNode | ((item: T) => React.ReactNode);
+  label?: React.ReactNode;
+  isRequired?: boolean;
+  /**
+   * Allows to set custom class names for the Select slots.
+   */
+  classNames?: {
+    /**
+     * The main wrapper of the select. This wraps the rest of the slots.
+     */
+    base?: string;
+    /**
+     * The label of the select.
+     */
+    label?: string;
+    /**
+     * The placeholder of the select.
+     */
+    placeholder?: string;
+    /**
+     * The asterisk `*` for `isRequired`.
+     */
+    requiredAsterisk?: string;
+    /**
+     * The trigger of the select. This wraps the label the inner wrapper and the selector icon.
+     */
+    trigger?: string;
+    /**
+     * Wraps the `helperWrapper` and the `trigger` slots.
+     */
+    mainWrapper?: string;
+    /**
+     * The wrapper of the select content. This wraps the start/end content and the select value.
+     */
+    innerWrapper?: string;
+    /**
+     * The selector icon of the select. This is the icon that rotates when the select is open (data-open).
+     */
+    selectorIcon?: string;
+    /**
+     * The select value. This is also the slot that wraps the renderValue function result.
+     */
+    value?: string;
+    /**
+     * The wrapper of the listbox. This wraps the listbox component, this slot is used on top of the scroll shadow component.
+     */
+    listboxWrapper?: string;
+    /**
+     * The listbox component. This is the component that wraps the select items.
+     */
+    listbox?: string;
+    /**
+     * The popover content slot. Use this to modify the popover content styles.
+     */
+    popoverContent?: string;
+    /**
+     * The wrapper of the helper text. This wraps the helper text and the error message.
+     */
+    helperWrapper?: string;
+    /**
+     * The description of the select.
+     */
+    description?: string;
+    /**
+     * The error message of the select.
+     */
+    errorMessage?: string;
+  };
 } & Omit<
   PopoverProps,
   | 'content'
@@ -159,8 +242,19 @@ export type SelectProps<T extends OptionItem> = {
   | 'isChild'
   | 'openOnHover'
   | 'children'
+  | 'classNames'
+  | 'placement'
 >;
 
+export type SelectMenuProps = {
+  children: React.ReactNode;
+  classNames?: {
+    /**
+     * Listbox wrapper
+     */
+    base?: string;
+  };
+};
 export type SelectItemProps<T extends OptionItem> = {
   children: React.ReactNode;
   isHighlighted?: boolean;

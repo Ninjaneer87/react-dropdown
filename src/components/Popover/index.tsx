@@ -9,6 +9,7 @@ import {
   Coords,
   buildPlacement,
   growContentPosition,
+  cn,
 } from '../../utils/common';
 import ClientPortal from '../ClientPortal';
 import { useWindowResize } from '../../hooks/useWindowResize';
@@ -47,6 +48,7 @@ const Popover = ({
   delayHide = 0,
   hoverableContent = true,
   growContent = false,
+  classNames,
 }: PopoverProps & PopoverComposition) => {
   const popoverMenuRef = useRef<HTMLDivElement>(null);
   const popoverTriggerRef = useRef<HTMLDivElement>(null);
@@ -286,17 +288,34 @@ const Popover = ({
     }, delayHide);
   }
 
+  const baseClassName = cn(
+    'relative',
+    fullWidth || isChild ? 'w-full' : 'w-fit',
+  );
+  const triggerClassName = cn(
+    'flex items-center gap-2',
+    !isDisabled ? 'cursor-pointer' : '',
+    'grow w-full',
+  );
+  const contentClassName = cn(
+    'fixed z-10',
+    isRootExpanded ? 'scale-in' : 'scale-out',
+    'transition-opacity p-2 bg-gray-700 rounded-lg',
+  );
+  const backdropClassName = cn(
+    'fixed z-0 inset-0',
+    backdrop !== 'transparent' ? 'bg-black/30' : '',
+    backdrop === 'blur' ? 'backdrop-blur-xs' : '',
+    isRootExpanded ? 'fade-in' : 'fade-out',
+  );
+
   const popoverJSX = (
     <PopoverContext.Provider value={{ isOpen: isExpanded, handleClose }}>
       <>
         <ClientPortal>
           {isMounted && !!backdrop && (
             <div
-              className={`fixed z-0 inset-0 ${
-                backdrop !== 'transparent' ? 'bg-black/30' : ''
-              } ${backdrop === 'blur' ? 'backdrop-blur-xs' : ''} ${
-                isRootExpanded ? 'fade-in' : 'fade-out'
-              }`}
+              className={cn(backdropClassName, classNames?.backdrop)}
               onClick={(e) => {
                 e.stopPropagation();
                 handleBackdropClick();
@@ -306,7 +325,7 @@ const Popover = ({
         </ClientPortal>
 
         <div
-          className={`relative ${fullWidth || isChild ? 'w-full' : 'w-fit'}`}
+          className={cn(baseClassName, classNames?.base)}
           onKeyDown={onPopoverKeyDown}
           onScroll={(e) => {
             e.preventDefault();
@@ -324,9 +343,7 @@ const Popover = ({
             data-trigger-open={isExpanded}
             tabIndex={isChild || isDisabled ? -1 : 0}
             onKeyDown={onTriggerKeyDown}
-            className={`flex items-center gap-2 ${
-              !isDisabled ? 'cursor-pointer' : ''
-            } grow w-full`}
+            className={cn(triggerClassName, classNames?.trigger)}
             ref={popoverTriggerRef}
             {...(openOnHover &&
               !hoverableContent && {
@@ -341,9 +358,7 @@ const Popover = ({
             {(isMounted || isExpanded) && (
               <div
                 data-popover-content
-                className={`fixed z-10 ${
-                  isRootExpanded ? 'scale-in' : 'scale-out'
-                } transition-opacity p-2 bg-gray-700 rounded-lg`}
+                className={cn(contentClassName, classNames?.content)}
                 style={popoverContentCoords}
                 ref={(node) => {
                   if (!node) return;

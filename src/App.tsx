@@ -49,12 +49,33 @@ const groups = [
 
 function App() {
   const [selectedValue, setSelectedValue] = useState([items[0]]);
+  const [doubleViewportSize, setDoubleViewportSize] = useState(false);
+
   return (
     <>
-      <h1 className="py-4 text-center">Title</h1>
-      <hr className="mb-16" />
-      <div className="flex justify-center items-center flex-col min-h-[200vh] min-w-[200vw]">
+      <div
+        className={`flex justify-center gap-2 items-center flex-col 
+        ${
+          doubleViewportSize
+            ? 'min-h-[200vh] min-w-[200vw]'
+            : 'min-h-[100vh] w-[50vw]'
+        }`}
+      >
+        <h1 className="w-full py-4 text-center">React dropdown</h1>
+        <hr className="w-full mb-16" />
+
         <button
+          className="p-2 border cursor-pointer rounded-sm"
+          onClick={() => {
+            setDoubleViewportSize((prev) => !prev);
+          }}
+        >
+          {doubleViewportSize
+            ? 'Regular viewport size'
+            : 'Double viewport size'}
+        </button>
+        <button
+          className="p-2 border cursor-pointer rounded-sm"
           onClick={() => {
             const currentBodyOverflowY = window.getComputedStyle(
               document.body,
@@ -66,6 +87,7 @@ function App() {
           Toggle OverflowY
         </button>
         <button
+          className="p-2 border cursor-pointer rounded-sm"
           onClick={() => {
             setSelectedValue((prev) => [...new Set([...prev, items[1]])]);
           }}
@@ -79,10 +101,12 @@ function App() {
           defaultValue={selectedValue}
           value={selectedValue}
           onClose={() => console.log('onClose')}
+          isDisabled
           onSelectionChange={(value) => {
             console.log({ value });
             setSelectedValue(value.selectedOptions);
           }}
+          classNames={{ mainWrapper: 'bg-amber-800', placeholder: 'opacity-60', base: 'w-80' }}
         />
 
         <Select
@@ -91,11 +115,15 @@ function App() {
             setSelectedValue(value.selectedOptions);
           }}
           multiple
+          // isDisabled
           placeholder="Select with sections"
           onClose={() => console.log('onClose')}
           // defaultValue={selectedValue}
           value={selectedValue}
-          placement="bottom-center" 
+          label="Select with sections"
+          isRequired
+          shouldBlockScroll={false}
+          shouldCloseOnScroll={false}
         >
           {groups.map((group, i) => (
             <Select.Section
@@ -115,13 +143,15 @@ function App() {
         <Select
           onSelectionChange={(value) => {
             console.log({ value });
-            setSelectedValue(value.selectedOptions);
+            // setSelectedValue(value.selectedOptions);
           }}
+          label='Select with children'
+          isRequired
           multiple
           placeholder="Select with children"
           onClose={() => console.log('onClose')}
           // defaultValue={selectedValue}
-          value={selectedValue}
+          // value={selectedValue}
         >
           {items.map((item) => (
             <Select.Item key={item.value} {...item}>
@@ -134,6 +164,7 @@ function App() {
           items={items}
           onSelectionChange={(value) => console.log(value)}
           multiple
+          label='Select with children function'
           placeholder="Select with children function"
           onClose={() => console.log('onClose')}
         >
@@ -265,7 +296,7 @@ function App() {
         </Dropdown>
 
         <Popover
-          placement="bottom-start"
+          placement="bottom-center"
           shouldBlockScroll={false}
           shouldCloseOnScroll={false}
           shouldFlip={false}
@@ -282,7 +313,7 @@ function App() {
             </button>
           </Popover.Trigger>
           <Popover.Content>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 max-w-80">
               <h1 className="text-2xl">Popover Content</h1>
               <p>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
