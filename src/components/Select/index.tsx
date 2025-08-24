@@ -168,7 +168,8 @@ function Select<T extends OptionItem>({
           }}
           onClose={() => {
             setIsOpen(false);
-            if (onClose) onClose();
+            console.log({ selected });
+            if (onClose) onClose(selected);
           }}
           onBlur={() => {
             if (onBlur) onBlur();

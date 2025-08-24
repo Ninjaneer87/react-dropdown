@@ -168,6 +168,7 @@ export type SelectProps<T extends OptionItem> = {
   children?: React.ReactNode | ((item: T) => React.ReactNode);
   label?: React.ReactNode;
   isRequired?: boolean;
+  onClose?: (items?: T[]) => void;
   /**
    * Allows to set custom class names for the Select slots.
    */
@@ -244,6 +245,7 @@ export type SelectProps<T extends OptionItem> = {
   | 'children'
   | 'classNames'
   | 'placement'
+  | 'onClose'
 >;
 
 export type SelectMenuProps = {

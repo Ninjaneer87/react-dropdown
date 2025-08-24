@@ -1,4 +1,10 @@
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { PopoverContext } from '../../context/PopoverContext';
 import PopoverTrigger from './PopoverTrigger';
 import { PopoverComposition, PopoverProps } from '../../types';
@@ -50,7 +56,7 @@ const Popover = ({
   growContent = false,
   classNames,
 }: PopoverProps & PopoverComposition) => {
-  const popoverMenuRef = useRef<HTMLDivElement>(null);
+  const popoverContentRef = useRef<HTMLDivElement>(null);
   const popoverTriggerRef = useRef<HTMLDivElement>(null);
   const showDelayRef = useRef<number | null>(null);
   const hideDelayRef = useRef<number | null>(null);
@@ -121,99 +127,11 @@ const Popover = ({
     throw new Error('Popover component requires a PopoverContent');
   }
 
-  useWindowResize(setMenuCoords);
-  usePreventBodyScroll(isRootExpanded && isRootPopover && shouldBlockScroll);
-
-  // Handle onOpen
-  useEffect(() => {
-    if (!isOpen || !onOpen) return;
-
-    onOpen();
-  }, [isOpen]);
-
-  // Handle onBlur
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (isDisabled) return;
-      if (!isExpanded) return;
-
-      const hasClickedPopoverMenu = popoverMenuRef.current?.contains(
-        event.target as Element,
-      );
-      const hasClickedPopoverTrigger = popoverTriggerRef.current?.contains(
-        event.target as Element,
-      );
-
-      if (!hasClickedPopoverMenu && !hasClickedPopoverTrigger) {
-        if (onBlur) onBlur();
-        if (shouldCloseOnBlur) handleClose();
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [shouldCloseOnBlur, isExpanded, isDisabled]);
-
-  // Handle position and scroll
-  useEffect(() => {
-    if (isRootExpanded) {
-      setMenuCoords();
-    }
-
-    function handleScroll() {
-      if (shouldCloseOnScroll) handleClose();
-
-      if (!isRootExpanded) return;
-      setMenuCoords();
-    }
-
-    document.addEventListener('scroll', handleScroll);
-
-    return () => {
-      document.removeEventListener('scroll', handleScroll);
-    };
-  }, [isRootExpanded, shouldCloseOnScroll]);
-
-  // Handle onClose
-  function handleClose() {
-    if (isDisabled) return;
-
-    if (onClose) {
-      onClose();
-    }
-
-    setIsOpen(false);
-    setIsHoverOpen(false);
-
-    if (focusTriggerOnClose) {
-      popoverTriggerRef.current?.focus();
-    }
-  }
-
-  // Handle onOpenChange
-  function handleToggle() {
-    if (isDisabled) return;
-
-    if (onOpenChange) {
-      onOpenChange(!open);
-    }
-
-    if (open) {
-      handleClose();
-      return;
-    }
-
-    setIsOpen((prev) => !prev);
-  }
-
-  function setMenuCoords() {
-    if (!popoverTriggerRef.current || !popoverMenuRef.current) return;
+  const setContentCoords = useCallback(() => {
+    if (!popoverTriggerRef.current || !popoverContentRef.current) return;
 
     const triggerRect = popoverTriggerRef.current.getBoundingClientRect();
-    const popoverRect = popoverMenuRef.current.getBoundingClientRect();
+    const popoverRect = popoverContentRef.current.getBoundingClientRect();
 
     if (growContent) {
       const coords = growContentPosition(placement, offset, triggerRect);
@@ -229,10 +147,94 @@ const Popover = ({
       fitPlacement,
       contentOffset,
       triggerRect,
-      popoverMenuRef.current,
+      popoverContentRef.current,
     );
 
     setPopoverContentCoords(coords);
+  }, [contentOffset, placement, offset, shouldFlip, growContent]);
+
+  // Handle onClose
+  const handleClose = useCallback(() => {
+    if (isDisabled) return;
+
+    if (onClose) {
+      onClose();
+    }
+
+    setIsOpen(false);
+    setIsHoverOpen(false);
+
+    if (focusTriggerOnClose) {
+      popoverTriggerRef.current?.focus();
+    }
+  }, [isDisabled, onClose, focusTriggerOnClose]);
+
+  useWindowResize(setContentCoords);
+  usePreventBodyScroll(isRootExpanded && isRootPopover && shouldBlockScroll);
+
+  // Handle onBlur
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (isDisabled) return;
+      if (!isExpanded) return;
+
+      const isPopoverTrigger = (event.target as Element).closest(
+        '[data-popover-trigger]',
+      );
+      const isPopoverContent = (event.target as Element).closest(
+        '[data-popover-content]',
+      );
+      if (!isPopoverTrigger && !isPopoverContent) {
+        if (onBlur) onBlur();
+        if (shouldCloseOnBlur) handleClose();
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [shouldCloseOnBlur, isExpanded, isDisabled, handleClose, onBlur]);
+
+  // Handle position and scroll
+  useEffect(() => {
+    if (isRootExpanded) {
+      setContentCoords();
+    }
+  }, [isRootExpanded, setContentCoords]);
+
+  useEffect(() => {
+    function handleScroll() {
+      if (!isRootExpanded) return;
+
+      if (shouldCloseOnScroll) handleClose();
+      setContentCoords();
+    }
+
+    document.addEventListener('scroll', handleScroll);
+
+    return () => {
+      document.removeEventListener('scroll', handleScroll);
+    };
+  }, [isRootExpanded, shouldCloseOnScroll, handleClose, setContentCoords]);
+
+  // Handle onOpenChange
+  function handleToggle() {
+    if (isDisabled) return;
+
+    if (onOpenChange) {
+      onOpenChange(!open);
+    }
+
+    if (open) {
+      handleClose();
+      return;
+    }
+
+    onOpen?.();
+
+    setIsOpen((prev) => !prev);
   }
 
   function handleBackdropClick() {
@@ -270,6 +272,8 @@ const Popover = ({
 
     showDelayRef.current = setTimeout(() => {
       setIsHoverOpen(true);
+
+      if (isRootPopover && openOnHover) onOpen?.();
     }, delayShow);
   }
 
@@ -281,6 +285,8 @@ const Popover = ({
 
     hideDelayRef.current = setTimeout(() => {
       setIsHoverOpen(false);
+
+      if (isRootPopover && openOnHover) onClose?.();
 
       if (focusTriggerOnClose) {
         popoverTriggerRef.current?.focus({ preventScroll: true });
@@ -363,7 +369,7 @@ const Popover = ({
                 ref={(node) => {
                   if (!node) return;
 
-                  popoverMenuRef.current = node;
+                  popoverContentRef.current = node;
                   focusContainerRef.current = node;
                 }}
               >

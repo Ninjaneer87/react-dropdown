@@ -5,7 +5,7 @@ type Props = ComponentPropsWithRef<'div'>;
 const PopoverFocusTrapper = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
   const popoverContext = usePopoverContext();
   if (!popoverContext) {
-    throw new Error('DropdownMenu should be used within a Popover component');
+    throw new Error('PopoverFocusTrapper should be used within a Popover component');
   }
 
   const { handleClose } = popoverContext;

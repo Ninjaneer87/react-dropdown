@@ -100,13 +100,17 @@ function App() {
           backdrop="blur"
           defaultValue={selectedValue}
           value={selectedValue}
-          onClose={() => console.log('onClose')}
-          isDisabled
+          onClose={(items) => console.log(items)}
+          // isDisabled
           onSelectionChange={(value) => {
             console.log({ value });
             setSelectedValue(value.selectedOptions);
           }}
-          classNames={{ mainWrapper: 'bg-amber-800', placeholder: 'opacity-60', base: 'w-80' }}
+          classNames={{
+            mainWrapper: 'bg-amber-800',
+            placeholder: 'opacity-60',
+            base: 'w-80',
+          }}
         />
 
         <Select
@@ -115,15 +119,16 @@ function App() {
             setSelectedValue(value.selectedOptions);
           }}
           multiple
+          onOpen={() => console.log('onOpen')}
           // isDisabled
           placeholder="Select with sections"
-          onClose={() => console.log('onClose')}
+          onClose={(items) => console.log(items)}
           // defaultValue={selectedValue}
           value={selectedValue}
           label="Select with sections"
           isRequired
           shouldBlockScroll={false}
-          shouldCloseOnScroll={false}
+          // shouldCloseOnScroll={false}
         >
           {groups.map((group, i) => (
             <Select.Section
@@ -145,7 +150,7 @@ function App() {
             console.log({ value });
             // setSelectedValue(value.selectedOptions);
           }}
-          label='Select with children'
+          label="Select with children"
           isRequired
           multiple
           placeholder="Select with children"
@@ -164,7 +169,7 @@ function App() {
           items={items}
           onSelectionChange={(value) => console.log(value)}
           multiple
-          label='Select with children function'
+          label="Select with children function"
           placeholder="Select with children function"
           onClose={() => console.log('onClose')}
         >
@@ -174,10 +179,13 @@ function App() {
             </Select.Item>
           )}
         </Select>
+
         <Dropdown
           placement="bottom-center"
           shouldBlockScroll={false}
           shouldCloseOnScroll={false}
+          // openOnHover
+          onOpen={() => console.log('onOpen dropdown')}
           // shouldFlip={false}
           // fullWidth
         >
@@ -299,13 +307,13 @@ function App() {
           placement="bottom-center"
           shouldBlockScroll={false}
           shouldCloseOnScroll={false}
-          shouldFlip={false}
+          // shouldFlip={false}
           shouldCloseOnBlur
           openOnHover
           delayHide={300}
           delayShow={300}
           focusTriggerOnClose={false}
-          hoverableContent={false}
+          // hoverableContent={false}
         >
           <Popover.Trigger>
             <button className="cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
@@ -322,6 +330,38 @@ function App() {
                 voluptatibus, blanditiis, exercitationem, doloribus
                 voluptatibus, blanditiis, exercitationem, doloribus
               </p>
+
+              <Popover
+                placement="bottom-center"
+                shouldBlockScroll={false}
+                shouldCloseOnScroll={false}
+                // shouldFlip={false}
+                shouldCloseOnBlur
+                openOnHover
+                delayHide={300}
+                delayShow={300}
+                focusTriggerOnClose={false}
+                // hoverableContent={false}
+              >
+                <Popover.Trigger>
+                  <button className="cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
+                    PopoverTrigger
+                  </button>
+                </Popover.Trigger>
+                <Popover.Content>
+                  <div className="flex flex-col gap-2 max-w-80">
+                    <h1 className="text-2xl">Popover Content</h1>
+                    <p>
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Quisquam , voluptatibus, blanditiis, exercitationem,
+                      doloribus voluptatibus, blanditiis, exercitationem,
+                      doloribus voluptatibus, blanditiis, exercitationem,
+                      doloribus voluptatibus, blanditiis, exercitationem,
+                      doloribus
+                    </p>
+                  </div>
+                </Popover.Content>
+              </Popover>
             </div>
           </Popover.Content>
         </Popover>

@@ -94,8 +94,8 @@ const Dropdown = ({
     <Popover
       openOnHover={openOnHover}
       isChild={isChild}
-      delayHide={isChild ? 300 : 0}
-      delayShow={isChild ? 100 : 0}
+      delayHide={isChild || openOnHover ? 300 : 0}
+      delayShow={isChild || openOnHover ? 100 : 0}
       fullWidth={fullWidth}
       shouldFlip={shouldFlip}
       shouldBlockScroll={shouldBlockScroll}
