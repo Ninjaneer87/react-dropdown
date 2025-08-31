@@ -17,7 +17,7 @@ import {
   growContentPosition,
   cn,
 } from '../../utils/common';
-import ClientPortal from '../ClientPortal';
+import ClientPortal from '../utility/ClientPortal';
 import { useWindowResize } from '../../hooks/useWindowResize';
 import useFocusTrap from '../../hooks/useFocusTrap';
 import PopoverFocusTrapper from './PopoverFocusTrapper';

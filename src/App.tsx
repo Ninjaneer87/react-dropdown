@@ -96,7 +96,7 @@ function App() {
         </button>
 
         <Select
-          items={items}
+          // items={items}
           backdrop="blur"
           defaultValue={selectedValue}
           value={selectedValue}
@@ -107,11 +107,32 @@ function App() {
             setSelectedValue(value.selectedOptions);
           }}
           classNames={{
-            mainWrapper: 'bg-amber-800',
+            mainWrapper: 'bg-blue-800',
             placeholder: 'opacity-60',
             base: 'w-80',
           }}
-        />
+          renderOption={(option) => {
+            return (
+              <li
+                className={`p-2 ${
+                  option.disabled ? 'opacity-60 pointer-events-none' : ''
+                }  hover:bg-blue-500 focus-visible:bg-blue-500 focus-within:bg-blue-500 rounded-lg transition-all my-2 w-full flex cursor-pointer items-center gap-2 bg-blue-600`}
+              >
+                <div>{option.label}</div>
+                {selectedValue.find((item) => item.value === option.value) && (
+                  <>✔</>
+                )}
+                <span>{`${option.isSelected}`}</span>
+              </li>
+            );
+          }}
+        >
+          {items.map((item) => (
+            <Select.Item key={item.value} {...item} showDisabledStyles={false}>
+              {item.label}
+            </Select.Item>
+          ))}
+        </Select>
 
         <Select
           onSelectionChange={(value) => {
@@ -175,7 +196,7 @@ function App() {
         >
           {(item) => (
             <Select.Item key={item.value} {...item}>
-              {item.label}
+              {`${item.isSelected}`}
             </Select.Item>
           )}
         </Select>

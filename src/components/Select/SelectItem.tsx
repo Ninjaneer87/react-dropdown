@@ -1,10 +1,10 @@
 import { usePopoverRootContext } from '../../context/PopoverRootContext';
 import { useSelectContext } from '../../context/SelectContext';
 import { OptionItem, SelectItemProps } from '../../types';
+import { Slot } from '../utility/Slot';
 
 function SelectItem<T extends OptionItem>({
   children,
-  isHighlighted,
   shouldCloseOnSelection = true,
   disabled,
   showDisabledStyles = true,
@@ -30,14 +30,16 @@ function SelectItem<T extends OptionItem>({
     selectContext;
   const { handleCloseRoot } = popoverRootContext;
 
-  const selectedOptionItem: T = {
+  const isOptionSelected = selected.some((item) => item.value === value);
+  const optionItem: T = {
     value,
     label,
     description,
+    disabled,
+    isSelected: isOptionSelected,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...(rest as any),
   };
-  const isOptionSelected = selected.some((item) => item.value === value);
 
   function handleSelection() {
     if (disabled) return;
@@ -57,14 +59,14 @@ function SelectItem<T extends OptionItem>({
 
       if (isNewSelection) {
         if (multiple) {
-          newSelectedOptions = [...newSelectedOptions, selectedOptionItem];
+          newSelectedOptions = [...newSelectedOptions, optionItem];
         } else {
-          newSelectedOptions = [selectedOptionItem];
+          newSelectedOptions = [optionItem];
         }
       }
 
       onSelectionChange({
-        selectedOption: selectedOptionItem,
+        selectedOption: optionItem,
         selectedOptions: newSelectedOptions,
       });
 
@@ -88,7 +90,17 @@ function SelectItem<T extends OptionItem>({
   }
 
   if (renderOption) {
-    return renderOption(selectedOptionItem);
+    return (
+      <Slot
+        data-select-item
+        tabIndex={disabled ? -1 : 0}
+        aria-disabled={disabled}
+        onClick={handleSelection}
+        onKeyDown={onKeyDown}
+      >
+        {renderOption(optionItem)}
+      </Slot>
+    );
   }
 
   return (
@@ -100,8 +112,6 @@ function SelectItem<T extends OptionItem>({
       onKeyDown={onKeyDown}
       className={`p-2 ${
         disabled && showDisabledStyles ? 'opacity-60 pointer-events-none' : ''
-      } ${
-        isHighlighted ? 'bg-gray-600' : ''
       } hover:bg-gray-500 focus-visible:bg-gray-500 focus-within:bg-gray-500 rounded-lg transition-all my-2 w-full flex cursor-pointer items-center gap-2`}
     >
       <span className="grow shrink-0 basis-36 justify-between">

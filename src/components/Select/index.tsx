@@ -41,6 +41,8 @@ function Select<T extends OptionItem>({
   classNames,
   label,
   isRequired,
+  openOnLabelClick,
+  shouldCloseOnSelection,
 }: SelectProps<T> & SelectCompositionProps<T>) {
   if (items && children && typeof children !== 'function') {
     throw new Error(
@@ -103,7 +105,7 @@ function Select<T extends OptionItem>({
     fullWidth ? 'w-full' : '',
     isDisabled ? 'opacity-60' : '',
   );
-  const labelClassName = cn('mb-1');
+  const labelClassName = cn('mb-1 w-fit');
   const placeholderClassName = cn('grow flex items-center opacity-60');
   const requiredAsteriskClassName = cn('text-red-700 ml-1');
   const triggerClassName = cn('w-full grow relative');
@@ -132,7 +134,11 @@ function Select<T extends OptionItem>({
         {label && (
           <div
             className={cn(labelClassName, classNames?.label)}
-            onClick={() => setIsOpen((prev) => !prev)}
+            onClick={() => {
+              if (!openOnLabelClick) return;
+
+              setIsOpen((prev) => !prev);
+            }}
           >
             {label}
             {isRequired && (
@@ -227,7 +233,12 @@ function Select<T extends OptionItem>({
                   {typeof children === 'function' &&
                     items &&
                     items.map((item) => {
-                      const renderedItem = children(item);
+                      const renderedItem = children({
+                        ...item,
+                        isSelected: selected.some(
+                          (sel) => sel.value === item.value,
+                        ),
+                      });
                       if (
                         !React.isValidElement(renderedItem) ||
                         renderedItem.type !== SelectItem
@@ -243,7 +254,11 @@ function Select<T extends OptionItem>({
                   {!children &&
                     items &&
                     items.map((item) => (
-                      <SelectItem key={item.value} {...item}>
+                      <SelectItem
+                        key={item.value}
+                        {...item}
+                        shouldCloseOnSelection={shouldCloseOnSelection}
+                      >
                         {item.label}
                       </SelectItem>
                     ))}

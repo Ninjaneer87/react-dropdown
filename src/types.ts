@@ -163,12 +163,16 @@ export type SelectProps<T extends OptionItem> = {
   placeholder?: string;
   value?: T[];
   defaultValue?: T[];
-  renderOption?: (option: T) => React.ReactNode;
-  renderValue?: (items: T[]) => React.ReactNode;
-  children?: React.ReactNode | ((item: T) => React.ReactNode);
+  renderOption?: (option: T & { isSelected?: boolean }) => React.ReactNode;
+  renderValue?: (selectedItems: T[]) => React.ReactNode;
+  children?:
+    | React.ReactNode
+    | ((item: T & { isSelected?: boolean }) => React.ReactNode);
   label?: React.ReactNode;
   isRequired?: boolean;
-  onClose?: (items?: T[]) => void;
+  onClose?: (selectedItems?: T[]) => void;
+  openOnLabelClick?: boolean;
+  shouldCloseOnSelection?: boolean;
   /**
    * Allows to set custom class names for the Select slots.
    */
@@ -259,7 +263,6 @@ export type SelectMenuProps = {
 };
 export type SelectItemProps<T extends OptionItem> = {
   children: React.ReactNode;
-  isHighlighted?: boolean;
   shouldCloseOnSelection?: boolean;
   showDisabledStyles?: boolean;
   startContent?: React.ReactNode;
@@ -300,6 +303,6 @@ export type OptionItem = {
 };
 
 export type OnSelectionChange<T extends OptionItem> = (value: {
-  selectedOption: T;
-  selectedOptions: T[];
+  selectedOption: T & { isSelected?: boolean };
+  selectedOptions: (T & { isSelected?: boolean })[];
 }) => void;
