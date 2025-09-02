@@ -2,6 +2,7 @@ import React, {
   ReactNode,
   useCallback,
   useEffect,
+  useId,
   useRef,
   useState,
 } from 'react';
@@ -62,8 +63,9 @@ const Popover = ({
   const hideDelayRef = useRef<number | null>(null);
 
   const popoverRootContext = usePopoverRootContext();
-  const { isRootOpen } = popoverRootContext || {};
+  const { isRootOpen, rootPopoverId } = popoverRootContext || {};
   const isRootPopover = !popoverRootContext;
+  const popoverId = useId();
 
   const [isOpen, setIsOpen] = useState(false);
   const [isHoverOpen, setIsHoverOpen] = useState(false);
@@ -179,12 +181,12 @@ const Popover = ({
       if (!isExpanded) return;
 
       const isPopoverTrigger = (event.target as Element).closest(
-        '[data-popover-trigger]',
+        `[data-popover-trigger="${popoverId}"]`,
       );
       const isPopoverContent = (event.target as Element).closest(
-        '[data-popover-content]',
+        `[data-popover-content="${popoverId}"]`,
       );
-      if (!isPopoverTrigger && !isPopoverContent) {
+      if (isRootPopover && !isPopoverTrigger && !isPopoverContent) {
         if (onBlur) onBlur();
         if (shouldCloseOnBlur) handleClose();
       }
@@ -195,7 +197,15 @@ const Popover = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [shouldCloseOnBlur, isExpanded, isDisabled, handleClose, onBlur]);
+  }, [
+    shouldCloseOnBlur,
+    isExpanded,
+    isDisabled,
+    handleClose,
+    onBlur,
+    popoverId,
+    isRootPopover,
+  ]);
 
   // Handle position and scroll
   useEffect(() => {
@@ -257,10 +267,6 @@ const Popover = ({
   function onPopoverKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
     if (event.key === 'Escape' && shouldCloseOnEsc) {
       handleClose();
-    }
-
-    if (event.key === ' ') {
-      event.preventDefault();
     }
   }
 
@@ -345,7 +351,7 @@ const Popover = ({
         >
           <div
             onClick={handleToggle}
-            data-popover-trigger
+            data-popover-trigger={rootPopoverId ?? popoverId}
             data-trigger-open={isExpanded}
             tabIndex={isChild || isDisabled ? -1 : 0}
             onKeyDown={onTriggerKeyDown}
@@ -363,7 +369,7 @@ const Popover = ({
           <ClientPortal>
             {(isMounted || isExpanded) && (
               <div
-                data-popover-content
+                data-popover-content={rootPopoverId ?? popoverId}
                 className={cn(contentClassName, classNames?.content)}
                 style={popoverContentCoords}
                 ref={(node) => {
@@ -390,7 +396,11 @@ const Popover = ({
 
   return (
     <PopoverRootContext.Provider
-      value={{ isRootOpen: isExpanded, handleCloseRoot: handleClose }}
+      value={{
+        isRootOpen: isExpanded,
+        handleCloseRoot: handleClose,
+        rootPopoverId: popoverId,
+      }}
     >
       {popoverJSX}
     </PopoverRootContext.Provider>

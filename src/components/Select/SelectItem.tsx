@@ -93,6 +93,8 @@ function SelectItem<T extends OptionItem>({
     return (
       <Slot
         data-select-item
+        data-value={value}
+        data-label={label}
         tabIndex={disabled ? -1 : 0}
         aria-disabled={disabled}
         onClick={handleSelection}
@@ -106,6 +108,8 @@ function SelectItem<T extends OptionItem>({
   return (
     <li
       data-select-item
+      data-value={value}
+      data-label={label}
       tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
       onClick={handleSelection}

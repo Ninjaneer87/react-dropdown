@@ -5,29 +5,39 @@ import Select from './components/Select';
 
 const items = [
   {
-    label: 'Option 1',
+    label: 'Andrej',
     value: 'option-1',
     extraProp: 'Extra prop',
   },
   {
-    label: 'Option 2',
+    label: 'Denis',
     value: 'option-2',
     extraProp: 'Extra prop',
     disabled: true,
   },
   {
-    label: 'Option 3',
+    label: 'Farcry',
     value: 'option-3',
     extraProp: 'Extra prop',
   },
   {
-    label: 'Option 4',
+    label: 'North',
     value: 'option-4',
     extraProp: 'Extra prop',
   },
   {
-    label: 'Option 5',
+    label: 'Zenit',
     value: 'option-5',
+    extraProp: 'Extra prop',
+  },
+  {
+    label: 'Fantom',
+    value: 'option-6',
+    extraProp: 'Extra prop',
+  },
+  {
+    label: 'Austral',
+    value: 'option-7',
     extraProp: 'Extra prop',
   },
 ];
@@ -150,6 +160,7 @@ function App() {
           isRequired
           shouldBlockScroll={false}
           // shouldCloseOnScroll={false}
+          // topContent={<input onChange={(e) => console.log(e.target.value)} />}
         >
           {groups.map((group, i) => (
             <Select.Section
@@ -196,7 +207,7 @@ function App() {
         >
           {(item) => (
             <Select.Item key={item.value} {...item}>
-              {`${item.isSelected}`}
+              {item.label}
             </Select.Item>
           )}
         </Select>

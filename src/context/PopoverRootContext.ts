@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
 
 type PopoverRootContextType = {
+  rootPopoverId: string;
   isRootOpen: boolean;
   handleCloseRoot: () => void;
 };
