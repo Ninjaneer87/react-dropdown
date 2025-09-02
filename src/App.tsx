@@ -5,38 +5,38 @@ import Select from './components/Select';
 
 const items = [
   {
-    label: 'Andrej',
+    text: 'Andrej',
     value: 'option-1',
     extraProp: 'Extra prop',
   },
   {
-    label: 'Denis',
+    text: 'Denis',
     value: 'option-2',
     extraProp: 'Extra prop',
     disabled: true,
   },
   {
-    label: 'Farcry',
+    text: 'Farcry',
     value: 'option-3',
     extraProp: 'Extra prop',
   },
   {
-    label: 'North',
+    text: 'North',
     value: 'option-4',
     extraProp: 'Extra prop',
   },
   {
-    label: 'Zenit',
+    text: 'Zenit',
     value: 'option-5',
     extraProp: 'Extra prop',
   },
   {
-    label: 'Fantom',
+    text: 'Fantom',
     value: 'option-6',
     extraProp: 'Extra prop',
   },
   {
-    label: 'Austral',
+    text: 'Austral',
     value: 'option-7',
     extraProp: 'Extra prop',
   },
@@ -121,25 +121,25 @@ function App() {
             placeholder: 'opacity-60',
             base: 'w-80',
           }}
-          renderOption={(option) => {
-            return (
-              <li
-                className={`p-2 ${
-                  option.disabled ? 'opacity-60 pointer-events-none' : ''
-                }  hover:bg-blue-500 focus-visible:bg-blue-500 focus-within:bg-blue-500 rounded-lg transition-all my-2 w-full flex cursor-pointer items-center gap-2 bg-blue-600`}
-              >
-                <div>{option.label}</div>
-                {selectedValue.find((item) => item.value === option.value) && (
-                  <>✔</>
-                )}
-                <span>{`${option.isSelected}`}</span>
-              </li>
-            );
-          }}
+          // renderOption={(option) => {
+          //   return (
+          //     <li
+          //       className={`p-2 ${
+          //         option.disabled ? 'opacity-60 pointer-events-none' : ''
+          //       }  hover:bg-blue-500 focus-visible:bg-blue-500 focus-within:bg-blue-500 rounded-lg transition-all my-2 w-full flex cursor-pointer items-center gap-2 bg-blue-600`}
+          //     >
+          //       <div>{option.label}</div>
+          //       {selectedValue.find((item) => item.value === option.value) && (
+          //         <>✔</>
+          //       )}
+          //       <span>{`${option.isSelected}`}</span>
+          //     </li>
+          //   );
+          // }}
         >
           {items.map((item) => (
-            <Select.Item key={item.value} {...item} showDisabledStyles={false}>
-              {item.label}
+            <Select.Item key={item.value} {...item}>
+              {item.text}
             </Select.Item>
           ))}
         </Select>
@@ -159,6 +159,7 @@ function App() {
           label="Select with sections"
           isRequired
           shouldBlockScroll={false}
+          truncate={{ itemText: true, itemDescription: true }}
           // shouldCloseOnScroll={false}
           // topContent={<input onChange={(e) => console.log(e.target.value)} />}
         >
@@ -170,7 +171,7 @@ function App() {
             >
               {group.items.map((item) => (
                 <Select.Item key={item.value} {...item}>
-                  {item.label}
+                  {item.text}
                 </Select.Item>
               ))}
             </Select.Section>
@@ -192,7 +193,7 @@ function App() {
         >
           {items.map((item) => (
             <Select.Item key={item.value} {...item}>
-              {item.label}
+              {item.text}
             </Select.Item>
           ))}
         </Select>
@@ -207,7 +208,7 @@ function App() {
         >
           {(item) => (
             <Select.Item key={item.value} {...item}>
-              {item.label}
+              {item.text}
             </Select.Item>
           )}
         </Select>

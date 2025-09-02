@@ -76,7 +76,7 @@ export function useKeyboardNavigation({ itemSelector }: Props) {
     const items = getItems();
     if (!items) return;
 
-    const itemLabels = items.map((item) => item.getAttribute('data-label'));
+    const itemLabels = items.map((item) => item.getAttribute('data-text'));
 
     const index = itemLabels.findIndex((item) =>
       item?.toLowerCase()?.startsWith(char.toLowerCase()),

@@ -1,6 +1,7 @@
 import { usePopoverRootContext } from '../../context/PopoverRootContext';
 import { useSelectContext } from '../../context/SelectContext';
 import { OptionItem, SelectItemProps } from '../../types';
+import { cn } from '../../utils/common';
 import { Slot } from '../utility/Slot';
 
 function SelectItem<T extends OptionItem>({
@@ -11,8 +12,9 @@ function SelectItem<T extends OptionItem>({
   startContent,
   endContent,
   value,
-  label,
+  text,
   description,
+  classNames,
   ...rest
 }: SelectItemProps<T>) {
   const selectContext = useSelectContext<T>();
@@ -26,14 +28,20 @@ function SelectItem<T extends OptionItem>({
     throw new Error('SelectItem should be used within a Popover component');
   }
 
-  const { onSelectionChange, multiple, selected, setSelected, renderOption } =
-    selectContext;
+  const {
+    onSelectionChange,
+    multiple,
+    selected,
+    setSelected,
+    renderOption,
+    truncate,
+  } = selectContext;
   const { handleCloseRoot } = popoverRootContext;
 
   const isOptionSelected = selected.some((item) => item.value === value);
   const optionItem: T = {
     value,
-    label,
+    text,
     description,
     disabled,
     isSelected: isOptionSelected,
@@ -89,12 +97,32 @@ function SelectItem<T extends OptionItem>({
     }
   }
 
+  const baseClassName = cn(
+    disabled && showDisabledStyles ? 'opacity-60 pointer-events-none' : '',
+    'p-2 hover:bg-gray-500 focus-visible:bg-gray-500 focus-within:bg-gray-500 rounded-lg transition-all w-full flex cursor-pointer items-center gap-2',
+  );
+  const contentWrapperClassName = cn('grow shrink-0 basis-36 justify-between');
+  const startContentClassName = cn('shrink-0 inline-flex');
+  const mainContentClassName = cn('shrink-0 grow inline-block');
+  const textContentClassName = cn(
+    truncate?.itemText ? 'line-clamp-1 break-all grow' : '',
+  );
+  const descriptionContentClassName = cn(
+    'text-xs opacity-60',
+    truncate?.itemText ? 'line-clamp-1 break-all grow' : '',
+  );
+  const endContentClassName = cn('ml-auto shrink-0 inline-flex');
+  const selectedIconClassName = cn(
+    'transition-all origin-left',
+    isOptionSelected ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0',
+  );
+
   if (renderOption) {
     return (
       <Slot
         data-select-item
         data-value={value}
-        data-label={label}
+        data-text={text}
         tabIndex={disabled ? -1 : 0}
         aria-disabled={disabled}
         onClick={handleSelection}
@@ -109,32 +137,45 @@ function SelectItem<T extends OptionItem>({
     <li
       data-select-item
       data-value={value}
-      data-label={label}
+      data-text={text}
       tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
       onClick={handleSelection}
       onKeyDown={onKeyDown}
-      className={`p-2 ${
-        disabled && showDisabledStyles ? 'opacity-60 pointer-events-none' : ''
-      } hover:bg-gray-500 focus-visible:bg-gray-500 focus-within:bg-gray-500 rounded-lg transition-all my-2 w-full flex cursor-pointer items-center gap-2`}
+      className={cn(baseClassName, classNames?.base)}
     >
-      <span className="grow shrink-0 basis-36 justify-between">
+      <span className={cn(contentWrapperClassName, classNames?.contentWrapper)}>
         {startContent && (
-          <span className="shrink-0 inline-flex">{startContent}</span>
+          <span className={cn(startContentClassName, classNames?.startContent)}>
+            {startContent}
+          </span>
         )}
 
-        <span className="shrink-0 grow inline-flex">{children}</span>
+        <span className={cn(mainContentClassName, classNames?.mainContent)}>
+          <div
+            title={`${text}`}
+            className={cn(textContentClassName, classNames?.textContent)}
+          >
+            {children}
+          </div>
+          <div
+            className={cn(
+              descriptionContentClassName,
+              classNames?.descriptionContent,
+            )}
+          >
+            Description of the item
+          </div>
+        </span>
 
         {endContent && (
-          <span className="ml-auto shrink-0 inline-flex">{endContent}</span>
+          <span className={cn(endContentClassName, classNames?.endContent)}>
+            {endContent}
+          </span>
         )}
       </span>
 
-      <span
-        className={`transition-all origin-left ${
-          isOptionSelected ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'
-        }`}
-      >
+      <span className={cn(selectedIconClassName, classNames?.selectedIcon)}>
         {'✔'}
       </span>
     </li>

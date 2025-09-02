@@ -180,10 +180,10 @@ const Popover = ({
       if (isDisabled) return;
       if (!isExpanded) return;
 
-      const isPopoverTrigger = (event.target as Element).closest(
+      const isPopoverTrigger = !!(event.target as Element).closest(
         `[data-popover-trigger="${popoverId}"]`,
       );
-      const isPopoverContent = (event.target as Element).closest(
+      const isPopoverContent = !!(event.target as Element).closest(
         `[data-popover-content="${popoverId}"]`,
       );
       if (isRootPopover && !isPopoverTrigger && !isPopoverContent) {

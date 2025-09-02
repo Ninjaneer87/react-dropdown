@@ -43,6 +43,7 @@ function Select<T extends OptionItem>({
   isRequired,
   openOnLabelClick,
   shouldCloseOnSelection,
+  truncate,
 }: SelectProps<T> & SelectCompositionProps<T>) {
   if (items && children && typeof children !== 'function') {
     throw new Error(
@@ -96,8 +97,16 @@ function Select<T extends OptionItem>({
       setSelected,
       selected,
       renderOption,
+      truncate,
     }),
-    [multiple, onSelectionChange, setSelected, selected, renderOption],
+    [
+      multiple,
+      onSelectionChange,
+      setSelected,
+      selected,
+      renderOption,
+      truncate,
+    ],
   );
 
   const popoverContentClassName = cn('p-0');
@@ -208,7 +217,7 @@ function Select<T extends OptionItem>({
                   )}
 
                   {showValue && (
-                    <div>{selected.map((item) => item.label).join(', ')}</div>
+                    <div>{selected.map((item) => item.text).join(', ')}</div>
                   )}
 
                   <div
@@ -259,7 +268,7 @@ function Select<T extends OptionItem>({
                         {...item}
                         shouldCloseOnSelection={shouldCloseOnSelection}
                       >
-                        {item.label}
+                        {item.text}
                       </SelectItem>
                     ))}
                 </ul>

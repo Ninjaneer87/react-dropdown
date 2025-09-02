@@ -151,6 +151,59 @@ export type DropdownComposition = {
   Divider?: React.FC;
 };
 
+export type SelectTruncate = {
+  /**
+   * Show selected value(s) in one line only
+   */
+  value?: boolean;
+  /**
+   * Truncate item text content
+   */
+  itemText?: boolean;
+  /**
+   * Truncate item description
+   */
+  itemDescription?: boolean;
+  /**
+   * Truncate section title
+   */
+  sectionTitle?: boolean;
+};
+
+export type SelectItemClassNames = {
+  /**
+   * The main slot for the listbox item. It wraps all the other slots.
+   */
+  base?: string;
+  /**
+   * `startContent`, `endContent` and `children` wrapper
+   */
+  contentWrapper?: string;
+  /**
+   * Left side of the content
+   */
+  startContent?: string;
+  /**
+   * Main content of the select item
+   */
+  mainContent?: string;
+  /**
+   * Main content of the select item
+   */
+  textContent?: string;
+  /**
+   * Main content of the select item
+   */
+  descriptionContent?: string;
+  /**
+   * Right side of the content
+   */
+  endContent?: string;
+  /**
+   * The selected icon slot. This is only visible when the item is selected - `✔`
+   */
+  selectedIcon?: string;
+};
 // !Select types
 export type SelectProps<T extends OptionItem> = {
   onSelectionChange: OnSelectionChange<T>;
@@ -173,6 +226,7 @@ export type SelectProps<T extends OptionItem> = {
   onClose?: (selectedItems?: T[]) => void;
   openOnLabelClick?: boolean;
   shouldCloseOnSelection?: boolean;
+  truncate?: SelectTruncate;
   /**
    * Allows to set custom class names for the Select slots.
    */
@@ -267,6 +321,7 @@ export type SelectItemProps<T extends OptionItem> = {
   showDisabledStyles?: boolean;
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
+  classNames?: SelectItemClassNames;
 } & T;
 
 export type SelectTriggerProps = {
@@ -297,7 +352,7 @@ export type SelectCompositionProps<T extends OptionItem> = {
 
 export type OptionItem = {
   value: string | number;
-  label: string | number;
+  text: string | number;
   description?: string;
   disabled?: boolean;
 };

@@ -32,7 +32,7 @@ function SelectSection({
     <li className={`bg-inherit`}>
       {title && (
         <div
-          className={`p-1 text-sm font-semibold text-gray-400 ${
+          className={`p-1 text-sm font-semibold text-gray-400 mb-2 ${
             isStickyTitle ? 'bg-gray-800 sticky top-0 z-10 rounded-sm' : ''
           }`}
         >
