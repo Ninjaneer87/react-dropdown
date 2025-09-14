@@ -27,6 +27,7 @@ import {
   usePopoverRootContext,
 } from '../../context/PopoverRootContext';
 import usePreventBodyScroll from '../../hooks/usePreventBodyScroll';
+import { useResizeObserver } from '../../hooks/useResizeObserver';
 
 const Popover = ({
   children,
@@ -56,7 +57,13 @@ const Popover = ({
   hoverableContent = true,
   growContent = false,
   classNames,
+  focusTrapProps = {
+    autoFocus: true,
+    trapFocus: true,
+  },
+  focusableTrigger = true,
 }: PopoverProps & PopoverComposition) => {
+  const { autoFocus, trapFocus } = focusTrapProps;
   const popoverContentRef = useRef<HTMLDivElement>(null);
   const popoverTriggerRef = useRef<HTMLDivElement>(null);
   const showDelayRef = useRef<number | null>(null);
@@ -82,7 +89,7 @@ const Popover = ({
   let popoverContent: ReactNode | null = content ?? null;
 
   const { firstFocusableItemRef, focusContainerRef, lastFocusableItemRef } =
-    useFocusTrap(open);
+    useFocusTrap(open && !!trapFocus, !!autoFocus);
 
   // Validate children
   React.Children.forEach(children, (child) => {
@@ -156,23 +163,31 @@ const Popover = ({
   }, [contentOffset, placement, offset, shouldFlip, growContent]);
 
   // Handle onClose
-  const handleClose = useCallback(() => {
-    if (isDisabled) return;
+  const handleClose = useCallback(
+    (focusTrigger = focusTriggerOnClose) => {
+      if (isDisabled) return;
 
-    if (onClose) {
-      onClose();
-    }
+      if (onClose) {
+        onClose();
+      }
 
-    setIsOpen(false);
-    setIsHoverOpen(false);
+      setIsOpen(false);
+      setIsHoverOpen(false);
+      onOpenChange?.(false);
 
-    if (focusTriggerOnClose) {
-      popoverTriggerRef.current?.focus();
-    }
-  }, [isDisabled, onClose, focusTriggerOnClose]);
+      if (focusTrigger) {
+        popoverTriggerRef.current?.focus();
+      }
+    },
+    [isDisabled, onClose, focusTriggerOnClose, onOpenChange],
+  );
 
   useWindowResize(setContentCoords);
   usePreventBodyScroll(isRootExpanded && isRootPopover && shouldBlockScroll);
+  useResizeObserver({
+    element: popoverTriggerRef.current,
+    onResize: setContentCoords,
+  });
 
   // Handle onBlur
   useEffect(() => {
@@ -254,7 +269,10 @@ const Popover = ({
   }
 
   function onTriggerKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    if (event.key === 'Enter' || event.key === ' ') {
+    if (
+      event.key === 'Enter'
+      // || event.key === ' '
+    ) {
       event.preventDefault();
       handleToggle();
     }
@@ -322,7 +340,9 @@ const Popover = ({
   );
 
   const popoverJSX = (
-    <PopoverContext.Provider value={{ isOpen: isExpanded, handleClose }}>
+    <PopoverContext.Provider
+      value={{ isOpen: isExpanded, handleClose, popoverId }}
+    >
       <>
         <ClientPortal>
           {isMounted && !!backdrop && (
@@ -353,7 +373,7 @@ const Popover = ({
             onClick={handleToggle}
             data-popover-trigger={rootPopoverId ?? popoverId}
             data-trigger-open={isExpanded}
-            tabIndex={isChild || isDisabled ? -1 : 0}
+            tabIndex={!focusableTrigger || isChild || isDisabled ? -1 : 0}
             onKeyDown={onTriggerKeyDown}
             className={cn(triggerClassName, classNames?.trigger)}
             ref={popoverTriggerRef}

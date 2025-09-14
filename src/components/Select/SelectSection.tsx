@@ -3,18 +3,21 @@ import { useSelectContext } from '../../context/SelectContext';
 import { SelectSectionProps } from '../../types';
 import SelectItem from './SelectItem';
 import SelectDivider from './SelectDivider';
+import { cn } from '../../utils/common';
 
 function SelectSection({
   children,
   title,
   isStickyTitle = true,
   showDivider = true,
+  classNames,
 }: SelectSectionProps) {
-  const dropdownContext = useSelectContext();
+  const selectContext = useSelectContext();
 
-  if (!dropdownContext) {
+  if (!selectContext) {
     throw new Error('SelectSection should be used within a Select component');
   }
+
   // Validate children
   if (children) {
     React.Children.forEach(children, (child) => {
@@ -27,14 +30,24 @@ function SelectSection({
       }
     });
   }
+  const { sectionClassNames } = selectContext;
+  const baseClassName = cn('bg-inherit');
+  const titleClassName = cn(
+    'p-1 text-sm font-semibold text-gray-400 mb-2',
+    isStickyTitle ? 'bg-gray-800 sticky top-0 z-10 rounded-sm' : '',
+  );
 
   return (
-    <li className={`bg-inherit`}>
+    <li
+      className={cn(baseClassName, sectionClassNames?.base, classNames?.base)}
+    >
       {title && (
         <div
-          className={`p-1 text-sm font-semibold text-gray-400 mb-2 ${
-            isStickyTitle ? 'bg-gray-800 sticky top-0 z-10 rounded-sm' : ''
-          }`}
+          className={cn(
+            titleClassName,
+            sectionClassNames?.title,
+            classNames?.title,
+          )}
         >
           {title}
         </div>

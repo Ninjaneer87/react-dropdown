@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Dropdown from './components/Dropdown';
 import Popover from './components/Popover';
 import Select from './components/Select';
@@ -8,6 +8,7 @@ const items = [
     text: 'Andrej',
     value: 'option-1',
     extraProp: 'Extra prop',
+    disabled: false,
   },
   {
     text: 'Denis',
@@ -19,11 +20,13 @@ const items = [
     text: 'Farcry',
     value: 'option-3',
     extraProp: 'Extra prop',
+    disabled: false,
   },
   {
     text: 'North',
     value: 'option-4',
     extraProp: 'Extra prop',
+    disabled: false,
   },
   {
     text: 'Zenit',
@@ -41,6 +44,12 @@ const items = [
     extraProp: 'Extra prop',
   },
 ];
+
+const manyItems = [...Array(100).keys()].map((item) => ({
+  text: `Option-${item}`,
+  value: `option-${item}`,
+  extraProp: 'Extra prop',
+}));
 
 const groups = [
   {
@@ -60,7 +69,29 @@ const groups = [
 function App() {
   const [selectedValue, setSelectedValue] = useState([items[0]]);
   const [doubleViewportSize, setDoubleViewportSize] = useState(false);
+  const [selectItems, setSelectItems] = useState(manyItems);
+  const [searchVal, setSearchVal] = useState('');
+  const filteredItems = useMemo(
+    () =>
+      items.filter((item) =>
+        item.text.toLowerCase().includes(searchVal.toLowerCase()),
+      ),
+    [searchVal],
+  );
+  // const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setSelectItems([
+        ...selectItems,
+        {
+          text: 'Added optiony',
+          value: 'option-999999999',
+          extraProp: 'Extra prop',
+        },
+      ]);
+    }, 3000);
+  }, []);
   return (
     <>
       <div
@@ -99,22 +130,31 @@ function App() {
         <button
           className="p-2 border cursor-pointer rounded-sm"
           onClick={() => {
-            setSelectedValue((prev) => [...new Set([...prev, items[1]])]);
+            setSelectItems((prev) => [
+              ...new Set([
+                ...prev,
+                {
+                  text: 'Added option',
+                  value: 'option-8',
+                  extraProp: 'Extra prop',
+                },
+              ]),
+            ]);
           }}
         >
-          Change selected value
+          Add item
         </button>
 
         <Select
           // items={items}
           backdrop="blur"
-          defaultValue={selectedValue}
-          value={selectedValue}
+          // defaultValue={selectedValue}
+          // value={selectedValue}
           onClose={(items) => console.log(items)}
           // isDisabled
           onSelectionChange={(value) => {
             console.log({ value });
-            setSelectedValue(value.selectedOptions);
+            // setSelectedValue(value.selectedOptions);
           }}
           classNames={{
             mainWrapper: 'bg-blue-800',
@@ -137,7 +177,7 @@ function App() {
           //   );
           // }}
         >
-          {items.map((item) => (
+          {manyItems.map((item) => (
             <Select.Item key={item.value} {...item}>
               {item.text}
             </Select.Item>
@@ -150,20 +190,55 @@ function App() {
             setSelectedValue(value.selectedOptions);
           }}
           multiple
+          // isOpen={open}
+          // onOpenChange={setOpen}
           onOpen={() => console.log('onOpen')}
           // isDisabled
-          placeholder="Select with sections"
+          placeholder="Search Select with items"
           onClose={(items) => console.log(items)}
           // defaultValue={selectedValue}
           value={selectedValue}
-          label="Select with sections"
+          label="Search Select with items"
           isRequired
           shouldBlockScroll={false}
           truncate={{ itemText: true, itemDescription: true }}
           // shouldCloseOnScroll={false}
-          // topContent={<input onChange={(e) => console.log(e.target.value)} />}
+          autoFocusMenu={false}
+          focusTrapProps={{ autoFocus: false, trapFocus: true }}
+          search
+          items={selectItems}
+          noResultsMessage={
+            <>
+              <i>Dummy no results message</i>
+            </>
+          }
+          description={
+            <>
+              <i>Dummy description</i>
+            </>
+          }
+          errorMessage={
+            <>
+              <i>Dummy error message</i>
+            </>
+          }
+          classNames={{
+            errorMessage: 'text-amber-600',
+            contentWrapper: 'text-sm',
+            trigger: 'py-[1px] px-2',
+          }}
+          // topContent={
+          //   <input
+          //     // autoFocus
+          //     data-focusable-item
+          //     onChange={(e) => {
+          //       e.stopPropagation();
+          //       console.log(e.target.value);
+          //     }}
+          //   />
+          // }
         >
-          {groups.map((group, i) => (
+          {/* {groups.map((group, i) => (
             <Select.Section
               key={group.title}
               title={group.title}
@@ -175,7 +250,7 @@ function App() {
                 </Select.Item>
               ))}
             </Select.Section>
-          ))}
+          ))} */}
         </Select>
 
         <Select
@@ -183,15 +258,17 @@ function App() {
             console.log({ value });
             // setSelectedValue(value.selectedOptions);
           }}
-          label="Select with children"
+          label="Search Select with children"
           isRequired
           multiple
-          placeholder="Select with children"
+          placeholder="Search Select with children"
           onClose={() => console.log('onClose')}
           // defaultValue={selectedValue}
           // value={selectedValue}
+          search
+          onSearchChange={setSearchVal}
         >
-          {items.map((item) => (
+          {filteredItems.map((item) => (
             <Select.Item key={item.value} {...item}>
               {item.text}
             </Select.Item>
@@ -212,6 +289,71 @@ function App() {
             </Select.Item>
           )}
         </Select>
+
+        <Dropdown
+          placement="bottom-center"
+          shouldBlockScroll={false}
+          shouldCloseOnScroll={false}
+          // openOnHover
+          onOpen={() => console.log('onOpen dropdown')}
+          // shouldFlip={false}
+          // fullWidth
+          // focusTrapProps={{ autoFocus: false }}
+        >
+          <Dropdown.Trigger>
+            <button className="w-full cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
+              DropdownTrigger
+            </button>
+          </Dropdown.Trigger>
+
+          <Dropdown.Menu>
+            <Dropdown.Header>
+              <input
+                autoFocus
+                data-focusable-item
+                onChange={(e) => {
+                  e.stopPropagation();
+                  console.log(e.target.value);
+                }}
+              />
+            </Dropdown.Header>
+
+            <Dropdown.Divider />
+
+            <Dropdown.Section title="Section 1">
+              <Dropdown.Item
+                onClick={() => {
+                  console.log('Andrej ksnm forgac');
+                }}
+              >
+                Andrej ksnm forgac
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => {
+                  console.log('Item 2');
+                }}
+              >
+                Item 2
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => {
+                  console.log('Item 3');
+                }}
+              >
+                Item 3
+              </Dropdown.Item>
+            </Dropdown.Section>
+
+            <Dropdown.Divider />
+
+            <Dropdown.Footer>
+              <div className="flex justify-between">
+                <button data-focusable-item>Cancel</button>
+                <button data-focusable-item>Save</button>
+              </div>
+            </Dropdown.Footer>
+          </Dropdown.Menu>
+        </Dropdown>
 
         <Dropdown
           placement="bottom-center"
@@ -329,8 +471,8 @@ function App() {
 
             <Dropdown.Footer>
               <div className="flex justify-between">
-                <button>Cancel</button>
-                <button>Save</button>
+                <button data-focusable-item>Cancel</button>
+                <button data-focusable-item>Save</button>
               </div>
             </Dropdown.Footer>
           </Dropdown.Menu>

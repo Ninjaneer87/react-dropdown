@@ -1,13 +1,21 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { OptionItem, SelectCompositionProps, SelectProps } from '../../types';
 import SelectDivider from './SelectDivider';
 import SelectItem from './SelectItem';
 import SelectSection from './SelectSection';
 import Popover from '../Popover';
 import { SelectContext, SelectContextType } from '../../context/SelectContext';
-import SelectMenu from './SelectMenu';
+// import SelectMenu from './SelectMenu';
 import CaretIcon from '../ui/CaretIcon';
 import { cn } from '../../utils/common';
+import SelectSearch from './SelectSearch';
+import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 
 function Select<T extends OptionItem>({
   // caret,
@@ -44,6 +52,19 @@ function Select<T extends OptionItem>({
   openOnLabelClick,
   shouldCloseOnSelection,
   truncate,
+  itemClassNames,
+  sectionClassNames,
+  autoFocusMenu = true,
+  focusTrapProps = {
+    autoFocus: !autoFocusMenu,
+    trapFocus: true,
+  },
+  search,
+  onSearchChange,
+  description,
+  errorMessage,
+  renderValue,
+  noResultsMessage,
 }: SelectProps<T> & SelectCompositionProps<T>) {
   if (items && children && typeof children !== 'function') {
     throw new Error(
@@ -53,7 +74,7 @@ function Select<T extends OptionItem>({
 
   if (!items && !children) {
     throw new Error(
-      'Options are missing.Provide either "items" prop or "children".',
+      'Options are missing. Provide either "items" prop or "children".',
     );
   }
 
@@ -73,9 +94,23 @@ function Select<T extends OptionItem>({
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<T[]>([]);
   const [hasMountedDefaultValue, setHasMountedDefaultValue] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const baseRef = useRef<HTMLDivElement | null>(null);
+  const searchRef = useRef<HTMLInputElement | null>(null);
 
   const open = controlledIsOpen ?? isOpen;
+
+  const focusSearch = useCallback(() => {
+    searchRef.current?.focus();
+  }, []);
+
+  const { containerRef, onKeyDown, setFocusedIndex, focusableItemsLength } =
+    useKeyboardNavigation<HTMLDivElement>({
+      autoFocus: 'none',
+      onFirstUp: focusSearch,
+      onLastDown: focusSearch,
+      isMounted: open,
+    });
 
   useEffect(() => {
     if (!value) return;
@@ -98,6 +133,15 @@ function Select<T extends OptionItem>({
       selected,
       renderOption,
       truncate,
+      itemClassNames,
+      sectionClassNames,
+      items,
+      searchValue,
+      setSearchValue,
+      setFocusedIndex,
+      focusableItemsLength,
+      search,
+      onSearchChange,
     }),
     [
       multiple,
@@ -106,22 +150,34 @@ function Select<T extends OptionItem>({
       selected,
       renderOption,
       truncate,
+      itemClassNames,
+      sectionClassNames,
+      items,
+      searchValue,
+      setSearchValue,
+      setFocusedIndex,
+      focusableItemsLength,
+      search,
+      onSearchChange,
     ],
   );
 
   const popoverContentClassName = cn('p-0');
   const baseClassName = cn(
-    fullWidth ? 'w-full' : '',
+    fullWidth ? 'w-full' : 'w-80',
     isDisabled ? 'opacity-60' : '',
   );
   const labelClassName = cn('mb-1 w-fit');
   const placeholderClassName = cn('grow flex items-center opacity-60');
   const requiredAsteriskClassName = cn('text-red-700 ml-1');
-  const triggerClassName = cn('w-full grow relative');
-  const mainWrapperClassName = cn(
-    'rounded-lg border p-2 grow flex items-center gap-2',
+  // const triggerClassName = cn('w-full grow relative');
+  const triggerClassName = cn(
+    'rounded-lg border p-2 grow flex items-center gap-2 relative',
   );
   const selectorIconClassName = cn('ml-auto');
+
+  const contentWrapperClassName =
+    'relative !outline-none !border-none p-2 grow';
   const listboxClassName = cn(
     'max-h-[250px] overflow-y-auto relative  scroll-pt-12',
   );
@@ -129,13 +185,38 @@ function Select<T extends OptionItem>({
   const descriptionClassName = cn('opacity-60');
   const errorMessageClassName = cn('text-red-700');
 
-  const showPlaceholder = !selected.length;
+  const showPlaceholder = !selected.length && !search;
 
-  const showValue = !!selected.length;
+  const showValue = !!selected.length || search;
 
   const baseWidth = baseRef.current
     ? window.getComputedStyle(baseRef.current).width
     : 'initial';
+
+  const filteredItems = useMemo(() => {
+    if (!search || !items) return items;
+
+    if (typeof search === 'function') return search(items);
+
+    console.log({ searchValue, items });
+    return items.filter((item) =>
+      item.text.toLowerCase().includes(searchValue.toLowerCase()),
+    );
+  }, [items, search, searchValue]);
+
+  const showNoFilteredResults =
+    filteredItems && !filteredItems.length && !!searchValue.length;
+
+  if (showNoFilteredResults) {
+    filteredItems.push({
+      textContent: noResultsMessage,
+      text: 'No results',
+      value: 'no-results',
+      disabled: true,
+    } as T);
+  }
+
+  const showHelperSection = !!errorMessage || !!description;
 
   return (
     <SelectContext.Provider value={contextValue}>
@@ -196,38 +277,55 @@ function Select<T extends OptionItem>({
           classNames={{
             content: cn(popoverContentClassName, classNames?.popoverContent),
           }}
+          focusTrapProps={focusTrapProps}
+          focusableTrigger={!search}
         >
           <Popover.Trigger>
             {trigger ? (
               trigger
             ) : (
               <div className={cn(triggerClassName, classNames?.trigger)}>
-                <div
-                  className={cn(mainWrapperClassName, classNames?.mainWrapper)}
-                >
-                  {showPlaceholder && (
-                    <div
-                      className={cn(
-                        placeholderClassName,
-                        classNames?.placeholder,
-                      )}
-                    >
-                      {placeholder ?? 'Select'}
-                    </div>
-                  )}
-
-                  {showValue && (
-                    <div>{selected.map((item) => item.text).join(', ')}</div>
-                  )}
-
+                {showPlaceholder && (
                   <div
                     className={cn(
-                      selectorIconClassName,
-                      classNames?.selectorIcon,
+                      placeholderClassName,
+                      classNames?.placeholder,
                     )}
                   >
-                    <CaretIcon open={open} />
+                    {placeholder ?? 'Select'}
                   </div>
+                )}
+
+                {showValue && (
+                  <div className="flex items-center grow flex-wrap gap-1">
+                    {renderValue ? (
+                      renderValue(selected)
+                    ) : (
+                      <>
+                        {selected.map((item) => (
+                          <span key={item.value} tabIndex={0}>
+                            {item.textContent ?? item.text}
+                          </span>
+                        ))}
+                      </>
+                    )}
+
+                    {search && (
+                      <SelectSearch
+                        searchRef={searchRef}
+                        placeholder={placeholder}
+                      />
+                    )}
+                  </div>
+                )}
+
+                <div
+                  className={cn(
+                    selectorIconClassName,
+                    classNames?.selectorIcon,
+                  )}
+                >
+                  <CaretIcon open={open} />
                 </div>
               </div>
             )}
@@ -235,13 +333,21 @@ function Select<T extends OptionItem>({
 
           <Popover.Content>
             <div style={{ width: baseWidth }}>
-              {topContent && topContent}
-              <SelectMenu classNames={{ base: classNames?.listboxWrapper }}>
+              <div
+                className={cn(
+                  contentWrapperClassName,
+                  classNames?.contentWrapper,
+                )}
+                ref={containerRef}
+                onKeyDown={onKeyDown}
+                tabIndex={0}
+              >
+                {topContent && topContent}
                 <ul className={cn(listboxClassName, classNames?.listbox)}>
                   {typeof children !== 'function' && children}
                   {typeof children === 'function' &&
-                    items &&
-                    items.map((item) => {
+                    filteredItems &&
+                    filteredItems.map((item) => {
                       const renderedItem = children({
                         ...item,
                         isSelected: selected.some(
@@ -261,32 +367,44 @@ function Select<T extends OptionItem>({
                     })}
 
                   {!children &&
-                    items &&
-                    items.map((item) => (
+                    filteredItems &&
+                    filteredItems.map((item) => (
                       <SelectItem
                         key={item.value}
                         {...item}
                         shouldCloseOnSelection={shouldCloseOnSelection}
                       >
-                        {item.text}
+                        {item.textContent ?? item.text}
                       </SelectItem>
                     ))}
                 </ul>
-              </SelectMenu>
-              {bottomContent && bottomContent}
+                {bottomContent && bottomContent}
+              </div>
             </div>
           </Popover.Content>
         </Popover>
 
-        <div className={cn(helperWrapperClassName, classNames?.helperWrapper)}>
-          <div className={cn(descriptionClassName, classNames?.description)}>
-            Description Description Description Description Description
-            Description Description Description Description
+        {showHelperSection && (
+          <div
+            className={cn(helperWrapperClassName, classNames?.helperWrapper)}
+          >
+            {description && (
+              <div
+                className={cn(descriptionClassName, classNames?.description)}
+              >
+                {description}
+              </div>
+            )}
+
+            {errorMessage && (
+              <div
+                className={cn(errorMessageClassName, classNames?.errorMessage)}
+              >
+                {errorMessage}
+              </div>
+            )}
           </div>
-          <div className={cn(errorMessageClassName, classNames?.errorMessage)}>
-            Error
-          </div>
-        </div>
+        )}
       </div>
     </SelectContext.Provider>
   );

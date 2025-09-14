@@ -40,6 +40,11 @@ export type PopoverProps = {
     backdrop?: string;
     content?: string;
   };
+  focusTrapProps?: {
+    trapFocus?: boolean;
+    autoFocus?: boolean;
+  };
+  focusableTrigger?: boolean;
 };
 
 export type PopoverTriggerProps = {
@@ -170,6 +175,8 @@ export type SelectTruncate = {
   sectionTitle?: boolean;
 };
 
+// !Select types
+
 export type SelectItemClassNames = {
   /**
    * The main slot for the listbox item. It wraps all the other slots.
@@ -204,7 +211,12 @@ export type SelectItemClassNames = {
    */
   selectedIcon?: string;
 };
-// !Select types
+
+export type SelectSectionClassNames = {
+  base?: string;
+  title?: string;
+};
+
 export type SelectProps<T extends OptionItem> = {
   onSelectionChange: OnSelectionChange<T>;
   multiple?: boolean;
@@ -227,6 +239,12 @@ export type SelectProps<T extends OptionItem> = {
   openOnLabelClick?: boolean;
   shouldCloseOnSelection?: boolean;
   truncate?: SelectTruncate;
+  autoFocusMenu?: boolean;
+  search?: boolean | ((items: T[]) => T[]);
+  onSearchChange?: (searchQuery: string) => void;
+  description?: React.ReactNode;
+  errorMessage?: React.ReactNode;
+  noResultsMessage?: React.ReactNode;
   /**
    * Allows to set custom class names for the Select slots.
    */
@@ -248,13 +266,9 @@ export type SelectProps<T extends OptionItem> = {
      */
     requiredAsterisk?: string;
     /**
-     * The trigger of the select. This wraps the label the inner wrapper and the selector icon.
+     * The trigger of the select. This wraps the placeholder, the value and the selector icon.
      */
     trigger?: string;
-    /**
-     * Wraps the `helperWrapper` and the `trigger` slots.
-     */
-    mainWrapper?: string;
     /**
      * The wrapper of the select content. This wraps the start/end content and the select value.
      */
@@ -267,6 +281,10 @@ export type SelectProps<T extends OptionItem> = {
      * The select value. This is also the slot that wraps the renderValue function result.
      */
     value?: string;
+    /**
+     * The wrapper of `topContent`, the listbox and `endContent`.
+     */
+    contentWrapper?: string;
     /**
      * The wrapper of the listbox. This wraps the listbox component, this slot is used on top of the scroll shadow component.
      */
@@ -292,6 +310,14 @@ export type SelectProps<T extends OptionItem> = {
      */
     errorMessage?: string;
   };
+  /**
+   * Will apply classNames to all SelectItem-s
+   */
+  itemClassNames?: SelectItemClassNames;
+  /**
+   * Will apply classNames to all SelectSection-s
+   */
+  sectionClassNames?: SelectSectionClassNames;
 } & Omit<
   PopoverProps,
   | 'content'
@@ -314,6 +340,7 @@ export type SelectMenuProps = {
      */
     base?: string;
   };
+  autoFocusMenu?: boolean;
 };
 export type SelectItemProps<T extends OptionItem> = {
   children: React.ReactNode;
@@ -333,6 +360,7 @@ export type SelectSectionProps = {
   title?: React.ReactNode;
   isStickyTitle?: boolean;
   showDivider?: boolean;
+  classNames?: SelectSectionClassNames;
 };
 
 export type SelectCompositionProps<T extends OptionItem> = {
@@ -352,8 +380,9 @@ export type SelectCompositionProps<T extends OptionItem> = {
 
 export type OptionItem = {
   value: string | number;
-  text: string | number;
-  description?: string;
+  text: string;
+  textContent?: React.ReactNode;
+  description?: React.ReactNode;
   disabled?: boolean;
 };
 

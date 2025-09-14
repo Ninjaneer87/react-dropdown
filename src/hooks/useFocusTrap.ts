@@ -29,14 +29,17 @@ function useFocusTrap(isActive: boolean, shouldAutoFocus = true) {
       }
     }
 
-    if (shouldAutoFocus) firstFocusableItemRef.current?.focus(); // Auto-focus first element when mounted
+    if (shouldAutoFocus) {
+      console.log('autoFocus', firstFocusableItemRef.current);
+      firstFocusableItemRef.current?.focus(); // Auto-focus first element when mounted
+    }
 
     document.addEventListener('keydown', trapFocus);
 
     return () => {
       document.removeEventListener('keydown', trapFocus);
     };
-  }, [isActive]);
+  }, [isActive,shouldAutoFocus]);
 
   return { focusContainerRef, firstFocusableItemRef, lastFocusableItemRef };
 }

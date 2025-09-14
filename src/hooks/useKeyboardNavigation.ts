@@ -1,165 +1,185 @@
-import { useEffect, useRef, useState } from 'react';
-import { usePopoverContext } from '../context/PopoverContext';
-import { useDebouncedValue } from './useDebouncedValue';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useMutationObserver } from './useMutationObserver';
 
 type Props = {
-  itemSelector: '[data-dropdown-item]' | '[data-select-item]';
+  autoFocus?: 'first-item' | 'last-item' | 'menu' | 'none';
+  onFirstUp?: () => void;
+  onLastDown?: () => void;
+  onEsc?: () => void;
+  isMounted: boolean;
 };
 
-export function useKeyboardNavigation({ itemSelector }: Props) {
-  const popoverContext = usePopoverContext();
-  const menuRef = useRef<HTMLDivElement>(null);
+export function useKeyboardNavigation<T extends HTMLElement>({
+  autoFocus = 'first-item',
+  onFirstUp,
+  onEsc,
+  onLastDown,
+  isMounted,
+}: Props) {
+  const containerRef = useRef<T>(null);
   const [focusedIndex, setFocusedIndex] = useState<number | undefined>();
-  const [itemsLength, setItemsLength] = useState(0);
-  const [chars, setChars] = useState('');
-  const debouncedChars = useDebouncedValue(chars, 1000);
+  const [focusableItems, setFocusableItems] = useState<T[]>([]);
+  const focusableItemsLength = focusableItems.length;
 
-  if (!popoverContext) {
-    throw new Error(
-      '"useKeyboardNavigation" hook should be used within a Popover component',
+  console.log({ containerElement: containerRef.current });
+  const getItems = useCallback(() => {
+    const containerElement = containerRef.current;
+    console.log({ containerElement });
+    if (!containerElement) return;
+
+    console.log('getting items');
+
+    const items = [
+      ...containerElement.querySelectorAll('[data-focusable-item="true"]'),
+    ].filter(
+      (element) =>
+        !element.hasAttribute('disabled') &&
+        element.getAttribute('data-disabled') !== 'true',
+    ) as T[];
+
+    items.forEach((item, i) =>
+      item.setAttribute('data-focusable-index', i.toString()),
     );
-  }
 
-  const { handleClose } = popoverContext;
+    setFocusableItems(items);
+  }, [containerRef]);
 
-  useEffect(() => {
-    const itemIndex = getFilteredIndex(chars.trim());
-    if (itemIndex === undefined || itemIndex < 0) return;
-
-    focusItem(itemIndex);
-    setFocusedIndex(itemIndex);
-  }, [chars]);
+  useMutationObserver({ element: containerRef?.current, onMutation: getItems });
 
   useEffect(() => {
-    return () => setChars('');
-  }, [debouncedChars.value]);
+    console.log({ autoFocus });
+    if (!autoFocus || autoFocus === 'none') return;
+
+    if (autoFocus === 'first-item') {
+      if (!focusableItems) return;
+
+      setFocusedIndex(0);
+
+      return;
+    }
+
+    if (autoFocus === 'last-item') {
+      if (!focusableItems) return;
+
+      setFocusedIndex(focusableItems.length - 1);
+
+      return;
+    }
+
+    if (autoFocus === 'menu') {
+      containerRef.current?.focus();
+    }
+  }, [autoFocus]);
 
   useEffect(() => {
-    menuRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
+    console.log({ focusedIndex });
     focusItem(focusedIndex);
   }, [focusedIndex]);
 
-  function getItems() {
-    const menuElement = menuRef.current;
-    if (!menuElement) return;
+  useEffect(() => {
+    if (!isMounted) return;
 
-    const items = [...menuElement.querySelectorAll(itemSelector)].filter(
-      (element) =>
-        !element.hasAttribute('disabled') &&
-        element.getAttribute('aria-disabled') !== 'true',
-    );
-
-    return items;
-  }
+    getItems();
+  }, [getItems, isMounted]);
 
   function focusItem(index: number | undefined) {
-    const items = getItems();
-    if (!items) return;
-
-    setItemsLength(items.length);
+    if (!focusableItems) return;
 
     if (index === undefined) return;
 
-    if (items.length > 0) {
-      const firstFocusableElement = items[index] as HTMLElement;
+    console.log({ focusableItems, index });
+    if (focusableItems.length > 0) {
+      const firstFocusableElement = focusableItems[index];
       firstFocusableElement.focus();
       firstFocusableElement.scrollIntoView({ block: 'nearest' });
     }
   }
 
-  function getFilteredIndex(char: string) {
-    if (!char) return;
-
-    const items = getItems();
-    if (!items) return;
-
-    const itemLabels = items.map((item) => item.getAttribute('data-text'));
-
-    const index = itemLabels.findIndex((item) =>
-      item?.toLowerCase()?.startsWith(char.toLowerCase()),
-    );
-
-    return index;
-  }
-
   function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    event.stopPropagation();
-
     switch (event.key) {
       case 'Escape': {
-        event.stopPropagation();
-        handleClose();
+        // event.stopPropagation();
+        // handleClose();
+        onEsc?.();
 
         break;
       }
 
       case 'Home': {
         event.preventDefault();
+        event.stopPropagation();
 
-        focusItem(0);
+        // focusItem(0);
         setFocusedIndex(0);
         break;
       }
 
       case 'End': {
         event.preventDefault();
+        event.stopPropagation();
 
-        focusItem(itemsLength - 1);
-        setFocusedIndex(itemsLength - 1);
+        // focusItem(focusableItemsLength - 1);
+        setFocusedIndex(focusableItemsLength - 1);
         break;
       }
 
       case 'ArrowUp': {
         event.preventDefault();
+        event.stopPropagation();
 
         if (focusedIndex === undefined) {
-          focusItem(itemsLength - 1);
-          setFocusedIndex(itemsLength - 1);
+          //   focusItem(focusableItemsLength - 1);
+          setFocusedIndex(focusableItemsLength - 1);
           return;
         }
 
-        setFocusedIndex((prevIndex) => {
-          if (prevIndex === undefined) return undefined;
-
-          const newIndex = prevIndex - 1;
-          return newIndex < 0 ? itemsLength - 1 : newIndex;
-        });
+        const newIndex = focusedIndex - 1;
+        if (newIndex < 0) {
+          if (onFirstUp) {
+            setFocusedIndex(undefined);
+            onFirstUp();
+          } else {
+            setFocusedIndex(focusableItemsLength - 1);
+          }
+        } else {
+          setFocusedIndex(newIndex);
+        }
 
         break;
       }
 
       case 'ArrowDown': {
         event.preventDefault();
+        event.stopPropagation();
 
         if (focusedIndex === undefined) {
-          focusItem(0);
           setFocusedIndex(0);
           return;
         }
+        console.log({ focusedIndex });
 
-        setFocusedIndex((prevIndex) => {
-          if (prevIndex === undefined) return undefined;
-
-          const newIndex = prevIndex + 1;
-          return newIndex < itemsLength ? newIndex : 0;
-        });
+        const newIndex = focusedIndex + 1;
+        if (newIndex > focusableItemsLength - 1) {
+          if (onLastDown) {
+            setFocusedIndex(undefined);
+            onLastDown();
+          } else {
+            setFocusedIndex(0);
+          }
+        } else {
+          setFocusedIndex(newIndex);
+        }
 
         break;
       }
 
+      //   case ' ': {
+      //     event.preventDefault();
 
-      case ' ': {
-        event.preventDefault();
-
-        break;
-      }
+      //     break;
+      //   }
 
       default: {
-        setChars((prev) => prev + event.key);
-
         break;
       }
     }
@@ -167,6 +187,9 @@ export function useKeyboardNavigation({ itemSelector }: Props) {
 
   return {
     onKeyDown,
-    menuRef,
+    containerRef,
+    focusedIndex,
+    setFocusedIndex,
+    focusableItemsLength,
   };
 }

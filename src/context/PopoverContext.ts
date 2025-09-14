@@ -1,8 +1,9 @@
 import { createContext, useContext } from 'react';
 
 type PopoverContextType = {
+  popoverId: string;
   isOpen: boolean;
-  handleClose: () => void;
+  handleClose: (focusTrigger?: boolean) => void;
 };
 
 export const PopoverContext = createContext<PopoverContextType | null>(null);

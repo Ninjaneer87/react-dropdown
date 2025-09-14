@@ -74,8 +74,9 @@ function DropdownItem<T extends ElementType = 'div'>(
     <Component
       {...rest}
       ref={ref}
-      data-dropdown-item
+      data-focusable-item
       tabIndex={disabled ? -1 : 0}
+      data-disabled={disabled}
       aria-disabled={disabled}
       disabled={disabled}
       onClick={handleClick}

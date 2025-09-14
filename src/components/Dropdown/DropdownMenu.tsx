@@ -10,9 +10,6 @@ const menuClassName =
 function DropdownMenu({ children }: DropdownMenuProps) {
   const dropdownContext = useDropdownContext();
   const popoverContext = usePopoverContext();
-  const { menuRef, onKeyDown } = useKeyboardNavigation({
-    itemSelector: '[data-dropdown-item]',
-  });
 
   if (!dropdownContext) {
     throw new Error('DropdownMenu should be used within a Dropdown component');
@@ -22,12 +19,17 @@ function DropdownMenu({ children }: DropdownMenuProps) {
     throw new Error('DropdownMenu should be used within a Popover component');
   }
 
+  const { isOpen } = popoverContext;
+  const { containerRef, onKeyDown } = useKeyboardNavigation<HTMLDivElement>({
+    isMounted: isOpen,
+  });
+
   return (
     <DropdownMenuContext.Provider value={{}}>
       <div
         className={menuClassName}
         onKeyDown={onKeyDown}
-        ref={menuRef}
+        ref={containerRef}
         tabIndex={0}
       >
         {children}

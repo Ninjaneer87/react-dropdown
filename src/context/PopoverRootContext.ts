@@ -3,7 +3,7 @@ import { createContext, useContext } from 'react';
 type PopoverRootContextType = {
   rootPopoverId: string;
   isRootOpen: boolean;
-  handleCloseRoot: () => void;
+  handleCloseRoot: (focusTrigger?: boolean) => void;
 };
 
 export const PopoverRootContext = createContext<PopoverRootContextType | null>(
