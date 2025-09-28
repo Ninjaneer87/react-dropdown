@@ -40,7 +40,6 @@ function SelectSearch({ placeholder = 'Search...', searchRef }: Props) {
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     e.stopPropagation();
-    console.log(e.target.value);
     setSearchValue(e.target.value);
     onSearchChange?.(e.target.value);
   }
@@ -53,7 +52,6 @@ function SelectSearch({ placeholder = 'Search...', searchRef }: Props) {
   }
 
   function onKeydown(e: React.KeyboardEvent<HTMLInputElement>) {
-    console.log(e.key);
     if (e.key === 'Enter') {
       e.preventDefault();
       e.stopPropagation();
