@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMutationObserver } from './useMutationObserver';
+import { ListAutoFocus } from '../types';
 
 type Props = {
-  autoFocus?: 'first-item' | 'last-item' | 'menu' | 'none';
+  autoFocus?: ListAutoFocus;
   onFirstUp?: () => void;
   onLastDown?: () => void;
   onEsc?: () => void;
@@ -10,7 +11,7 @@ type Props = {
 };
 
 export function useKeyboardNavigation<T extends HTMLElement>({
-  autoFocus = 'first-item',
+  autoFocus = 'menu',
   onFirstUp,
   onEsc,
   onLastDown,
@@ -21,13 +22,9 @@ export function useKeyboardNavigation<T extends HTMLElement>({
   const [focusableItems, setFocusableItems] = useState<T[]>([]);
   const focusableItemsLength = focusableItems.length;
 
-  console.log({ containerElement: containerRef.current });
   const getItems = useCallback(() => {
     const containerElement = containerRef.current;
-    console.log({ containerElement });
     if (!containerElement) return;
-
-    console.log('getting items');
 
     const items = [
       ...containerElement.querySelectorAll('[data-focusable-item="true"]'),
@@ -47,8 +44,7 @@ export function useKeyboardNavigation<T extends HTMLElement>({
   useMutationObserver({ element: containerRef?.current, onMutation: getItems });
 
   useEffect(() => {
-    console.log({ autoFocus });
-    if (!autoFocus || autoFocus === 'none') return;
+    if (!isMounted || !autoFocus || autoFocus === 'none') return;
 
     if (autoFocus === 'first-item') {
       if (!focusableItems) return;
@@ -69,12 +65,16 @@ export function useKeyboardNavigation<T extends HTMLElement>({
     if (autoFocus === 'menu') {
       containerRef.current?.focus();
     }
-  }, [autoFocus]);
+  }, [autoFocus, isMounted]);
 
   useEffect(() => {
-    console.log({ focusedIndex });
+    if (!isMounted) {
+      setFocusedIndex(undefined);
+      return;
+    }
+
     focusItem(focusedIndex);
-  }, [focusedIndex]);
+  }, [focusedIndex, isMounted]);
 
   useEffect(() => {
     if (!isMounted) return;
@@ -87,19 +87,16 @@ export function useKeyboardNavigation<T extends HTMLElement>({
 
     if (index === undefined) return;
 
-    console.log({ focusableItems, index });
     if (focusableItems.length > 0) {
       const firstFocusableElement = focusableItems[index];
-      firstFocusableElement.focus();
-      firstFocusableElement.scrollIntoView({ block: 'nearest' });
+      firstFocusableElement?.focus();
+      firstFocusableElement?.scrollIntoView({ block: 'nearest' });
     }
   }
 
   function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
     switch (event.key) {
       case 'Escape': {
-        // event.stopPropagation();
-        // handleClose();
         onEsc?.();
 
         break;
@@ -109,7 +106,6 @@ export function useKeyboardNavigation<T extends HTMLElement>({
         event.preventDefault();
         event.stopPropagation();
 
-        // focusItem(0);
         setFocusedIndex(0);
         break;
       }
@@ -118,7 +114,6 @@ export function useKeyboardNavigation<T extends HTMLElement>({
         event.preventDefault();
         event.stopPropagation();
 
-        // focusItem(focusableItemsLength - 1);
         setFocusedIndex(focusableItemsLength - 1);
         break;
       }
@@ -128,7 +123,6 @@ export function useKeyboardNavigation<T extends HTMLElement>({
         event.stopPropagation();
 
         if (focusedIndex === undefined) {
-          //   focusItem(focusableItemsLength - 1);
           setFocusedIndex(focusableItemsLength - 1);
           return;
         }
@@ -156,7 +150,6 @@ export function useKeyboardNavigation<T extends HTMLElement>({
           setFocusedIndex(0);
           return;
         }
-        console.log({ focusedIndex });
 
         const newIndex = focusedIndex + 1;
         if (newIndex > focusableItemsLength - 1) {

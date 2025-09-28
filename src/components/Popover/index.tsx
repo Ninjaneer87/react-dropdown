@@ -262,6 +262,14 @@ const Popover = ({
     setIsOpen((prev) => !prev);
   }
 
+  const handleOpen = useCallback(() => {
+    if (isDisabled || open) return;
+
+    if (onOpenChange) onOpenChange(true);
+    if (onOpen) onOpen();
+    setIsOpen(true);
+  }, [isDisabled, onOpen, onOpenChange, open]);
+
   function handleBackdropClick() {
     if (shouldCloseOnBlur) {
       handleClose();
@@ -341,7 +349,7 @@ const Popover = ({
 
   const popoverJSX = (
     <PopoverContext.Provider
-      value={{ isOpen: isExpanded, handleClose, popoverId }}
+      value={{ isOpen: isExpanded, handleClose, popoverId, handleOpen }}
     >
       <>
         <ClientPortal>

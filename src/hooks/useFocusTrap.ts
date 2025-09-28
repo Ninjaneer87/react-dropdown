@@ -30,7 +30,6 @@ function useFocusTrap(isActive: boolean, shouldAutoFocus = true) {
     }
 
     if (shouldAutoFocus) {
-      console.log('autoFocus', firstFocusableItemRef.current);
       firstFocusableItemRef.current?.focus(); // Auto-focus first element when mounted
     }
 

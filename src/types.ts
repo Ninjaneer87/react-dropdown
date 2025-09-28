@@ -82,6 +82,7 @@ export type DropdownProps = {
     listboxWrapper?: string;
     listbox?: string;
   };
+  autoFocus?: ListAutoFocus;
 } & Omit<
   PopoverProps,
   'content' | 'delayShow' | 'delayHide' | 'hoverableContent' | 'classNames'
@@ -239,12 +240,16 @@ export type SelectProps<T extends OptionItem> = {
   openOnLabelClick?: boolean;
   shouldCloseOnSelection?: boolean;
   truncate?: SelectTruncate;
-  autoFocusMenu?: boolean;
+  autoFocus?: ListAutoFocus;
   search?: boolean | ((items: T[]) => T[]);
   onSearchChange?: (searchQuery: string) => void;
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
   noResultsMessage?: React.ReactNode;
+  /**
+   * Removes selected from the options list. Works only with `items` prop.
+   */
+  popOnSelection?: boolean;
   /**
    * Allows to set custom class names for the Select slots.
    */
@@ -332,16 +337,6 @@ export type SelectProps<T extends OptionItem> = {
   | 'onClose'
 >;
 
-export type SelectMenuProps = {
-  children: React.ReactNode;
-  classNames?: {
-    /**
-     * Listbox wrapper
-     */
-    base?: string;
-  };
-  autoFocusMenu?: boolean;
-};
 export type SelectItemProps<T extends OptionItem> = {
   children: React.ReactNode;
   shouldCloseOnSelection?: boolean;
@@ -387,6 +382,8 @@ export type OptionItem = {
 };
 
 export type OnSelectionChange<T extends OptionItem> = (value: {
-  selectedOption: T & { isSelected?: boolean };
+  selectedOption?: T & { isSelected?: boolean };
   selectedOptions: (T & { isSelected?: boolean })[];
 }) => void;
+
+export type ListAutoFocus = 'first-item' | 'last-item' | 'menu' | 'none';

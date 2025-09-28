@@ -18,7 +18,6 @@ export function useMutationObserver<T extends Element>({
     if (!element) return;
 
     const observer = new MutationObserver((mutations) => {
-      console.log({ mutations });
       onMutationRef.current(mutations);
     });
 

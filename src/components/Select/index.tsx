@@ -11,7 +11,6 @@ import SelectItem from './SelectItem';
 import SelectSection from './SelectSection';
 import Popover from '../Popover';
 import { SelectContext, SelectContextType } from '../../context/SelectContext';
-// import SelectMenu from './SelectMenu';
 import CaretIcon from '../ui/CaretIcon';
 import { cn } from '../../utils/common';
 import SelectSearch from './SelectSearch';
@@ -54,9 +53,9 @@ function Select<T extends OptionItem>({
   truncate,
   itemClassNames,
   sectionClassNames,
-  autoFocusMenu = true,
+  autoFocus = 'menu',
   focusTrapProps = {
-    autoFocus: !autoFocusMenu,
+    autoFocus: autoFocus === 'none',
     trapFocus: true,
   },
   search,
@@ -65,6 +64,7 @@ function Select<T extends OptionItem>({
   errorMessage,
   renderValue,
   noResultsMessage,
+  popOnSelection = true,
 }: SelectProps<T> & SelectCompositionProps<T>) {
   if (items && children && typeof children !== 'function') {
     throw new Error(
@@ -106,9 +106,9 @@ function Select<T extends OptionItem>({
 
   const { containerRef, onKeyDown, setFocusedIndex, focusableItemsLength } =
     useKeyboardNavigation<HTMLDivElement>({
-      autoFocus: 'none',
-      onFirstUp: focusSearch,
-      onLastDown: focusSearch,
+      autoFocus,
+      onFirstUp: search ? focusSearch : undefined,
+      onLastDown: search ? focusSearch : undefined,
       isMounted: open,
     });
 
@@ -119,11 +119,30 @@ function Select<T extends OptionItem>({
   }, [value]);
 
   useEffect(() => {
+    if (!search || !open) return;
+
+    focusSearch();
+  }, [search, focusSearch, open]);
+
+  useEffect(() => {
     if (!defaultValue || !defaultValue.length || hasMountedDefaultValue) return;
 
     setSelected(defaultValue);
     setHasMountedDefaultValue(true);
   }, [defaultValue, hasMountedDefaultValue]);
+
+  function handleRemoveSelected(selectedValue: string | number) {
+    if (isDisabled) return;
+
+    const newSelected = selected.filter((item) => item.value !== selectedValue);
+    setSelected(newSelected);
+
+    if (onSelectionChange) {
+      onSelectionChange({
+        selectedOptions: newSelected,
+      });
+    }
+  }
 
   const contextValue: SelectContextType<T> = useMemo(
     () => ({
@@ -142,6 +161,8 @@ function Select<T extends OptionItem>({
       focusableItemsLength,
       search,
       onSearchChange,
+      focusSearch,
+      popOnSelection,
     }),
     [
       multiple,
@@ -159,6 +180,8 @@ function Select<T extends OptionItem>({
       focusableItemsLength,
       search,
       onSearchChange,
+      focusSearch,
+      popOnSelection,
     ],
   );
 
@@ -170,7 +193,6 @@ function Select<T extends OptionItem>({
   const labelClassName = cn('mb-1 w-fit');
   const placeholderClassName = cn('grow flex items-center opacity-60');
   const requiredAsteriskClassName = cn('text-red-700 ml-1');
-  // const triggerClassName = cn('w-full grow relative');
   const triggerClassName = cn(
     'rounded-lg border p-2 grow flex items-center gap-2 relative',
   );
@@ -194,18 +216,34 @@ function Select<T extends OptionItem>({
     : 'initial';
 
   const filteredItems = useMemo(() => {
-    if (!search || !items) return items;
+    if (!items) return items;
 
-    if (typeof search === 'function') return search(items);
+    let newItems = [...items];
 
-    console.log({ searchValue, items });
-    return items.filter((item) =>
-      item.text.toLowerCase().includes(searchValue.toLowerCase()),
-    );
-  }, [items, search, searchValue]);
+    if (search) {
+      if (typeof search === 'function') {
+        newItems = search(items);
+      } else {
+        newItems = items.filter((item) =>
+          item.text.toLowerCase().includes(searchValue.toLowerCase()),
+        );
+      }
+    }
+
+    if (popOnSelection) {
+      newItems = newItems.filter((item) =>
+        selected.every((sel) => sel.value !== item.value),
+      );
+    }
+
+    return newItems;
+  }, [items, search, searchValue, popOnSelection, selected]);
 
   const showNoFilteredResults =
-    filteredItems && !filteredItems.length && !!searchValue.length;
+    filteredItems &&
+    !filteredItems.length &&
+    (!!searchValue.length ||
+      (popOnSelection && selected.length === items?.length));
 
   if (showNoFilteredResults) {
     filteredItems.push({
@@ -264,7 +302,6 @@ function Select<T extends OptionItem>({
           }}
           onClose={() => {
             setIsOpen(false);
-            console.log({ selected });
             if (onClose) onClose(selected);
           }}
           onBlur={() => {
@@ -278,7 +315,6 @@ function Select<T extends OptionItem>({
             content: cn(popoverContentClassName, classNames?.popoverContent),
           }}
           focusTrapProps={focusTrapProps}
-          focusableTrigger={!search}
         >
           <Popover.Trigger>
             {trigger ? (
@@ -303,9 +339,26 @@ function Select<T extends OptionItem>({
                     ) : (
                       <>
                         {selected.map((item) => (
-                          <span key={item.value} tabIndex={0}>
-                            {item.textContent ?? item.text}
-                          </span>
+                          <button
+                            className="inline-flex items-center"
+                            key={item.value}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.stopPropagation();
+                                e.preventDefault();
+
+                                handleRemoveSelected(item.value);
+                              }
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+
+                              handleRemoveSelected(item.value);
+                            }}
+                          >
+                            {item.textContent ?? item.text} &times;
+                          </button>
                         ))}
                       </>
                     )}

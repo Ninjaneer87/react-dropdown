@@ -1,10 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { usePopoverRootContext } from '../../context/PopoverRootContext';
 import { useSelectContext } from '../../context/SelectContext';
 import { OptionItem, SelectItemProps } from '../../types';
 import { cn } from '../../utils/common';
 import { Slot } from '../utility/Slot';
-import { useSelectMenuContext } from '../../context/SelectMenuContext';
 
 function SelectItem<T extends OptionItem>({
   children,
@@ -20,20 +19,11 @@ function SelectItem<T extends OptionItem>({
   ...rest
 }: SelectItemProps<T>) {
   const selectContext = useSelectContext<T>();
-  // const selectMenuContext = useSelectMenuContext();
   const popoverRootContext = usePopoverRootContext();
-
-  useEffect(() => {
-    console.log('mounted');
-  }, []);
 
   if (!selectContext) {
     throw new Error('SelectItem should be used within a Select component');
   }
-
-  // if (!selectMenuContext) {
-  //   throw new Error('SelectItem should be used within a SelectMenu component');
-  // }
 
   if (!popoverRootContext) {
     throw new Error('SelectItem should be used within a Popover component');
@@ -48,10 +38,11 @@ function SelectItem<T extends OptionItem>({
     truncate,
     itemClassNames,
     setFocusedIndex,
+    focusSearch,
+    popOnSelection,
   } = selectContext;
-  const { handleCloseRoot } = popoverRootContext;
 
-  // const { setFocusedIndex } = selectMenuContext;
+  const { handleCloseRoot } = popoverRootContext;
 
   const isOptionSelected = selected.some((item) => item.value === value);
   const optionItem: T = {
@@ -67,6 +58,8 @@ function SelectItem<T extends OptionItem>({
 
   function handleSelection() {
     if (disabled) return;
+
+    const focusedIndex = selectItemRef.current?.dataset.focusableIndex;
 
     if (onSelectionChange) {
       const selectedValues = selected.map((item) => item.value);
@@ -96,10 +89,13 @@ function SelectItem<T extends OptionItem>({
 
       setSelected(newSelectedOptions);
 
-      const focusedIndex = selectItemRef.current?.dataset.focusableIndex;
       if (focusedIndex) {
         setFocusedIndex(+focusedIndex);
       }
+    }
+
+    if (multiple && popOnSelection && focusSearch) {
+      focusSearch();
     }
 
     if (!multiple && shouldCloseOnSelection) {

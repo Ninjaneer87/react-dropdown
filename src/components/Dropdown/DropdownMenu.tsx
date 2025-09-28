@@ -19,9 +19,11 @@ function DropdownMenu({ children }: DropdownMenuProps) {
     throw new Error('DropdownMenu should be used within a Popover component');
   }
 
+  const { autoFocus } = dropdownContext;
   const { isOpen } = popoverContext;
   const { containerRef, onKeyDown } = useKeyboardNavigation<HTMLDivElement>({
     isMounted: isOpen,
+    autoFocus,
   });
 
   return (

@@ -157,7 +157,7 @@ function App() {
             // setSelectedValue(value.selectedOptions);
           }}
           classNames={{
-            mainWrapper: 'bg-blue-800',
+            trigger: 'bg-blue-800',
             placeholder: 'opacity-60',
             base: 'w-80',
           }}
@@ -203,7 +203,7 @@ function App() {
           shouldBlockScroll={false}
           truncate={{ itemText: true, itemDescription: true }}
           // shouldCloseOnScroll={false}
-          autoFocusMenu={false}
+          autoFocus="menu"
           focusTrapProps={{ autoFocus: false, trapFocus: true }}
           search
           items={selectItems}
@@ -298,7 +298,8 @@ function App() {
           onOpen={() => console.log('onOpen dropdown')}
           // shouldFlip={false}
           // fullWidth
-          // focusTrapProps={{ autoFocus: false }}
+          focusTrapProps={{ autoFocus: false }}
+          autoFocus="first-item"
         >
           <Dropdown.Trigger>
             <button className="w-full cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
@@ -363,6 +364,7 @@ function App() {
           onOpen={() => console.log('onOpen dropdown')}
           // shouldFlip={false}
           // fullWidth
+          autoFocus='first-item'
         >
           <Dropdown.Trigger>
             <button className="w-full cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">

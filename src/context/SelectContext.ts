@@ -23,6 +23,8 @@ export type SelectContextType<T extends OptionItem = OptionItem> = {
   focusableItemsLength: number;
   search?: boolean | ((items: T[]) => T[]);
   onSearchChange?: (searchQuery: string) => void;
+  focusSearch?: () => void;
+  popOnSelection?: boolean;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

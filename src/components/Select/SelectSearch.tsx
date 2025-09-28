@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { usePopoverContext } from '../../context/PopoverContext';
 import { useSelectContext } from '../../context/SelectContext';
 
@@ -18,7 +18,7 @@ function SelectSearch({ placeholder = 'Search...', searchRef }: Props) {
     throw new Error('SelectSearch should be used within a Select component');
   }
 
-  const { popoverId, isOpen, handleClose } = popoverContext;
+  const { popoverId, isOpen, handleClose, handleOpen } = popoverContext;
   const {
     selected,
     setSelected,
@@ -35,7 +35,7 @@ function SelectSearch({ placeholder = 'Search...', searchRef }: Props) {
     searchRef.current.focus();
 
     return () => setSearchValue('');
-  }, [isOpen, setSearchValue]);
+  }, [isOpen, setSearchValue, searchRef]);
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
@@ -87,14 +87,19 @@ function SelectSearch({ placeholder = 'Search...', searchRef }: Props) {
     }
   }
 
+  function onFocus() {
+    handleOpen();
+    setFocusedIndex(undefined);
+  }
+
   return (
     <>
       <input
         onClick={onClick}
         onKeyDown={onKeydown}
         onChange={onChange}
-        // ! TODO: open popover on focus
-        // onFocus={}
+        onFocus={onFocus}
+        tabIndex={-1}
         value={searchValue}
         ref={searchRef}
         className="!outline-none !border-none grow max-w-full min-w-10 basis-10"
