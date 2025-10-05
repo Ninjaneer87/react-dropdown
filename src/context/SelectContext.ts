@@ -2,6 +2,7 @@ import { createContext, Dispatch, SetStateAction, useContext } from 'react';
 import {
   OnSelectionChange,
   OptionItem,
+  RenderOption,
   SelectItemClassNames,
   SelectSectionClassNames,
   SelectTruncate,
@@ -12,7 +13,7 @@ export type SelectContextType<T extends OptionItem = OptionItem> = {
   onSelectionChange: OnSelectionChange<T>;
   setSelected: Dispatch<SetStateAction<T[]>>;
   selected: T[];
-  renderOption?: (option: T) => React.ReactNode;
+  renderOption?: RenderOption<T>;
   truncate?: SelectTruncate;
   itemClassNames?: SelectItemClassNames;
   sectionClassNames?: SelectSectionClassNames;
@@ -25,6 +26,7 @@ export type SelectContextType<T extends OptionItem = OptionItem> = {
   onSearchChange?: (searchQuery: string) => void;
   focusSearch?: () => void;
   popOnSelection?: boolean;
+  currentOptions?: T[];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

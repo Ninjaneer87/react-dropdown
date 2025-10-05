@@ -227,6 +227,17 @@ function App() {
             contentWrapper: 'text-sm',
             trigger: 'py-[1px] px-2',
           }}
+          renderOption={({ option, currentOptions }) => {
+            const isLastItem =
+              currentOptions &&
+              currentOptions[currentOptions.length - 1].value === option.value;
+            return (
+              <li>
+                {isLastItem && <div>Last Item</div>}
+                <div>{option.text}</div>
+              </li>
+            );
+          }}
           // topContent={
           //   <input
           //     // autoFocus
@@ -364,7 +375,7 @@ function App() {
           onOpen={() => console.log('onOpen dropdown')}
           // shouldFlip={false}
           // fullWidth
-          autoFocus='first-item'
+          autoFocus="first-item"
         >
           <Dropdown.Trigger>
             <button className="w-full cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
@@ -494,7 +505,7 @@ function App() {
         >
           <Popover.Trigger>
             <button className="cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
-              PopoverTrigger
+              TooltipTrigger
             </button>
           </Popover.Trigger>
           <Popover.Content>

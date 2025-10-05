@@ -218,6 +218,14 @@ export type SelectSectionClassNames = {
   title?: string;
 };
 
+export type RenderOption<T extends OptionItem> = ({
+  option,
+  currentOptions,
+}: {
+  option: T & { isSelected?: boolean };
+  currentOptions?: (T & { isSelected?: boolean })[];
+}) => React.ReactNode;
+
 export type SelectProps<T extends OptionItem> = {
   onSelectionChange: OnSelectionChange<T>;
   multiple?: boolean;
@@ -229,7 +237,7 @@ export type SelectProps<T extends OptionItem> = {
   placeholder?: string;
   value?: T[];
   defaultValue?: T[];
-  renderOption?: (option: T & { isSelected?: boolean }) => React.ReactNode;
+  renderOption?: RenderOption<T>;
   renderValue?: (selectedItems: T[]) => React.ReactNode;
   children?:
     | React.ReactNode

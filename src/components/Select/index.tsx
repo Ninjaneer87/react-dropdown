@@ -144,47 +144,6 @@ function Select<T extends OptionItem>({
     }
   }
 
-  const contextValue: SelectContextType<T> = useMemo(
-    () => ({
-      multiple,
-      onSelectionChange,
-      setSelected,
-      selected,
-      renderOption,
-      truncate,
-      itemClassNames,
-      sectionClassNames,
-      items,
-      searchValue,
-      setSearchValue,
-      setFocusedIndex,
-      focusableItemsLength,
-      search,
-      onSearchChange,
-      focusSearch,
-      popOnSelection,
-    }),
-    [
-      multiple,
-      onSelectionChange,
-      setSelected,
-      selected,
-      renderOption,
-      truncate,
-      itemClassNames,
-      sectionClassNames,
-      items,
-      searchValue,
-      setSearchValue,
-      setFocusedIndex,
-      focusableItemsLength,
-      search,
-      onSearchChange,
-      focusSearch,
-      popOnSelection,
-    ],
-  );
-
   const popoverContentClassName = cn('p-0');
   const baseClassName = cn(
     fullWidth ? 'w-full' : 'w-80',
@@ -255,6 +214,49 @@ function Select<T extends OptionItem>({
   }
 
   const showHelperSection = !!errorMessage || !!description;
+
+  const contextValue: SelectContextType<T> = useMemo(
+    () => ({
+      multiple,
+      onSelectionChange,
+      setSelected,
+      selected,
+      renderOption,
+      truncate,
+      itemClassNames,
+      sectionClassNames,
+      items,
+      searchValue,
+      setSearchValue,
+      setFocusedIndex,
+      focusableItemsLength,
+      search,
+      onSearchChange,
+      focusSearch,
+      popOnSelection,
+      currentOptions: filteredItems,
+    }),
+    [
+      multiple,
+      onSelectionChange,
+      setSelected,
+      selected,
+      renderOption,
+      truncate,
+      itemClassNames,
+      sectionClassNames,
+      items,
+      searchValue,
+      setSearchValue,
+      setFocusedIndex,
+      focusableItemsLength,
+      search,
+      onSearchChange,
+      focusSearch,
+      popOnSelection,
+      filteredItems,
+    ],
+  );
 
   return (
     <SelectContext.Provider value={contextValue}>

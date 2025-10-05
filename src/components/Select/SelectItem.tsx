@@ -40,6 +40,7 @@ function SelectItem<T extends OptionItem>({
     setFocusedIndex,
     focusSearch,
     popOnSelection,
+    currentOptions,
   } = selectContext;
 
   const { handleCloseRoot } = popoverRootContext;
@@ -136,39 +137,30 @@ function SelectItem<T extends OptionItem>({
     isOptionSelected ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0',
   );
 
+  const itemProps = {
+    'data-focusable-item': true,
+    'data-select-menu-item': true,
+    'data-value': value,
+    'data-text': text,
+    tabIndex: disabled ? -1 : 0,
+    'data-disabled': disabled,
+    'aria-disabled': disabled,
+    onClick: handleSelection,
+    onKeyDown: onKeyDown,
+    ref: selectItemRef,
+    className: cn(baseClassName, itemClassNames?.base, classNames?.base),
+  };
+
   if (renderOption) {
     return (
-      <Slot
-        data-focusable-item
-        data-select-menu-item
-        data-value={value}
-        data-text={text}
-        tabIndex={disabled ? -1 : 0}
-        data-disabled={disabled}
-        aria-disabled={disabled}
-        onClick={handleSelection}
-        onKeyDown={onKeyDown}
-        ref={selectItemRef}
-      >
-        {renderOption(optionItem)}
+      <Slot {...itemProps}>
+        {renderOption({ option: optionItem, currentOptions })}
       </Slot>
     );
   }
 
   return (
-    <li
-      data-focusable-item
-      data-select-menu-item
-      data-value={value}
-      data-text={text}
-      tabIndex={disabled ? -1 : 0}
-      data-disabled={disabled}
-      aria-disabled={disabled}
-      onClick={handleSelection}
-      onKeyDown={onKeyDown}
-      ref={selectItemRef}
-      className={cn(baseClassName, itemClassNames?.base, classNames?.base)}
-    >
+    <li {...itemProps}>
       <span
         className={cn(
           contentWrapperClassName,
