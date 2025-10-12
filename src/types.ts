@@ -254,6 +254,8 @@ export type SelectProps<T extends OptionItem> = {
   description?: React.ReactNode;
   errorMessage?: React.ReactNode;
   noResultsMessage?: React.ReactNode;
+  infiniteScrollProps?: InfiniteScrollProps;
+
   /**
    * Removes selected from the options list. Works only with `items` prop.
    */
@@ -395,3 +397,9 @@ export type OnSelectionChange<T extends OptionItem> = (value: {
 }) => void;
 
 export type ListAutoFocus = 'first-item' | 'last-item' | 'menu' | 'none';
+
+export type InfiniteScrollProps = {
+  onLoadMore: (search?: string) => void;
+  isLoading?: boolean;
+  hasMore: boolean;
+};

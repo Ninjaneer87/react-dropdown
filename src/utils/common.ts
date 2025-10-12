@@ -259,3 +259,36 @@ export function buildPlacement(
 
   return fitPlacement;
 }
+
+let debounceTimer: ReturnType<typeof setTimeout>;
+let progressTimer: ReturnType<typeof setTimeout>;
+export function debounceCallback<Args extends unknown[], Return>(
+  callback: (...args: Args) => Return,
+  delay: number,
+) {
+  let progress = 0;
+  let isInProgress = false;
+
+  const debouncedCallback = (...args: Args) => {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    if (progressTimer) clearTimeout(progressTimer);
+
+    progress = 0;
+    isInProgress = false;
+
+    progressTimer = setTimeout(() => {
+      progress = 100;
+      isInProgress = true;
+
+      if (progressTimer) clearTimeout(progressTimer);
+    }, 10);
+
+    debounceTimer = setTimeout(() => {
+      callback(...args);
+
+      isInProgress = false;
+      if (debounceTimer) clearTimeout(debounceTimer);
+    }, delay);
+  };
+  return { callback: debouncedCallback, progress, isInProgress };
+}

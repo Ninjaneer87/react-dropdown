@@ -2,81 +2,87 @@ import { useEffect, useMemo, useState } from 'react';
 import Dropdown from './components/Dropdown';
 import Popover from './components/Popover';
 import Select from './components/Select';
+import { usePokemonList } from './utils/dummy-data-hooks';
+import { debounceCallback } from './utils/common';
 
-const items = [
-  {
-    text: 'Andrej',
-    value: 'option-1',
-    extraProp: 'Extra prop',
-    disabled: false,
-  },
-  {
-    text: 'Denis',
-    value: 'option-2',
-    extraProp: 'Extra prop',
-    disabled: true,
-  },
-  {
-    text: 'Farcry',
-    value: 'option-3',
-    extraProp: 'Extra prop',
-    disabled: false,
-  },
-  {
-    text: 'North',
-    value: 'option-4',
-    extraProp: 'Extra prop',
-    disabled: false,
-  },
-  {
-    text: 'Zenit',
-    value: 'option-5',
-    extraProp: 'Extra prop',
-  },
-  {
-    text: 'Fantom',
-    value: 'option-6',
-    extraProp: 'Extra prop',
-  },
-  {
-    text: 'Austral',
-    value: 'option-7',
-    extraProp: 'Extra prop',
-  },
-];
+// const items = [
+//   {
+//     text: 'Andrej',
+//     value: 'option-1',
+//     extraProp: 'Extra prop',
+//     disabled: false,
+//   },
+//   {
+//     text: 'Denis',
+//     value: 'option-2',
+//     extraProp: 'Extra prop',
+//     disabled: true,
+//   },
+//   {
+//     text: 'Farcry',
+//     value: 'option-3',
+//     extraProp: 'Extra prop',
+//     disabled: false,
+//   },
+//   {
+//     text: 'North',
+//     value: 'option-4',
+//     extraProp: 'Extra prop',
+//     disabled: false,
+//   },
+//   {
+//     text: 'Zenit',
+//     value: 'option-5',
+//     extraProp: 'Extra prop',
+//   },
+//   {
+//     text: 'Fantom',
+//     value: 'option-6',
+//     extraProp: 'Extra prop',
+//   },
+//   {
+//     text: 'Austral',
+//     value: 'option-7',
+//     extraProp: 'Extra prop',
+//   },
+// ];
 
-const manyItems = [...Array(100).keys()].map((item) => ({
-  text: `Option-${item}`,
-  value: `option-${item}`,
-  extraProp: 'Extra prop',
-}));
+// const manyItems = [...Array(100).keys()].map((item) => ({
+//   text: `Option-${item}`,
+//   value: `option-${item}`,
+//   extraProp: 'Extra prop',
+// }));
 
-const groups = [
-  {
-    title: 'Group 1',
-    items,
-  },
-  {
-    title: 'Group 2',
-    items,
-  },
-  {
-    title: 'Group 3',
-    items,
-  },
-];
+// const groups = [
+//   {
+//     title: 'Group 1',
+//     items,
+//   },
+//   {
+//     title: 'Group 2',
+//     items,
+//   },
+//   {
+//     title: 'Group 3',
+//     items,
+//   },
+// ];
 
 function App() {
-  const [selectedValue, setSelectedValue] = useState([items[0]]);
+  const { items, isLoading, onLoadMore, hasMore } = usePokemonList({
+    fetchDelay: 300,
+  });
+  console.log({ items });
+  const [selectedValue, setSelectedValue] = useState();
   const [doubleViewportSize, setDoubleViewportSize] = useState(false);
-  const [selectItems, setSelectItems] = useState(manyItems);
+  const [selectItems, setSelectItems] = useState(items);
   const [searchVal, setSearchVal] = useState('');
   const filteredItems = useMemo(
     () =>
       items.filter((item) =>
         item.text.toLowerCase().includes(searchVal.toLowerCase()),
       ),
-    [searchVal],
+    [searchVal, items],
   );
   // const [open, setOpen] = useState(false);
 
@@ -92,6 +98,11 @@ function App() {
       ]);
     }, 3000);
   }, []);
+
+  const { callback: debouncedSearch } = debounceCallback(
+    (searchQuery?: string) => onLoadMore({ newOffset: 0, search: searchQuery }),
+    500,
+  );
   return (
     <>
       <div
@@ -99,7 +110,7 @@ function App() {
         ${
           doubleViewportSize
             ? 'min-h-[200vh] min-w-[200vw]'
-            : 'min-h-[100vh] w-[50vw]'
+            : 'min-h-[100vh] w-[100vw]'
         }`}
       >
         <h1 className="w-full py-4 text-center">React dropdown</h1>
@@ -177,7 +188,7 @@ function App() {
           //   );
           // }}
         >
-          {manyItems.map((item) => (
+          {items.map((item) => (
             <Select.Item key={item.value} {...item}>
               {item.text}
             </Select.Item>
@@ -185,6 +196,12 @@ function App() {
         </Select>
 
         <Select
+          infiniteScrollProps={{
+            onLoadMore: (searchVal) => onLoadMore({ search: searchVal }),
+            hasMore,
+            isLoading,
+          }}
+          onSearchChange={debouncedSearch}
           onSelectionChange={(value) => {
             console.log({ value });
             setSelectedValue(value.selectedOptions);
@@ -206,7 +223,7 @@ function App() {
           autoFocus="menu"
           focusTrapProps={{ autoFocus: false, trapFocus: true }}
           search
-          items={selectItems}
+          items={items}
           noResultsMessage={
             <>
               <i>Dummy no results message</i>

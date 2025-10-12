@@ -15,6 +15,8 @@ import CaretIcon from '../ui/CaretIcon';
 import { cn } from '../../utils/common';
 import SelectSearch from './SelectSearch';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
+import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
+import SpinnerLoader from '../SpinnerLoader';
 
 function Select<T extends OptionItem>({
   // caret,
@@ -65,6 +67,7 @@ function Select<T extends OptionItem>({
   renderValue,
   noResultsMessage,
   popOnSelection = true,
+  infiniteScrollProps,
 }: SelectProps<T> & SelectCompositionProps<T>) {
   if (items && children && typeof children !== 'function') {
     throw new Error(
@@ -99,10 +102,19 @@ function Select<T extends OptionItem>({
   const searchRef = useRef<HTMLInputElement | null>(null);
 
   const open = controlledIsOpen ?? isOpen;
+  const loading = !!infiniteScrollProps?.isLoading;
 
   const focusSearch = useCallback(() => {
     searchRef.current?.focus();
   }, []);
+
+  console.log({ infiniteScrollProps });
+  const [, scrollerRef] = useInfiniteScroll<never, HTMLUListElement>({
+    hasMore: infiniteScrollProps?.hasMore,
+    isEnabled: isOpen && !!infiniteScrollProps,
+    onLoadMore: () => infiniteScrollProps?.onLoadMore(searchValue),
+    shouldUseLoader: false,
+  });
 
   const { containerRef, onKeyDown, setFocusedIndex, focusableItemsLength } =
     useKeyboardNavigation<HTMLDivElement>({
@@ -168,6 +180,7 @@ function Select<T extends OptionItem>({
 
   const showPlaceholder = !selected.length && !search;
 
+  console.log({ selected });
   const showValue = !!selected.length || search;
 
   const baseWidth = baseRef.current
@@ -374,14 +387,18 @@ function Select<T extends OptionItem>({
                   </div>
                 )}
 
-                <div
-                  className={cn(
-                    selectorIconClassName,
-                    classNames?.selectorIcon,
-                  )}
-                >
-                  <CaretIcon open={open} />
-                </div>
+                {loading ? (
+                  <SpinnerLoader />
+                ) : (
+                  <div
+                    className={cn(
+                      selectorIconClassName,
+                      classNames?.selectorIcon,
+                    )}
+                  >
+                    <CaretIcon open={open} />
+                  </div>
+                )}
               </div>
             )}
           </Popover.Trigger>
@@ -398,7 +415,10 @@ function Select<T extends OptionItem>({
                 tabIndex={0}
               >
                 {topContent && topContent}
-                <ul className={cn(listboxClassName, classNames?.listbox)}>
+                <ul
+                  ref={scrollerRef}
+                  className={cn(listboxClassName, classNames?.listbox)}
+                >
                   {typeof children !== 'function' && children}
                   {typeof children === 'function' &&
                     filteredItems &&
