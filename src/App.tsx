@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Dropdown from './components/Dropdown';
 import Popover from './components/Popover';
 import Select from './components/Select';
-import { usePokemonList } from './utils/dummy-data-hooks';
+import { Option, usePokemonList } from './utils/dummy-data-hooks';
 import { debounceCallback } from './utils/common';
 
 // const items = [
@@ -68,12 +68,70 @@ import { debounceCallback } from './utils/common';
 //   },
 // ];
 
+const preselectedDropdownItems = [
+  {
+    text: 'bulbasaur',
+    value: 'https://pokeapi.co/api/v2/pokemon/1/',
+  },
+  {
+    text: 'venusaur',
+    value: 'https://pokeapi.co/api/v2/pokemon/3/',
+  },
+  {
+    text: 'ekans',
+    value: 'https://pokeapi.co/api/v2/pokemon/23/',
+  },
+  {
+    text: 'fearow',
+    value: 'https://pokeapi.co/api/v2/pokemon/22/',
+  },
+  {
+    text: 'jigglypuff',
+    value: 'https://pokeapi.co/api/v2/pokemon/39/',
+  },
+  {
+    text: 'wigglytuff',
+    value: 'https://pokeapi.co/api/v2/pokemon/40/',
+  },
+  {
+    text: 'ninetales',
+    value: 'https://pokeapi.co/api/v2/pokemon/38/',
+  },
+  {
+    text: 'vulpix',
+    value: 'https://pokeapi.co/api/v2/pokemon/37/',
+  },
+  {
+    text: 'ivysaur',
+    value: 'https://pokeapi.co/api/v2/pokemon/2/',
+  },
+  {
+    text: 'charmander',
+    value: 'https://pokeapi.co/api/v2/pokemon/4/',
+  },
+  {
+    text: 'charmeleon',
+    value: 'https://pokeapi.co/api/v2/pokemon/5/',
+  },
+  {
+    text: 'machop',
+    value: 'https://pokeapi.co/api/v2/pokemon/66/',
+  },
+  {
+    text: 'alakazam',
+    value: 'https://pokeapi.co/api/v2/pokemon/65/',
+  },
+  {
+    text: 'kadabra',
+    value: 'https://pokeapi.co/api/v2/pokemon/64/',
+  },
+];
 function App() {
   const { items, isLoading, onLoadMore, hasMore } = usePokemonList({
     fetchDelay: 300,
   });
   console.log({ items });
-  const [selectedValue, setSelectedValue] = useState();
+  const [selectedValue, setSelectedValue] = useState<Option[]>([]);
   const [doubleViewportSize, setDoubleViewportSize] = useState(false);
   const [selectItems, setSelectItems] = useState(items);
   const [searchVal, setSearchVal] = useState('');
@@ -318,6 +376,55 @@ function App() {
           )}
         </Select>
 
+        <Dropdown shouldCloseOnSelection={false}>
+          <Dropdown.Trigger>
+            <button className="w-full cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
+              Dropdown with pokemons
+            </button>
+          </Dropdown.Trigger>
+
+          <Dropdown.Menu>
+            <Dropdown.Header>Input</Dropdown.Header>
+
+            <Dropdown.Divider />
+
+            <Dropdown.Section
+              scrolling
+              infiniteScrollProps={{
+                onLoadMore: () => onLoadMore(),
+                hasMore,
+                isLoading,
+              }}
+            >
+              {items.map((item) => (
+                <Dropdown.Item
+                  key={item.value}
+                  {...item}
+                  startContent={
+                    <input
+                      type="checkbox"
+                      checked={
+                        !!selectedValue.find((sel) => sel.value === item.value)
+                      }
+                    />
+                  }
+                  onClick={() =>
+                    setSelectedValue((prev) => {
+                      if (prev.find((sel) => sel.value === item.value)) {
+                        return prev.filter((sel) => sel.value !== item.value);
+                      }
+
+                      return [...prev, item];
+                    })
+                  }
+                >
+                  {item.text}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Section>
+          </Dropdown.Menu>
+        </Dropdown>
+
         <Dropdown
           placement="bottom-center"
           shouldBlockScroll={false}
@@ -396,7 +503,7 @@ function App() {
         >
           <Dropdown.Trigger>
             <button className="w-full cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
-              DropdownTrigger
+              DropdownTrigger Nested
             </button>
           </Dropdown.Trigger>
 

@@ -108,6 +108,7 @@ export type DropdownSectionProps = {
   scrolling?: boolean;
   title?: React.ReactNode;
   isStickyTitle?: boolean;
+  infiniteScrollProps?: InfiniteScrollProps;
 };
 
 export type DropdownItemProps<T extends ElementType = 'div'> = {
@@ -255,7 +256,7 @@ export type SelectProps<T extends OptionItem> = {
   errorMessage?: React.ReactNode;
   noResultsMessage?: React.ReactNode;
   infiniteScrollProps?: InfiniteScrollProps;
-
+  isLoading?: boolean;
   /**
    * Removes selected from the options list. Works only with `items` prop.
    */

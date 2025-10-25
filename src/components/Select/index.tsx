@@ -68,6 +68,7 @@ function Select<T extends OptionItem>({
   noResultsMessage,
   popOnSelection = true,
   infiniteScrollProps,
+  isLoading,
 }: SelectProps<T> & SelectCompositionProps<T>) {
   if (items && children && typeof children !== 'function') {
     throw new Error(
@@ -102,13 +103,12 @@ function Select<T extends OptionItem>({
   const searchRef = useRef<HTMLInputElement | null>(null);
 
   const open = controlledIsOpen ?? isOpen;
-  const loading = !!infiniteScrollProps?.isLoading;
+  const loading = !!isLoading || !!infiniteScrollProps?.isLoading;
 
   const focusSearch = useCallback(() => {
     searchRef.current?.focus();
   }, []);
 
-  console.log({ infiniteScrollProps });
   const [, scrollerRef] = useInfiniteScroll<never, HTMLUListElement>({
     hasMore: infiniteScrollProps?.hasMore,
     isEnabled: isOpen && !!infiniteScrollProps,

@@ -28,6 +28,7 @@ import {
 } from '../../context/PopoverRootContext';
 import usePreventBodyScroll from '../../hooks/usePreventBodyScroll';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
+import { usePositionObserver } from '../../hooks/usePositionObserver';
 
 const Popover = ({
   children,
@@ -137,7 +138,12 @@ const Popover = ({
   }
 
   const setContentCoords = useCallback(() => {
-    if (!popoverTriggerRef.current || !popoverContentRef.current) return;
+    if (
+      !isRootExpanded ||
+      !popoverTriggerRef.current ||
+      !popoverContentRef.current
+    )
+      return;
 
     const triggerRect = popoverTriggerRef.current.getBoundingClientRect();
     const popoverRect = popoverContentRef.current.getBoundingClientRect();
@@ -160,7 +166,14 @@ const Popover = ({
     );
 
     setPopoverContentCoords(coords);
-  }, [contentOffset, placement, offset, shouldFlip, growContent]);
+  }, [
+    contentOffset,
+    placement,
+    offset,
+    shouldFlip,
+    growContent,
+    isRootExpanded,
+  ]);
 
   // Handle onClose
   const handleClose = useCallback(
@@ -187,6 +200,10 @@ const Popover = ({
   useResizeObserver({
     element: popoverTriggerRef.current,
     onResize: setContentCoords,
+  });
+  usePositionObserver({
+    element: popoverTriggerRef.current,
+    callback: setContentCoords,
   });
 
   // Handle onBlur

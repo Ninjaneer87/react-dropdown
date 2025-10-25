@@ -11,7 +11,7 @@ export type Pokemon = {
   url: string;
 };
 
-type Option = {
+export type Option = {
   text: string;
   value: string;
 };
@@ -100,7 +100,7 @@ export function usePokemonList({ fetchDelay = 0 }: UsePokemonListProps = {}) {
     }: {
       search?: string;
       newOffset?: number;
-    }) => {
+    } = {}) => {
       console.info(JSON.stringify({ search }, null, 2));
       const newCalcOffset = newOffset + limit;
 
