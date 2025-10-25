@@ -204,6 +204,7 @@ const Popover = ({
   usePositionObserver({
     element: popoverTriggerRef.current,
     callback: setContentCoords,
+    isActive: isRootExpanded,
   });
 
   // Handle onBlur

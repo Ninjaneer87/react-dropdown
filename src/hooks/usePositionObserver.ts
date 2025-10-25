@@ -10,9 +10,11 @@ import { useEffect, useRef } from 'react';
 export const usePositionObserver = ({
   element,
   callback,
+  isActive,
 }: {
   element: HTMLElement | null;
   callback: () => void;
+  isActive: boolean;
 }) => {
   const callbackRef = useRef(callback);
 
@@ -24,7 +26,7 @@ export const usePositionObserver = ({
   const animationFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!element) {
+    if (!isActive || !element) {
       // Clean up any existing frame if the element is null
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
@@ -66,5 +68,5 @@ export const usePositionObserver = ({
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [element]);
+  }, [element, isActive]);
 };
