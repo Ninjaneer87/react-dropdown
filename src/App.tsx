@@ -144,19 +144,6 @@ function App() {
   );
   // const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setSelectItems([
-        ...selectItems,
-        {
-          text: 'Added optiony',
-          value: 'option-999999999',
-          extraProp: 'Extra prop',
-        },
-      ]);
-    }, 3000);
-  }, []);
-
   const { callback: debouncedSearch } = debounceCallback(
     (searchQuery?: string) => onLoadMore({ newOffset: 0, search: searchQuery }),
     500,
@@ -309,7 +296,7 @@ function App() {
             return (
               <li>
                 {isLastItem && <div>Last Item</div>}
-                <div>{option.text}</div>
+                <div>{option.children ?? option.text}</div>
               </li>
             );
           }}
@@ -376,7 +363,7 @@ function App() {
           )}
         </Select>
 
-        <Dropdown shouldCloseOnSelection={false}>
+        <Dropdown shouldCloseOnSelection={false} autoFocus="first-item">
           <Dropdown.Trigger>
             <button className="w-full cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
               Dropdown with pokemons
@@ -384,7 +371,12 @@ function App() {
           </Dropdown.Trigger>
 
           <Dropdown.Menu>
-            <Dropdown.Header>Input</Dropdown.Header>
+            <Dropdown.Header>
+              <input
+                data-focusable-item
+                onChange={(e) => debouncedSearch(e.target.value)}
+              />
+            </Dropdown.Header>
 
             <Dropdown.Divider />
 
@@ -403,6 +395,8 @@ function App() {
                   startContent={
                     <input
                       type="checkbox"
+                      id="myCheckbox"
+                      onChange={() => {}}
                       checked={
                         !!selectedValue.find((sel) => sel.value === item.value)
                       }
@@ -422,6 +416,15 @@ function App() {
                 </Dropdown.Item>
               ))}
             </Dropdown.Section>
+
+            <Dropdown.Divider />
+
+            <Dropdown.Footer>
+              <div className="flex justify-between">
+                <button data-focusable-item>Cancel</button>
+                <button data-focusable-item>Save</button>
+              </div>
+            </Dropdown.Footer>
           </Dropdown.Menu>
         </Dropdown>
 

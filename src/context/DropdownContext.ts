@@ -1,9 +1,10 @@
 import { createContext, useContext } from 'react';
-import { ListAutoFocus } from '../types';
+import { DropdownClassNames, ListAutoFocus } from '../types';
 
 type DropdownContextType = {
   shouldCloseOnSelection?: boolean;
   autoFocus?: ListAutoFocus;
+  classNames?: DropdownClassNames;
 };
 
 export const DropdownContext = createContext<DropdownContextType | null>(null);

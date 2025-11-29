@@ -53,8 +53,6 @@ function Select<T extends OptionItem>({
   openOnLabelClick,
   shouldCloseOnSelection,
   truncate,
-  itemClassNames,
-  sectionClassNames,
   autoFocus = 'menu',
   focusTrapProps = {
     autoFocus: autoFocus === 'none',
@@ -95,6 +93,7 @@ function Select<T extends OptionItem>({
     });
   }
 
+  const { item: itemClassNames, section: sectionClassNames } = classNames || {};
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<T[]>([]);
   const [hasMountedDefaultValue, setHasMountedDefaultValue] = useState(false);
@@ -109,11 +108,10 @@ function Select<T extends OptionItem>({
     searchRef.current?.focus();
   }, []);
 
-  const [, scrollerRef] = useInfiniteScroll<never, HTMLUListElement>({
+  const [loaderRef, scrollerRef] = useInfiniteScroll<never, HTMLUListElement>({
     hasMore: infiniteScrollProps?.hasMore,
     isEnabled: isOpen && !!infiniteScrollProps,
     onLoadMore: () => infiniteScrollProps?.onLoadMore(searchValue),
-    shouldUseLoader: false,
   });
 
   const { containerRef, onKeyDown, setFocusedIndex, focusableItemsLength } =
@@ -121,7 +119,7 @@ function Select<T extends OptionItem>({
       autoFocus,
       onFirstUp: search ? focusSearch : undefined,
       onLastDown: search ? focusSearch : undefined,
-      isMounted: open,
+      isActive: open,
     });
 
   useEffect(() => {
@@ -162,12 +160,15 @@ function Select<T extends OptionItem>({
     isDisabled ? 'opacity-60' : '',
   );
   const labelClassName = cn('mb-1 w-fit');
-  const placeholderClassName = cn('grow flex items-center opacity-60');
   const requiredAsteriskClassName = cn('text-red-700 ml-1');
-  const triggerClassName = cn(
+
+  const triggerBaseClassName = cn(
     'rounded-lg border p-2 grow flex items-center gap-2 relative',
   );
-  const selectorIconClassName = cn('ml-auto');
+  const triggerPlaceholderClassName = cn('grow flex items-center opacity-60');
+  const triggerValueTextClassName = 'flex items-center grow flex-wrap gap-1';
+  const triggerValueChipClassName = 'inline-flex items-center';
+  const triggerSelectorIconClassName = cn('ml-auto');
 
   const contentWrapperClassName =
     'relative !outline-none !border-none p-2 grow';
@@ -180,7 +181,6 @@ function Select<T extends OptionItem>({
 
   const showPlaceholder = !selected.length && !search;
 
-  console.log({ selected });
   const showValue = !!selected.length || search;
 
   const baseWidth = baseRef.current
@@ -327,7 +327,8 @@ function Select<T extends OptionItem>({
             if (onOpenChange) onOpenChange(isOpen);
           }}
           classNames={{
-            content: cn(popoverContentClassName, classNames?.popoverContent),
+            ...classNames?.popover,
+            content: cn(popoverContentClassName, classNames?.popover?.content),
           }}
           focusTrapProps={focusTrapProps}
         >
@@ -335,12 +336,14 @@ function Select<T extends OptionItem>({
             {trigger ? (
               trigger
             ) : (
-              <div className={cn(triggerClassName, classNames?.trigger)}>
+              <div
+                className={cn(triggerBaseClassName, classNames?.trigger?.base)}
+              >
                 {showPlaceholder && (
                   <div
                     className={cn(
-                      placeholderClassName,
-                      classNames?.placeholder,
+                      triggerPlaceholderClassName,
+                      classNames?.trigger?.placeholder,
                     )}
                   >
                     {placeholder ?? 'Select'}
@@ -348,14 +351,22 @@ function Select<T extends OptionItem>({
                 )}
 
                 {showValue && (
-                  <div className="flex items-center grow flex-wrap gap-1">
+                  <div
+                    className={cn(
+                      triggerValueTextClassName,
+                      classNames?.trigger?.valueText,
+                    )}
+                  >
                     {renderValue ? (
                       renderValue(selected)
                     ) : (
                       <>
                         {selected.map((item) => (
                           <button
-                            className="inline-flex items-center"
+                            className={cn(
+                              triggerValueChipClassName,
+                              classNames?.trigger?.valueChip,
+                            )}
                             key={item.value}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
@@ -382,6 +393,7 @@ function Select<T extends OptionItem>({
                       <SelectSearch
                         searchRef={searchRef}
                         placeholder={placeholder}
+                        className={classNames?.trigger?.searchInput}
                       />
                     )}
                   </div>
@@ -392,8 +404,8 @@ function Select<T extends OptionItem>({
                 ) : (
                   <div
                     className={cn(
-                      selectorIconClassName,
-                      classNames?.selectorIcon,
+                      triggerSelectorIconClassName,
+                      classNames?.trigger?.selectorIcon,
                     )}
                   >
                     <CaretIcon open={open} />
@@ -452,6 +464,8 @@ function Select<T extends OptionItem>({
                         {item.textContent ?? item.text}
                       </SelectItem>
                     ))}
+
+                  {infiniteScrollProps?.hasMore && <li ref={loaderRef} />}
                 </ul>
                 {bottomContent && bottomContent}
               </div>

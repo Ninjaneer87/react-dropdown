@@ -1,22 +1,16 @@
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { type PropsWithChildren, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-export default function ClientOnlyPortal({ children }: PropsWithChildren) {
-  const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
+export default function ReactPortal({ children }: PropsWithChildren) {
+  const [container] = useState(() => document.createElement('div'));
 
-  // Check if the portal element exists
   useEffect(() => {
-    const existingPortalElement = document.getElementById('portal');
-    if (existingPortalElement) {
-      setPortalElement(existingPortalElement);
-      return;
-    }
+    document.body.appendChild(container);
 
-    const newPortalElement = document.createElement('div');
-    newPortalElement.id = 'portal';
-    document.body.appendChild(newPortalElement);
-    setPortalElement(newPortalElement);
-  }, []);
+    return () => {
+      document.body.removeChild(container);
+    };
+  }, [container]);
 
-  return portalElement ? createPortal(children, portalElement!) : null;
+  return createPortal(children, container);
 }

@@ -3,6 +3,7 @@ import { useDropdownContext } from '../../context/DropdownContext';
 import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
 import { DropdownItemProps } from '../../types';
 import { usePopoverRootContext } from '../../context/PopoverRootContext';
+import { cn } from '../../utils/common';
 
 function DropdownItem<T extends ElementType = 'div'>(
   props: DropdownItemProps<T>,
@@ -18,6 +19,7 @@ function DropdownItem<T extends ElementType = 'div'>(
     showDisabledStyles = disabled,
     startContent,
     endContent,
+    classNames,
     ...rest
   } = props;
   const dropdownContext = useDropdownContext();
@@ -37,6 +39,8 @@ function DropdownItem<T extends ElementType = 'div'>(
   if (!popoverRootContext) {
     throw new Error('DropdownItem should be used within a Popover component');
   }
+
+  const { classNames: contextClassNames } = dropdownContext;
 
   const { handleCloseRoot } = popoverRootContext;
 
@@ -70,6 +74,15 @@ function DropdownItem<T extends ElementType = 'div'>(
     }
   }
 
+  const baseClassName = cn(
+    'p-2 hover:bg-gray-500 focus-visible:bg-gray-500 focus-within:bg-gray-500 rounded-lg transition-all w-full flex cursor-pointer items-center gap-2',
+    disabled && showDisabledStyles ? 'opacity-60 pointer-events-none' : '',
+    isHighlighted ? 'bg-gray-600' : '',
+  );
+  const startContentClassName = cn('shrink-0 inline-flex');
+  const mainContentClassName = cn('shrink-0 grow inline-block');
+  const endContentClassName = cn('ml-auto shrink-0 inline-flex');
+
   return (
     <Component
       {...rest}
@@ -81,20 +94,44 @@ function DropdownItem<T extends ElementType = 'div'>(
       disabled={disabled}
       onClick={handleClick}
       onKeyDown={onKeyDown}
-      className={`p-2 ${
-        disabled && showDisabledStyles ? 'opacity-60 pointer-events-none' : ''
-      } ${
-        isHighlighted ? 'bg-gray-600' : ''
-      } hover:bg-gray-500 focus-visible:bg-gray-500 focus-within:bg-gray-500 rounded-lg transition-all w-full flex cursor-pointer items-center gap-2`}
+      className={cn(
+        baseClassName,
+        contextClassNames?.item?.base,
+        classNames?.base,
+      )}
     >
       {startContent && (
-        <span className="shrink-0 inline-flex">{startContent}</span>
+        <span
+          className={cn(
+            startContentClassName,
+            contextClassNames?.item?.startContent,
+            classNames?.startContent,
+          )}
+        >
+          {startContent}
+        </span>
       )}
 
-      <span className="shrink-0 grow inline-flex">{children}</span>
+      <span
+        className={cn(
+          mainContentClassName,
+          contextClassNames?.item?.mainContent,
+          classNames?.mainContent,
+        )}
+      >
+        {children}
+      </span>
 
       {endContent && (
-        <span className="ml-auto shrink-0 inline-flex">{endContent}</span>
+        <span
+          className={cn(
+            endContentClassName,
+            contextClassNames?.item?.endContent,
+            classNames?.endContent,
+          )}
+        >
+          {endContent}
+        </span>
       )}
     </Component>
   );

@@ -1,8 +1,10 @@
 import { useDropdownContext } from '../../context/DropdownContext';
 import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
-import { divider } from '../../utils/elements';
+import { DropdownDividerProps } from '../../types';
+import { cn } from '../../utils/common';
+import { dividerBaseClassName } from '../../utils/elements';
 
-function DropdownDivider() {
+function DropdownDivider({ classNames }: DropdownDividerProps) {
   const dropdownContext = useDropdownContext();
   const dropdownMenuContext = useDropdownMenuContext();
 
@@ -18,7 +20,17 @@ function DropdownDivider() {
     );
   }
 
-  return divider;
+  const { classNames: contextClassNames } = dropdownContext;
+
+  return (
+    <div
+      className={cn(
+        dividerBaseClassName,
+        contextClassNames?.divider?.base,
+        classNames?.base,
+      )}
+    />
+  );
 }
 
 export default DropdownDivider;

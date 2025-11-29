@@ -1,8 +1,13 @@
 import { useDropdownContext } from '../../context/DropdownContext';
 import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
 import { DropdownFooterProps } from '../../types';
+import { cn } from '../../utils/common';
 
-function DropdownFooter({ children, isSticky }: DropdownFooterProps) {
+function DropdownFooter({
+  children,
+  isSticky,
+  classNames,
+}: DropdownFooterProps) {
   const dropdownContext = useDropdownContext();
   const dropdownMenuContext = useDropdownMenuContext();
 
@@ -18,11 +23,20 @@ function DropdownFooter({ children, isSticky }: DropdownFooterProps) {
     );
   }
 
+  const { classNames: contextClassNames } = dropdownContext;
+
+  const baseClassNames = cn(
+    'p-2',
+    isSticky ? 'sticky bottom-0 z-10 bg-inherit shadow-sm' : '',
+  );
+
   return (
     <footer
-      className={`${
-        isSticky ? 'sticky bottom-0 z-10 bg-inherit shadow-sm' : ''
-      } p-2 mb-2`}
+      className={cn(
+        baseClassNames,
+        contextClassNames?.footer?.base,
+        classNames?.base,
+      )}
     >
       {children}
     </footer>

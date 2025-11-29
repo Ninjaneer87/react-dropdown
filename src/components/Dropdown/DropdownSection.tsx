@@ -3,6 +3,7 @@ import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
 import { usePopoverContext } from '../../context/PopoverContext';
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import { DropdownSectionProps } from '../../types';
+import { cn } from '../../utils/common';
 
 function DropdownSection({
   children,
@@ -10,6 +11,7 @@ function DropdownSection({
   title,
   isStickyTitle = true,
   infiniteScrollProps,
+  classNames,
 }: DropdownSectionProps) {
   const dropdownContext = useDropdownContext();
   const popoverContext = usePopoverContext();
@@ -32,32 +34,48 @@ function DropdownSection({
     );
   }
 
+  const { classNames: contextClassNames } = dropdownContext;
+
   const { isOpen } = popoverContext;
 
-  const [, scrollerRef] = useInfiniteScroll<never, HTMLDivElement>({
+  const [loaderRef, scrollerRef] = useInfiniteScroll<never, HTMLDivElement>({
     hasMore: infiniteScrollProps?.hasMore,
     isEnabled: isOpen && !!infiniteScrollProps,
     onLoadMore: () => infiniteScrollProps?.onLoadMore(),
-    shouldUseLoader: false,
   });
+
+  const baseClassName = cn(
+    'bg-inherit',
+    scrolling ? 'max-h-[250px] overflow-y-auto scroll-pt-12' : '',
+  );
+
+  const titleClassName = cn(
+    'p-1 mb-2 text-sm font-semibold text-gray-400',
+    isStickyTitle ? 'bg-gray-800 sticky top-0 z-10 rounded-sm' : '',
+  );
 
   return (
     <div
-      className={`bg-inherit ${
-        scrolling ? 'max-h-[250px] overflow-y-auto scroll-pt-12' : ''
-      }`}
+      className={cn(
+        baseClassName,
+        contextClassNames?.section?.base,
+        classNames?.base,
+      )}
       ref={scrollerRef}
     >
       {title && (
         <div
-          className={`p-1 mb-2 text-sm font-semibold text-gray-400 ${
-            isStickyTitle ? 'bg-gray-800 sticky top-0 z-10 rounded-sm' : ''
-          }`}
+          className={cn(
+            titleClassName,
+            contextClassNames?.section?.title,
+            classNames?.title,
+          )}
         >
           {title}
         </div>
       )}
       {children}
+      {infiniteScrollProps?.hasMore && <div ref={loaderRef} />}
     </div>
   );
 }

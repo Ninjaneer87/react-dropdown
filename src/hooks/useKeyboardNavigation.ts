@@ -7,7 +7,7 @@ type Props = {
   onFirstUp?: () => void;
   onLastDown?: () => void;
   onEsc?: () => void;
-  isMounted: boolean;
+  isActive: boolean;
 };
 
 export function useKeyboardNavigation<T extends HTMLElement>({
@@ -15,7 +15,7 @@ export function useKeyboardNavigation<T extends HTMLElement>({
   onFirstUp,
   onEsc,
   onLastDown,
-  isMounted,
+  isActive,
 }: Props) {
   const containerRef = useRef<T>(null);
   const [focusedIndex, setFocusedIndex] = useState<number | undefined>();
@@ -44,7 +44,7 @@ export function useKeyboardNavigation<T extends HTMLElement>({
   useMutationObserver({ element: containerRef?.current, onMutation: getItems });
 
   useEffect(() => {
-    if (!isMounted || !autoFocus || autoFocus === 'none') return;
+    if (!isActive || !autoFocus || autoFocus === 'none') return;
 
     if (autoFocus === 'first-item') {
       if (!focusableItems) return;
@@ -65,22 +65,22 @@ export function useKeyboardNavigation<T extends HTMLElement>({
     if (autoFocus === 'menu') {
       containerRef.current?.focus();
     }
-  }, [autoFocus, isMounted]);
+  }, [autoFocus, isActive]);
 
   useEffect(() => {
-    if (!isMounted) {
+    if (!isActive) {
       setFocusedIndex(undefined);
       return;
     }
 
     focusItem(focusedIndex);
-  }, [focusedIndex, isMounted]);
+  }, [focusedIndex, isActive]);
 
   useEffect(() => {
-    if (!isMounted) return;
+    if (!isActive) return;
 
     getItems();
-  }, [getItems, isMounted]);
+  }, [getItems, isActive]);
 
   function focusItem(index: number | undefined) {
     if (!focusableItems) return;

@@ -7,6 +7,13 @@ export type PopoverPlacement = `${PopoverPosition}-${PopoverAlign}`;
 
 export type Backdrop = 'transparent' | 'opaque' | 'blur';
 
+type PopoverClassNames = {
+  base?: string;
+  trigger?: string;
+  backdrop?: string;
+  content?: string;
+};
+
 export type PopoverProps = {
   children?: React.ReactNode;
   trigger?: React.ReactNode;
@@ -34,12 +41,7 @@ export type PopoverProps = {
   delayHide?: number;
   hoverableContent?: boolean;
   growContent?: boolean;
-  classNames?: {
-    base?: string;
-    trigger?: string;
-    backdrop?: string;
-    content?: string;
-  };
+  classNames?: PopoverClassNames;
   focusTrapProps?: {
     trapFocus?: boolean;
     autoFocus?: boolean;
@@ -67,21 +69,48 @@ export type PopoverComposition = {
   Content?: React.FC<PopoverContentProps>;
 };
 
+export type DropdownClassNames = {
+  popover?: PopoverClassNames;
+  divider?: DropdownDividerClassNames;
+  footer?: DropdownFooterClassNames;
+  header?: DropdownHeaderClassNames;
+  menu?: DropdownMenuClassNames;
+  item?: DropdownItemClassNames;
+  section?: DropdownSectionClassNames;
+};
+
+type DropdownItemClassNames = {
+  base?: string;
+  startContent?: string;
+  mainContent?: string;
+  endContent?: string;
+};
+
+type DropdownSectionClassNames = {
+  base?: string;
+  title?: string;
+};
+type DropdownTriggerClassNames = {
+  base?: string;
+};
+type DropdownDividerClassNames = {
+  base?: string;
+};
+type DropdownMenuClassNames = {
+  base?: string;
+};
+type DropdownHeaderClassNames = {
+  base?: string;
+};
+type DropdownFooterClassNames = {
+  base?: string;
+};
 // !Dropdown types
 export type DropdownProps = {
   shouldCloseOnSelection?: boolean;
   caret?: React.ReactNode;
   showCaret?: boolean;
-  classNames?: {
-    label?: string;
-    trigger?: string;
-    mainWrapper?: string;
-    innerWrapper?: string;
-    selectorIcon?: string;
-    value?: string;
-    listboxWrapper?: string;
-    listbox?: string;
-  };
+  classNames?: DropdownClassNames;
   autoFocus?: ListAutoFocus;
 } & Omit<
   PopoverProps,
@@ -91,16 +120,19 @@ export type DropdownProps = {
 export type DropdownMenuProps = {
   children: React.ReactNode;
   isOpen?: boolean;
+  classNames?: DropdownMenuClassNames;
 };
 
 export type DropdownHeaderProps = {
   children: React.ReactNode;
   isSticky?: boolean;
+  classNames?: DropdownHeaderClassNames;
 };
 
 export type DropdownFooterProps = {
   children: React.ReactNode;
   isSticky?: boolean;
+  classNames?: DropdownFooterClassNames;
 };
 
 export type DropdownSectionProps = {
@@ -109,6 +141,7 @@ export type DropdownSectionProps = {
   title?: React.ReactNode;
   isStickyTitle?: boolean;
   infiniteScrollProps?: InfiniteScrollProps;
+  classNames?: DropdownSectionClassNames;
 };
 
 export type DropdownItemProps<T extends ElementType = 'div'> = {
@@ -120,10 +153,16 @@ export type DropdownItemProps<T extends ElementType = 'div'> = {
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
   as?: T;
-} & Omit<ComponentPropsWithRef<T>, 'children'>;
+  classNames?: DropdownItemClassNames;
+} & Omit<ComponentPropsWithRef<T>, 'children' | 'className'>;
 
 export type DropdownTriggerProps = {
   children: React.ReactNode;
+  classNames?: DropdownTriggerClassNames;
+};
+
+export type DropdownDividerProps = {
+  classNames?: DropdownDividerClassNames;
 };
 
 export type DropdownComposition = {
@@ -155,7 +194,7 @@ export type DropdownComposition = {
   /**
    * DropdownDivider is a visual separator between sections.
    */
-  Divider?: React.FC;
+  Divider?: React.FC<DropdownDividerProps>;
 };
 
 export type SelectTruncate = {
@@ -214,6 +253,88 @@ export type SelectItemClassNames = {
   selectedIcon?: string;
 };
 
+export type SelectClassNames = {
+  /**
+   * The main wrapper of the select. This wraps the rest of the slots.
+   */
+  base?: string;
+  /**
+   * The label of the select.
+   */
+  label?: string;
+  /**
+   * The asterisk `*` after the label for `isRequired`.
+   */
+  requiredAsterisk?: string;
+  /**
+   * The trigger of the select. This wraps placeholder/value(s)/autocomplete-input and loading/caret.
+   */
+  trigger?: {
+    /**
+     * Trigger wrapper
+     */
+    base?: string;
+    /**
+     * The placeholder of the select.
+     */
+    placeholder?: string;
+    /**
+     * The default representation of selected value
+     */
+    valueText?: string;
+    valueChip?: string;
+    searchInput?: string;
+    /**
+     * The selector icon of the select. This is the icon that rotates when the select is open (data-open).
+     */
+    selectorIcon?: string;
+  };
+  /**
+   * The wrapper of the select content. This wraps the start/end content and the select value.
+   */
+  innerWrapper?: string;
+  /**
+   * The select value. This is also the slot that wraps the renderValue function result.
+   */
+  value?: string;
+  /**
+   * The wrapper of `topContent`, the listbox and `bottomContent`.
+   */
+  contentWrapper?: string;
+  /**
+   * The wrapper of the listbox. This wraps the listbox component, this slot is used on top of the scroll shadow component.
+   */
+  listboxWrapper?: string;
+  /**
+   * The listbox component. This is the component that wraps the select items.
+   */
+  listbox?: string;
+  /**
+   * The popover content slot. Use this to modify the popover content styles.
+   */
+  popover?: PopoverClassNames;
+  /**
+   * The wrapper of the helper text. This wraps the helper text and the error message.
+   */
+  helperWrapper?: string;
+  /**
+   * The description of the select.
+   */
+  description?: string;
+  /**
+   * The error message of the select.
+   */
+  errorMessage?: string;
+  /**
+   * Will apply classNames to all SelectItem-s
+   */
+  item?: SelectItemClassNames;
+  /**
+   * Will apply classNames to all SelectSection-s
+   */
+  section?: SelectSectionClassNames;
+};
+
 export type SelectSectionClassNames = {
   base?: string;
   title?: string;
@@ -223,7 +344,7 @@ export type RenderOption<T extends OptionItem> = ({
   option,
   currentOptions,
 }: {
-  option: T & { isSelected?: boolean };
+  option: T & { isSelected?: boolean; children?: React.ReactNode };
   currentOptions?: (T & { isSelected?: boolean })[];
 }) => React.ReactNode;
 
@@ -264,76 +385,7 @@ export type SelectProps<T extends OptionItem> = {
   /**
    * Allows to set custom class names for the Select slots.
    */
-  classNames?: {
-    /**
-     * The main wrapper of the select. This wraps the rest of the slots.
-     */
-    base?: string;
-    /**
-     * The label of the select.
-     */
-    label?: string;
-    /**
-     * The placeholder of the select.
-     */
-    placeholder?: string;
-    /**
-     * The asterisk `*` for `isRequired`.
-     */
-    requiredAsterisk?: string;
-    /**
-     * The trigger of the select. This wraps the placeholder, the value and the selector icon.
-     */
-    trigger?: string;
-    /**
-     * The wrapper of the select content. This wraps the start/end content and the select value.
-     */
-    innerWrapper?: string;
-    /**
-     * The selector icon of the select. This is the icon that rotates when the select is open (data-open).
-     */
-    selectorIcon?: string;
-    /**
-     * The select value. This is also the slot that wraps the renderValue function result.
-     */
-    value?: string;
-    /**
-     * The wrapper of `topContent`, the listbox and `endContent`.
-     */
-    contentWrapper?: string;
-    /**
-     * The wrapper of the listbox. This wraps the listbox component, this slot is used on top of the scroll shadow component.
-     */
-    listboxWrapper?: string;
-    /**
-     * The listbox component. This is the component that wraps the select items.
-     */
-    listbox?: string;
-    /**
-     * The popover content slot. Use this to modify the popover content styles.
-     */
-    popoverContent?: string;
-    /**
-     * The wrapper of the helper text. This wraps the helper text and the error message.
-     */
-    helperWrapper?: string;
-    /**
-     * The description of the select.
-     */
-    description?: string;
-    /**
-     * The error message of the select.
-     */
-    errorMessage?: string;
-  };
-  /**
-   * Will apply classNames to all SelectItem-s
-   */
-  itemClassNames?: SelectItemClassNames;
-  /**
-   * Will apply classNames to all SelectSection-s
-   */
-  sectionClassNames?: SelectSectionClassNames;
+  classNames?: SelectClassNames;
 } & Omit<
   PopoverProps,
   | 'content'
@@ -355,6 +407,7 @@ export type SelectItemProps<T extends OptionItem> = {
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
   classNames?: SelectItemClassNames;
+  ref?: React.RefObject<HTMLLIElement | null>;
 } & T;
 
 export type SelectTriggerProps = {

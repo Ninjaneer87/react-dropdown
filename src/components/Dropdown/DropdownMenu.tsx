@@ -3,11 +3,9 @@ import { DropdownMenuContext } from '../../context/DropdownMenuContext';
 import { usePopoverContext } from '../../context/PopoverContext';
 import { DropdownMenuProps } from '../../types';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
+import { cn } from '../../utils/common';
 
-const menuClassName =
-  'bg-gray-700 rounded-lg w-full min-w-[200px] relative !outline-none !border-none';
-
-function DropdownMenu({ children }: DropdownMenuProps) {
+function DropdownMenu({ children, classNames }: DropdownMenuProps) {
   const dropdownContext = useDropdownContext();
   const popoverContext = usePopoverContext();
 
@@ -19,17 +17,24 @@ function DropdownMenu({ children }: DropdownMenuProps) {
     throw new Error('DropdownMenu should be used within a Popover component');
   }
 
-  const { autoFocus } = dropdownContext;
+  const { autoFocus, classNames: contextClassNames } = dropdownContext;
   const { isOpen } = popoverContext;
   const { containerRef, onKeyDown } = useKeyboardNavigation<HTMLDivElement>({
-    isMounted: isOpen,
+    isActive: isOpen,
     autoFocus,
   });
+
+  const baseClassName =
+    'bg-gray-700 rounded-lg w-full min-w-[200px] relative !outline-none !border-none';
 
   return (
     <DropdownMenuContext.Provider value={{}}>
       <div
-        className={menuClassName}
+        className={cn(
+          baseClassName,
+          contextClassNames?.menu?.base,
+          classNames?.base,
+        )}
         onKeyDown={onKeyDown}
         ref={containerRef}
         tabIndex={0}

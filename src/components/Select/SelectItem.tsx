@@ -16,6 +16,7 @@ function SelectItem<T extends OptionItem>({
   text,
   description,
   classNames,
+  ref,
   ...rest
 }: SelectItemProps<T>) {
   const selectContext = useSelectContext<T>();
@@ -51,6 +52,7 @@ function SelectItem<T extends OptionItem>({
     text,
     description,
     disabled,
+    children,
     isSelected: isOptionSelected,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...(rest as any),
@@ -147,7 +149,10 @@ function SelectItem<T extends OptionItem>({
     'aria-disabled': disabled,
     onClick: handleSelection,
     onKeyDown: onKeyDown,
-    ref: selectItemRef,
+    ref: (node: HTMLLIElement | null) => {
+      selectItemRef.current = node;
+      if (ref) ref.current = node;
+    },
     className: cn(baseClassName, itemClassNames?.base, classNames?.base),
   };
 

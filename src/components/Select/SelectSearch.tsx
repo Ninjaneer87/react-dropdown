@@ -1,13 +1,19 @@
 import { useEffect } from 'react';
 import { usePopoverContext } from '../../context/PopoverContext';
 import { useSelectContext } from '../../context/SelectContext';
+import { cn } from '../../utils/common';
 
 type Props = {
   placeholder: string;
   searchRef: React.RefObject<HTMLInputElement | null>;
+  className?: string;
 };
 
-function SelectSearch({ placeholder = 'Search...', searchRef }: Props) {
+function SelectSearch({
+  placeholder = 'Search...',
+  searchRef,
+  className,
+}: Props) {
   const popoverContext = usePopoverContext();
   const selectContext = useSelectContext();
 
@@ -58,8 +64,6 @@ function SelectSearch({ placeholder = 'Search...', searchRef }: Props) {
     }
 
     if (e.key === 'Tab') {
-      // e.preventDefault();
-      // e.stopPropagation();
       handleClose(false);
     }
 
@@ -90,21 +94,22 @@ function SelectSearch({ placeholder = 'Search...', searchRef }: Props) {
     setFocusedIndex(undefined);
   }
 
+  const baseClassName =
+    '!outline-none !border-none grow max-w-full min-w-10 basis-10';
+
   return (
-    <>
-      <input
-        onClick={onClick}
-        onKeyDown={onKeydown}
-        onChange={onChange}
-        onFocus={onFocus}
-        tabIndex={-1}
-        value={searchValue}
-        ref={searchRef}
-        className="!outline-none !border-none grow max-w-full min-w-10 basis-10"
-        data-select-search={popoverId}
-        placeholder={selected.length > 0 ? '' : placeholder}
-      />
-    </>
+    <input
+      onClick={onClick}
+      onKeyDown={onKeydown}
+      onChange={onChange}
+      onFocus={onFocus}
+      tabIndex={-1}
+      value={searchValue}
+      ref={searchRef}
+      className={cn(baseClassName, className)}
+      data-select-search={popoverId}
+      placeholder={selected.length > 0 ? '' : placeholder}
+    />
   );
 }
 

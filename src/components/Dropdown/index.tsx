@@ -36,6 +36,7 @@ const Dropdown = ({
   growContent,
   offset,
   autoFocus,
+  classNames,
 }: DropdownProps & DropdownComposition) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -110,6 +111,7 @@ const Dropdown = ({
       isOpen={open}
       growContent={growContent}
       offset={offset}
+      classNames={classNames?.popover}
       onOpen={() => {
         setIsOpen(true);
         if (onOpen) onOpen();
@@ -146,7 +148,9 @@ const Dropdown = ({
   );
 
   return (
-    <DropdownContext.Provider value={{ shouldCloseOnSelection, autoFocus }}>
+    <DropdownContext.Provider
+      value={{ shouldCloseOnSelection, autoFocus, classNames }}
+    >
       {dropdownJSX}
     </DropdownContext.Provider>
   );

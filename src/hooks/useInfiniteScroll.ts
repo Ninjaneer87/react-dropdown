@@ -13,7 +13,7 @@ export interface UseInfiniteScrollProps {
   hasMore?: boolean;
   /**
    * The distance in pixels before the end of the items that will trigger a call to load more.
-   * @default 100
+   * @default 50
    */
   distance?: number;
   /**
@@ -37,7 +37,7 @@ export function useInfiniteScroll<
 >(props: UseInfiniteScrollProps = {}) {
   const {
     hasMore = true,
-    distance = 100,
+    distance = 50,
     isEnabled = true,
     shouldUseLoader = true,
     onLoadMore,
