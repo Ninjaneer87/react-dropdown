@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-function usePreventBodyScroll(shouldPrevent: boolean) {
+export function usePreventBodyScroll(shouldPrevent: boolean) {
   useEffect(() => {
     const currentBodyOverflowY = window.getComputedStyle(
       document.body,
@@ -17,5 +17,3 @@ function usePreventBodyScroll(shouldPrevent: boolean) {
     };
   }, [shouldPrevent]);
 }
-
-export default usePreventBodyScroll;

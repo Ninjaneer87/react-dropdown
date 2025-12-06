@@ -9,14 +9,14 @@ import { OptionItem, SelectCompositionProps, SelectProps } from '../../types';
 import SelectDivider from './SelectDivider';
 import SelectItem from './SelectItem';
 import SelectSection from './SelectSection';
-import Popover from '../Popover';
+import Popover from '../Popover/Popover';
 import { SelectContext, SelectContextType } from '../../context/SelectContext';
 import CaretIcon from '../ui/CaretIcon';
 import { cn } from '../../utils/common';
 import SelectSearch from './SelectSearch';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
-import SpinnerLoader from '../SpinnerLoader';
+import SpinnerLoader from '../SpinnerLoader/SpinnerLoader';
 
 function Select<T extends OptionItem>({
   // caret,

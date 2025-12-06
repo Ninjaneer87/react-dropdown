@@ -1,0 +1,22 @@
+.dropdownBase {
+  background-color: blue;
+  padding: 20px;
+  border-radius: 0;
+}
+
+.dropdownItemBase {
+  background-color: grey;
+  border-radius: 0;
+
+  &:hover {
+    background-color: blueviolet;
+  }
+}
+
+.localContentWrapper {
+  background-color: blue;
+}
+
+.globalContentWrapper {
+  background-color: purple;
+}

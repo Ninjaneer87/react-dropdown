@@ -1,0 +1,5 @@
+{
+  // These settings are specific to the react-dropdown workspace
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "eslint.workingDirectories": ["packages/app", "packages/lib"]
+}

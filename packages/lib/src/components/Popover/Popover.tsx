@@ -20,13 +20,13 @@ import {
 } from '../../utils/common';
 import ClientPortal from '../utility/ClientPortal';
 import { useWindowResize } from '../../hooks/useWindowResize';
-import useFocusTrap from '../../hooks/useFocusTrap';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 import PopoverFocusTrapper from './PopoverFocusTrapper';
 import {
   PopoverRootContext,
   usePopoverRootContext,
 } from '../../context/PopoverRootContext';
-import usePreventBodyScroll from '../../hooks/usePreventBodyScroll';
+import { usePreventBodyScroll } from '../../hooks/usePreventBodyScroll';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
 import { usePositionObserver } from '../../hooks/usePositionObserver';
 
@@ -67,8 +67,8 @@ const Popover = ({
   const { autoFocus, trapFocus } = focusTrapProps;
   const popoverContentRef = useRef<HTMLDivElement>(null);
   const popoverTriggerRef = useRef<HTMLDivElement>(null);
-  const showDelayRef = useRef<number | null>(null);
-  const hideDelayRef = useRef<number | null>(null);
+  const showDelayRef = useRef<NodeJS.Timeout | null>(null);
+  const hideDelayRef = useRef<NodeJS.Timeout | null>(null);
 
   const popoverRootContext = usePopoverRootContext();
   const { isRootOpen, rootPopoverId } = popoverRootContext || {};

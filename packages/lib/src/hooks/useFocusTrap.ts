@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-function useFocusTrap(isActive: boolean, shouldAutoFocus = true) {
+export function useFocusTrap(isActive: boolean, shouldAutoFocus = true) {
   const focusContainerRef = useRef<HTMLDivElement>(null);
   const firstFocusableItemRef = useRef<HTMLDivElement>(null);
   const lastFocusableItemRef = useRef<HTMLDivElement>(null);
@@ -38,9 +38,7 @@ function useFocusTrap(isActive: boolean, shouldAutoFocus = true) {
     return () => {
       document.removeEventListener('keydown', trapFocus);
     };
-  }, [isActive,shouldAutoFocus]);
+  }, [isActive, shouldAutoFocus]);
 
   return { focusContainerRef, firstFocusableItemRef, lastFocusableItemRef };
 }
-
-export default useFocusTrap;

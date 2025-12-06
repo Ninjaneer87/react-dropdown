@@ -1,131 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
-import Dropdown from './components/Dropdown';
-import Popover from './components/Popover';
-import Select from './components/Select';
-import { Option, usePokemonList } from './utils/dummy-data-hooks';
-import { debounceCallback } from './utils/common';
+import { useMemo, useState } from 'react';
+import '@andrejground/react-dropdown/style.css';
+import {
+  debounceCallback,
+  Dropdown,
+  Popover,
+  Select,
+} from '@andrejground/react-dropdown';
+import styles from '~/App.module.css';
+import { Option, usePokemonList } from '~/hooks/usePokemonList';
+import PinkSelect from '~/PinkSelect/PinkSelect';
 
-// const items = [
-//   {
-//     text: 'Andrej',
-//     value: 'option-1',
-//     extraProp: 'Extra prop',
-//     disabled: false,
-//   },
-//   {
-//     text: 'Denis',
-//     value: 'option-2',
-//     extraProp: 'Extra prop',
-//     disabled: true,
-//   },
-//   {
-//     text: 'Farcry',
-//     value: 'option-3',
-//     extraProp: 'Extra prop',
-//     disabled: false,
-//   },
-//   {
-//     text: 'North',
-//     value: 'option-4',
-//     extraProp: 'Extra prop',
-//     disabled: false,
-//   },
-//   {
-//     text: 'Zenit',
-//     value: 'option-5',
-//     extraProp: 'Extra prop',
-//   },
-//   {
-//     text: 'Fantom',
-//     value: 'option-6',
-//     extraProp: 'Extra prop',
-//   },
-//   {
-//     text: 'Austral',
-//     value: 'option-7',
-//     extraProp: 'Extra prop',
-//   },
-// ];
-
-// const manyItems = [...Array(100).keys()].map((item) => ({
-//   text: `Option-${item}`,
-//   value: `option-${item}`,
-//   extraProp: 'Extra prop',
-// }));
-
-// const groups = [
-//   {
-//     title: 'Group 1',
-//     items,
-//   },
-//   {
-//     title: 'Group 2',
-//     items,
-//   },
-//   {
-//     title: 'Group 3',
-//     items,
-//   },
-// ];
-
-const preselectedDropdownItems = [
-  {
-    text: 'bulbasaur',
-    value: 'https://pokeapi.co/api/v2/pokemon/1/',
-  },
-  {
-    text: 'venusaur',
-    value: 'https://pokeapi.co/api/v2/pokemon/3/',
-  },
-  {
-    text: 'ekans',
-    value: 'https://pokeapi.co/api/v2/pokemon/23/',
-  },
-  {
-    text: 'fearow',
-    value: 'https://pokeapi.co/api/v2/pokemon/22/',
-  },
-  {
-    text: 'jigglypuff',
-    value: 'https://pokeapi.co/api/v2/pokemon/39/',
-  },
-  {
-    text: 'wigglytuff',
-    value: 'https://pokeapi.co/api/v2/pokemon/40/',
-  },
-  {
-    text: 'ninetales',
-    value: 'https://pokeapi.co/api/v2/pokemon/38/',
-  },
-  {
-    text: 'vulpix',
-    value: 'https://pokeapi.co/api/v2/pokemon/37/',
-  },
-  {
-    text: 'ivysaur',
-    value: 'https://pokeapi.co/api/v2/pokemon/2/',
-  },
-  {
-    text: 'charmander',
-    value: 'https://pokeapi.co/api/v2/pokemon/4/',
-  },
-  {
-    text: 'charmeleon',
-    value: 'https://pokeapi.co/api/v2/pokemon/5/',
-  },
-  {
-    text: 'machop',
-    value: 'https://pokeapi.co/api/v2/pokemon/66/',
-  },
-  {
-    text: 'alakazam',
-    value: 'https://pokeapi.co/api/v2/pokemon/65/',
-  },
-  {
-    text: 'kadabra',
-    value: 'https://pokeapi.co/api/v2/pokemon/64/',
-  },
-];
 function App() {
   const { items, isLoading, onLoadMore, hasMore } = usePokemonList({
     fetchDelay: 300,
@@ -133,7 +17,6 @@ function App() {
   console.log({ items });
   const [selectedValue, setSelectedValue] = useState<Option[]>([]);
   const [doubleViewportSize, setDoubleViewportSize] = useState(false);
-  const [selectItems, setSelectItems] = useState(items);
   const [searchVal, setSearchVal] = useState('');
   const filteredItems = useMemo(
     () =>
@@ -183,23 +66,6 @@ function App() {
         >
           Toggle OverflowY
         </button>
-        <button
-          className="p-2 border cursor-pointer rounded-sm"
-          onClick={() => {
-            setSelectItems((prev) => [
-              ...new Set([
-                ...prev,
-                {
-                  text: 'Added option',
-                  value: 'option-8',
-                  extraProp: 'Extra prop',
-                },
-              ]),
-            ]);
-          }}
-        >
-          Add item
-        </button>
 
         <Select
           // items={items}
@@ -213,8 +79,8 @@ function App() {
             // setSelectedValue(value.selectedOptions);
           }}
           classNames={{
-            trigger: 'bg-blue-800',
-            placeholder: 'opacity-60',
+            trigger: { base: 'bg-blue-800', placeholder: 'opacity-60' },
+
             base: 'w-80',
           }}
           // renderOption={(option) => {
@@ -287,7 +153,8 @@ function App() {
           classNames={{
             errorMessage: 'text-amber-600',
             contentWrapper: 'text-sm',
-            trigger: 'py-[1px] px-2',
+            trigger: { base: styles.dropdownBase },
+            item: { base: styles.dropdownItemBase },
           }}
           renderOption={({ option, currentOptions }) => {
             const isLastItem =
@@ -326,7 +193,7 @@ function App() {
           ))} */}
         </Select>
 
-        <Select
+        <PinkSelect
           onSelectionChange={(value) => {
             console.log({ value });
             // setSelectedValue(value.selectedOptions);
@@ -340,13 +207,18 @@ function App() {
           // value={selectedValue}
           search
           onSearchChange={setSearchVal}
+          // classNames={{ item: { contentWrapper: styles.globalContentWrapper } }}
         >
           {filteredItems.map((item) => (
-            <Select.Item key={item.value} {...item}>
+            <Select.Item
+              key={item.value}
+              {...item}
+              classNames={{ contentWrapper: styles.localContentWrapper }}
+            >
               {item.text}
             </Select.Item>
           ))}
-        </Select>
+        </PinkSelect>
 
         <Select
           items={items}

@@ -8,7 +8,7 @@ import DropdownItem from './DropdownItem';
 import DropdownTrigger from './DropdownTrigger';
 import DropdownDivider from './DropdownDivider';
 import { DropdownComposition, DropdownProps } from '../../types';
-import Popover from '../Popover';
+import Popover from '../Popover/Popover';
 import { defaultChildCaret, defaultRootCaret } from '../../utils/elements';
 
 const Dropdown = ({

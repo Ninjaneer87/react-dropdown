@@ -1,34 +1,24 @@
 {
-  "name": "react-dropdown",
+  "name": "react-dropdown-monorepo",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@tailwindcss/vite": "^4.0.6",
-    "clsx": "^2.1.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router": "^7.2.0",
-    "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.0.6"
+    "app": "npm run dev --workspace=app",
+    "build:lib": "npm run build --workspace=@andrejground/react-dropdown",
+    "lint": "npm run lint --workspaces --if-present"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
+    "@types/node": "^24.10.1",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9.19.0",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-react-refresh": "^0.4.18",
-    "globals": "^15.14.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "typescript": "~5.7.2",
-    "typescript-eslint": "^8.22.0",
     "vite": "^6.1.0"
   }
 }
