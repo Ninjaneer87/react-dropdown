@@ -36,6 +36,7 @@ function SelectSection({
     'p-1 text-sm font-semibold text-gray-400 mb-2',
     isStickyTitle ? 'bg-gray-800 sticky top-0 z-10 rounded-sm' : '',
   );
+  const listClassName = 'pl-0 mb-0 list-none';
 
   return (
     <li
@@ -53,7 +54,7 @@ function SelectSection({
         </div>
       )}
 
-      <ul>{children}</ul>
+      <ul className={listClassName}>{children}</ul>
 
       {showDivider && <SelectDivider />}
     </li>

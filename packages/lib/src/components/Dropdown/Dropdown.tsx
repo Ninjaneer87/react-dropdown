@@ -35,7 +35,11 @@ const Dropdown = ({
   openOnHover,
   growContent,
   offset,
-  autoFocus,
+  autoFocus = 'menu',
+  focusTrapProps = {
+    autoFocus: autoFocus === 'none',
+    trapFocus: true,
+  },
   classNames,
 }: DropdownProps & DropdownComposition) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -112,6 +116,7 @@ const Dropdown = ({
       growContent={growContent}
       offset={offset}
       classNames={classNames?.popover}
+      focusTrapProps={focusTrapProps}
       onOpen={() => {
         setIsOpen(true);
         if (onOpen) onOpen();

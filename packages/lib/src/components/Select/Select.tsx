@@ -173,7 +173,7 @@ function Select<T extends OptionItem>({
   const contentWrapperClassName =
     'relative !outline-none !border-none p-2 grow';
   const listboxClassName = cn(
-    'max-h-[250px] overflow-y-auto relative  scroll-pt-12',
+    'list-none pl-0 mb-0 max-h-[250px] overflow-y-auto relative  scroll-pt-12',
   );
   const helperWrapperClassName = cn('text-xs mt-1');
   const descriptionClassName = cn('opacity-60');
@@ -245,7 +245,7 @@ function Select<T extends OptionItem>({
       focusableItemsLength,
       search,
       onSearchChange,
-      focusSearch,
+      focusSearch: search ? focusSearch : undefined,
       popOnSelection,
       currentOptions: filteredItems,
     }),

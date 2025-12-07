@@ -95,7 +95,7 @@ function SelectSearch({
   }
 
   const baseClassName =
-    '!outline-none !border-none grow max-w-full min-w-10 basis-10';
+    '!outline-none bg-transparent !border-none grow max-w-full min-w-10 basis-10';
 
   return (
     <input

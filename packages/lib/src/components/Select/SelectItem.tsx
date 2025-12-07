@@ -42,6 +42,7 @@ function SelectItem<T extends OptionItem>({
     focusSearch,
     popOnSelection,
     currentOptions,
+    search,
   } = selectContext;
 
   const { handleCloseRoot } = popoverRootContext;
@@ -92,12 +93,17 @@ function SelectItem<T extends OptionItem>({
 
       setSelected(newSelectedOptions);
 
-      if (focusedIndex) {
-        setFocusedIndex(+focusedIndex);
+      console.log({ focusedIndex });
+      if (focusedIndex && !search) {
+        setFocusedIndex(undefined);
+        setTimeout(() => {
+          setFocusedIndex(+focusedIndex);
+        }, 1);
       }
     }
 
-    if (multiple && popOnSelection && focusSearch) {
+    if (multiple && popOnSelection && search && focusSearch) {
+      console.log('selection change');
       focusSearch();
     }
 

@@ -6,6 +6,7 @@
   ],
   "scripts": {
     "app": "npm run dev --workspace=app",
+    "site": "concurrently \"npm:dev --workspace=@andrejground/react-dropdown\" \"npm:start --workspace=site\"",
     "build:lib": "npm run build --workspace=@andrejground/react-dropdown",
     "lint": "npm run lint --workspaces --if-present"
   },
@@ -15,6 +16,7 @@
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^8.2.2",
     "eslint": "^9.19.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
