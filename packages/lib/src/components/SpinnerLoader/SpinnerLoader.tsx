@@ -9,7 +9,7 @@ const SpinnerLoader = () => {
           animationTimingFunction: 'ease-out',
           animationDuration: '700ms',
         }}
-        className="animate-spin rounded-full h-[1em] w-[1em] border-2 border[currentColor] border-t-transparent border-b-transparent border-l-transparent"
+        className="spinning rounded-full h-[1em] w-[1em] border-2 border[currentColor] border-t-transparent border-b-transparent border-l-transparent"
       />
     </div>
   );

@@ -17,6 +17,7 @@ import SelectSearch from './SelectSearch';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import SpinnerLoader from '../SpinnerLoader/SpinnerLoader';
+import styles from './Select.module.css';
 
 function Select<T extends OptionItem>({
   // caret,
@@ -163,15 +164,18 @@ function Select<T extends OptionItem>({
   const requiredAsteriskClassName = cn('text-red-700 ml-1');
 
   const triggerBaseClassName = cn(
-    'rounded-lg border p-2 grow flex items-center gap-2 relative',
+    styles.triggerBase,
+    'rounded-lg border border-gray-200 px-2 py-1 min-h-8 grow flex items-center gap-2 relative',
   );
-  const triggerPlaceholderClassName = cn('grow flex items-center opacity-60');
+  const triggerPlaceholderClassName = cn(
+    'text-[1em] leading-[1.2em] grow flex items-center text-gray-500',
+  );
   const triggerValueTextClassName = 'flex items-center grow flex-wrap gap-1';
   const triggerValueChipClassName = 'inline-flex items-center';
-  const triggerSelectorIconClassName = cn('ml-auto');
+  const triggerSelectorIconClassName = cn('ml-auto inline-flex items-center');
 
   const contentWrapperClassName =
-    'relative !outline-none !border-none p-2 grow';
+    'relative outline-none! border-none! p-2 grow';
   const listboxClassName = cn(
     'list-none pl-0 mb-0 max-h-[250px] overflow-y-auto relative  scroll-pt-12',
   );

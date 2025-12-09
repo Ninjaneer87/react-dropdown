@@ -26,6 +26,10 @@
   -webkit-animation-fill-mode: forwards;
 }
 
+.spinning {
+  animation: spinning 1s linear infinite;
+}
+
 @keyframes fadeIn {
   0% {
     opacity: 0;
@@ -68,4 +72,24 @@
     opacity: 0;
     transform: scale(0.95);
   }
+}
+
+@keyframes spinning {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+:root {
+  /* Select */
+  --rd-bg-fill-color: white;
+  --rd-text-color: black;
+  --rd-border-radius: 8px;
+  --rd-font-size: 1rem;
+
+  --rd-text-color-select-base: black;
+  --rd-bg-color-select-trigger-base: white;
 }

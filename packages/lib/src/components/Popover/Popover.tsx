@@ -356,7 +356,7 @@ const Popover = ({
   const contentClassName = cn(
     'fixed z-10',
     isRootExpanded ? 'scale-in' : 'scale-out',
-    'transition-opacity p-2 bg-gray-700 rounded-lg',
+    'transition-opacity p-2 bg-white text-gray-800 rounded-lg',
   );
   const backdropClassName = cn(
     'fixed z-0 inset-0',

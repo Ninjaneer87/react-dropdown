@@ -25,7 +25,7 @@ function DropdownMenu({ children, classNames }: DropdownMenuProps) {
   });
 
   const baseClassName =
-    'bg-gray-700 rounded-lg w-full min-w-[200px] relative !outline-none !border-none';
+    'rounded-lg w-full min-w-[200px] relative outline-none! border-none!';
 
   return (
     <DropdownMenuContext.Provider value={{}}>

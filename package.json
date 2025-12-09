@@ -6,8 +6,10 @@
   ],
   "scripts": {
     "app": "npm run dev --workspace=app",
-    "site": "concurrently \"npm:dev --workspace=@andrejground/react-dropdown\" \"npm:start --workspace=site\"",
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel --color | grep --line-buffered '\\S'",
     "build:lib": "npm run build --workspace=@andrejground/react-dropdown",
+    "site": "npm run start --workspace=site",
     "lint": "npm run lint --workspaces --if-present"
   },
   "devDependencies": {
@@ -20,7 +22,10 @@
     "eslint": "^9.19.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "turbo": "^2.6.3",
     "typescript": "~5.7.2",
     "vite": "^6.1.0"
-  }
+  },
+    "packageManager": "npm@10.9.3"
 }
+

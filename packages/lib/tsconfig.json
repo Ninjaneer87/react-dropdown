@@ -1,12 +1,35 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.base.json", // Assuming you have a base config
   "compilerOptions": {
+    // --- Output ---
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
     "noEmit": false,
     "composite": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "sourceMap": true,
+
+    // --- Module Resolution ---
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
+    // --- Interoperability ---
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // --- Language & Environment ---
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "esnext"],
+
+    // --- Type Checking ---
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

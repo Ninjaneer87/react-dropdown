@@ -125,7 +125,7 @@ function SelectItem<T extends OptionItem>({
 
   const baseClassName = cn(
     disabled && showDisabledStyles ? 'opacity-60 pointer-events-none' : '',
-    'p-2 hover:bg-gray-500 [&[data-focused="true"]]:bg-gray-500 focus-visible:bg-gray-500 focus-within:bg-gray-500 rounded-lg transition-all w-full flex cursor-pointer items-center gap-2',
+    'p-2 hover:bg-gray-200 [&[data-focused="true"]]:bg-gray-200 focus-visible:bg-gray-200 focus-within:bg-gray-200 rounded-lg transition-all w-full flex cursor-pointer items-center gap-2',
   );
   const contentWrapperClassName = cn(
     'flex grow shrink-0 basis-36 justify-between items-center',

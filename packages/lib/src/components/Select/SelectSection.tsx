@@ -33,8 +33,8 @@ function SelectSection({
   const { sectionClassNames } = selectContext;
   const baseClassName = cn('bg-inherit');
   const titleClassName = cn(
-    'p-1 text-sm font-semibold text-gray-400 mb-2',
-    isStickyTitle ? 'bg-gray-800 sticky top-0 z-10 rounded-sm' : '',
+    'bg-gray-100 p-1 text-sm font-semibold mb-2',
+    isStickyTitle ? 'sticky top-0 z-10 rounded-sm' : '',
   );
   const listClassName = 'pl-0 mb-0 list-none';
 

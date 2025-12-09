@@ -75,9 +75,9 @@ function DropdownItem<T extends ElementType = 'div'>(
   }
 
   const baseClassName = cn(
-    'p-2 hover:bg-gray-500 focus-visible:bg-gray-500 focus-within:bg-gray-500 rounded-lg transition-all w-full flex cursor-pointer items-center gap-2',
+    'p-2 hover:bg-gray-200 focus-visible:bg-gray-200 focus-within:bg-gray-200 rounded-lg transition-all w-full flex cursor-pointer items-center gap-2',
     disabled && showDisabledStyles ? 'opacity-60 pointer-events-none' : '',
-    isHighlighted ? 'bg-gray-600' : '',
+    isHighlighted ? 'bg-gray-300' : '',
   );
   const startContentClassName = cn('shrink-0 inline-flex');
   const mainContentClassName = cn('shrink-0 grow inline-block');

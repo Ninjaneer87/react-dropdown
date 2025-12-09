@@ -50,8 +50,8 @@ function DropdownSection({
   );
 
   const titleClassName = cn(
-    'p-1 mb-2 text-sm font-semibold text-gray-400',
-    isStickyTitle ? 'bg-gray-800 sticky top-0 z-10 rounded-sm' : '',
+    'bg-gray-100 p-1 mb-2 text-sm font-semibold text-gray-400',
+    isStickyTitle ? 'sticky top-0 z-10 rounded-sm' : '',
   );
 
   return (
