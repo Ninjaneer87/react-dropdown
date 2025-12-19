@@ -1,11 +1,6 @@
 {
   // These settings are specific to the react-dropdown workspace
   "typescript.preferences.importModuleSpecifier": "non-relative",
-  "eslint.workingDirectories": [
-    "packages/app",
-    "packages/site",
-    "packages/lib"
-  ],
   "tailwindCSS.classAttributes": [
     ".*class.*",
     ".*Class.*",
@@ -14,5 +9,9 @@
     ".*className.*",
     ".*ClassName.*",
     ".*Styles.*"
-  ]
+  ],
+  "tailwindCSS.experimental.classRegex": [
+    ["cn\\(([^)]*)\\)", "(?:'([^']*)'|\"([^\"]*)\"|`([^`]*)`)"]
+  ],
+  "editor.wordWrap": "wordWrapColumn"
 }

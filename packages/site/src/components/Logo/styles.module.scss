@@ -1,0 +1,69 @@
+.logo {
+  width: clamp(150px, 25vw, 250px);
+  aspect-ratio: 250 / 116;
+
+  &--background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    // height: 100%;
+    width: 100%;
+    z-index: -1;
+    opacity: 0.05;
+  }
+}
+.A,
+.rest {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 4;
+  stroke-dasharray: 700;
+  stroke-dashoffset: 0;
+}
+.A {
+  animation: letter 20s ease-in-out forwards;
+}
+.rest {
+  animation: lines 20s ease-in-out forwards;
+}
+
+// Animations
+@keyframes lines {
+  0% {
+    stroke-dashoffset: 700;
+    filter: blur(10px);
+  }
+  4% {
+    stroke: var(--ifm-color-primary);
+  }
+  8% {
+    stroke-dashoffset: 0;
+    fill: transparent;
+  }
+  10%,
+  100% {
+    stroke: var(--ifm-font-color-base);
+    fill: transparent;
+    filter: blur(0);
+  }
+}
+
+@keyframes letter {
+  0% {
+    stroke-dashoffset: 700;
+    filter: blur(10px);
+  }
+  4% {
+    stroke: var(--ifm-font-color-base);
+  }
+  8% {
+    stroke-dashoffset: 0;
+    fill: transparent;
+  }
+  10%,
+  100% {
+    stroke: var(--ifm-color-primary);
+    fill: transparent;
+    filter: blur(0);
+  }
+}

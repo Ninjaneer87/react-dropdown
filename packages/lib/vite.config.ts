@@ -6,6 +6,11 @@ import dts from 'vite-plugin-dts';
 
 // https://vitejs.dev/guide/build.html#library-mode
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+  },
   plugins: [
     react(),
     tailwindcss(),
@@ -13,6 +18,11 @@ export default defineConfig({
       insertTypesEntry: true,
     }),
   ],
+  css: {
+    modules: {
+      localsConvention: 'camelCaseOnly',
+    },
+  },
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),

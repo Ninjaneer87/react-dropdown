@@ -1,20 +1,17 @@
 import type { ReactNode } from 'react';
+import '@fontsource-variable/montserrat';
 import '@andrejground/react-dropdown/style.css';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import Heading from '@theme/Heading';
-import styles from './index.module.css';
-import { usePokemonList } from '@site/src/hooks/usePokemonList';
-import {
-  debounceCallback,
-  Dropdown,
-  Select,
-} from '@andrejground/react-dropdown';
+import styles from './index.module.scss';
 import clsx from 'clsx';
-import SelectDemo from '@site/src/components/SelectDemo/SelectDemo';
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import { TypeAnimation } from 'react-type-animation';
+import Logo from '@site/src/components/Logo';
+import Icon from '@mdi/react';
+import { mdiArrowRightThin } from '@mdi/js';
 
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
@@ -22,19 +19,40 @@ function HomepageHeader() {
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
-        <Heading as="h1" className="hero__title">
-          {siteConfig.title}
-        </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/intro"
-          >
-            Docusaurus Tutorial - 5min ⏱️
-          </Link>
+        <div className={styles.heroRow}>
+          <div className="">
+            <p className={clsx('hero__subtitle', styles.heroSubtitle)}>
+              {siteConfig.tagline}
+            </p>
 
-          <BrowserOnly>{() => <SelectDemo />}</BrowserOnly>
+            <Heading as="h1" className={clsx('hero__title', styles.heroTitle)}>
+              <span className={styles['heroTitle--primary']}>Andrej</span>Ground
+              <br />
+              <TypeAnimation
+                className={styles.typing}
+                cursor={false}
+                sequence={['Lab', 1500, 'Guides', 1500, 'Tutorials', 1500]}
+                wrapper="span"
+                repeat={Infinity}
+              />
+            </Heading>
+          </div>
+
+          <div className="">
+            <Logo />
+
+            <div className={styles.buttons}>
+              <Link
+                className="button button--primary button--lg"
+                to="/docs/intro"
+              >
+                Get started <Icon path={mdiArrowRightThin} size={1} />
+              </Link>
+              <Link className="button button--secondary button--lg" to="/blog">
+                What's new <Icon path={mdiArrowRightThin} size={1} />
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </header>

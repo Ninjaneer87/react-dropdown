@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMutationObserver } from './useMutationObserver';
 import { ListAutoFocus } from '../types';
@@ -41,7 +42,7 @@ export function useKeyboardNavigation<T extends HTMLElement>({
     setFocusableItems(items);
   }, [containerRef]);
 
-  useMutationObserver({ element: containerRef?.current, onMutation: getItems });
+  useMutationObserver({ element: containerRef.current, onMutation: getItems });
 
   useEffect(() => {
     if (!isActive || !autoFocus || autoFocus === 'none') return;

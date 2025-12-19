@@ -1,7 +1,11 @@
 import { useDropdownContext } from '../../context/DropdownContext';
 import { DropdownTriggerProps } from '../../types';
+import { Slot } from '@/components/utility/Slot';
 
-function DropdownTrigger({ children }: DropdownTriggerProps) {
+function DropdownTrigger({
+  children,
+  ...rest
+}: DropdownTriggerProps & Record<string, unknown>) {
   const dropdownContext = useDropdownContext();
 
   if (!dropdownContext) {
@@ -10,7 +14,7 @@ function DropdownTrigger({ children }: DropdownTriggerProps) {
     );
   }
 
-  return children;
+  return <Slot {...rest}>{children}</Slot>;
 }
 
 export default DropdownTrigger;

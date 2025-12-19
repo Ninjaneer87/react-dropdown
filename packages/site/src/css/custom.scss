@@ -1,0 +1,100 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-font-family-base:
+    'Montserrat Variable', ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  --ifm-color-primary: #0049db;
+  --ifm-color-primary-dark: #0042c5;
+  --ifm-color-primary-darker: #003eba;
+  --ifm-color-primary-darkest: #003399;
+  --ifm-color-primary-light: #0050f1;
+  --ifm-color-primary-lighter: #0054fc;
+  --ifm-color-primary-lightest: #1e69ff;
+  --ifm-background-color: #ffffff;
+  --ifm-navbar-background-color: #ffffffcc;
+  --ifm-code-font-size: 95%;
+  --ifm-font-color-base: #333333;
+  --ifm-font-color-secondary: #444444;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+
+  --rd-bg-color-select-trigger-base: white;
+  --dot-color: #33333322;
+  --bg-color-hover: #f1f1f1;
+  --ifm-color-primary-bg: #0049db22;
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+html[data-theme=dark] {
+  --ifm-color-primary: #00e5ff;
+  --ifm-color-primary-dark: #00cee6;
+  --ifm-color-primary-darker: #00c3d9;
+  --ifm-color-primary-darkest: #00a0b3;
+  --ifm-color-primary-light: #1ae8ff;
+  --ifm-color-primary-lighter: #26e9ff;
+  --ifm-color-primary-lightest: #4dedff;
+  --ifm-background-color: #0f0f0f;
+  --ifm-navbar-background-color: #0f0f0fcc;
+  --ifm-font-color-base: #ffffff;
+  --ifm-font-color-secondary: #cccccc;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+
+  --rd-bg-color-select-trigger-base: black;
+  --dot-color: #ffffff22;
+  --bg-color-hover: #3f3f3f;
+  --ifm-color-primary-bg: #00e5ff22;
+}
+
+#__docusaurus {
+  min-height: 100vh;
+}
+
+.navbar__title {
+  font-weight: 400;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.card {
+  backdrop-filter: blur(5px);
+  background-color: transparent;
+}
+
+@media screen and (min-width: 996px) {
+  .theme-layout-navbar.navbar.navbar--fixed-top:not(.navbar-sidebar--show) {
+    backdrop-filter: blur(5px);
+  }
+}
+
+.theme-layout-navbar-sidebar.navbar-sidebar {
+  backdrop-filter: blur(5px);
+}
+
+body {
+  --dot-size: 1px; /* The size/radius of the dot */
+  --dot-spacing: 30px; /* The space between the dots */
+  /* --------------------------------- */
+
+  height: unset;
+  min-height: 100vh; /* Make sure it covers the full viewport height */
+  // background-color: #1a1a2e; /* Your primary background color */
+  position: relative; /* Needed for the glass cards to be positioned relative to it */
+
+  /* The magic for the dotted pattern */
+  background-image: radial-gradient(
+    circle at center,
+    var(--dot-color) var(--dot-size),
+    transparent var(--dot-size)
+  );
+
+  background-size: var(--dot-spacing) var(--dot-spacing);
+  background-repeat: repeat;
+}

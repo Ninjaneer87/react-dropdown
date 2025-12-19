@@ -13,19 +13,19 @@ import Popover from '../Popover/Popover';
 import { SelectContext, SelectContextType } from '../../context/SelectContext';
 import CaretIcon from '../ui/CaretIcon';
 import { cn } from '../../utils/common';
-import SelectSearch from './SelectSearch';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import SpinnerLoader from '../SpinnerLoader/SpinnerLoader';
 import styles from './Select.module.css';
+import SelectSearch from '@/components/Select/SelectSearch';
 
 function Select<T extends OptionItem>({
   // caret,
   children,
   trigger,
   shouldFlip = true,
-  shouldBlockScroll = true,
-  shouldCloseOnScroll = !shouldBlockScroll,
+  shouldBlockScroll = false,
+  shouldCloseOnScroll = false,
   shouldCloseOnBlur = true,
   shouldCloseOnEsc = true,
   backdrop,
@@ -158,20 +158,20 @@ function Select<T extends OptionItem>({
   const popoverContentClassName = cn('p-0');
   const baseClassName = cn(
     fullWidth ? 'w-full' : 'w-80',
-    isDisabled ? 'opacity-60' : '',
+    isDisabled ? 'opacity-60 pointer-events-none' : '',
   );
-  const labelClassName = cn('mb-1 w-fit');
+  const labelClassName = cn('mb-1 w-fit', isDisabled ? 'opacity-60' : '');
   const requiredAsteriskClassName = cn('text-red-700 ml-1');
 
   const triggerBaseClassName = cn(
     styles.triggerBase,
-    'rounded-lg border border-gray-200 px-2 py-1 min-h-8 grow flex items-center gap-2 relative',
+    'rounded-lg border text-gray-800 border-gray-200 px-2 py-1 min-h-8 grow flex items-center gap-2 relative',
   );
   const triggerPlaceholderClassName = cn(
     'text-[1em] leading-[1.2em] grow flex items-center text-gray-500',
   );
   const triggerValueTextClassName = 'flex items-center grow flex-wrap gap-1';
-  const triggerValueChipClassName = 'inline-flex items-center';
+  const triggerValueChipClassName = 'inline-flex items-center truncate';
   const triggerSelectorIconClassName = cn('ml-auto inline-flex items-center');
 
   const contentWrapperClassName =
@@ -277,30 +277,30 @@ function Select<T extends OptionItem>({
 
   return (
     <SelectContext.Provider value={contextValue}>
+      {label && (
+        <div
+          className={cn(labelClassName, classNames?.label)}
+          onClick={() => {
+            if (!openOnLabelClick) return;
+
+            setIsOpen((prev) => !prev);
+          }}
+        >
+          {label}
+          {isRequired && (
+            <span
+              className={cn(
+                requiredAsteriskClassName,
+                classNames?.requiredAsterisk,
+              )}
+            >
+              *
+            </span>
+          )}
+        </div>
+      )}
+
       <div className={cn(baseClassName, classNames?.base)} ref={baseRef}>
-        {label && (
-          <div
-            className={cn(labelClassName, classNames?.label)}
-            onClick={() => {
-              if (!openOnLabelClick) return;
-
-              setIsOpen((prev) => !prev);
-            }}
-          >
-            {label}
-            {isRequired && (
-              <span
-                className={cn(
-                  requiredAsteriskClassName,
-                  classNames?.requiredAsterisk,
-                )}
-              >
-                *
-              </span>
-            )}
-          </div>
-        )}
-
         <Popover
           fullWidth
           shouldFlip={shouldFlip}

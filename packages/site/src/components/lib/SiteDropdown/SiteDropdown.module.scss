@@ -1,0 +1,24 @@
+.popoverContent {
+  background-color: var(--ifm-card-background-color);
+  color: var(--ifm-font-color-base);
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.sectionTitle {
+  background-color: transparent;
+  font-size: 80%;
+}
+
+.itemBase {
+  &:hover,
+  &:active,
+  &:focus-visible,
+  &:focus-within,
+  &[data-highlighted-item='true'] {
+    background-color: var(--ifm-color-emphasis-200);
+  }
+}
+
+.dividerBase {
+  background-color: var(--ifm-color-emphasis-300);
+}

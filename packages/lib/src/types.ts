@@ -33,7 +33,7 @@ export type PopoverProps = {
   onClose?: () => void;
   onBlur?: () => void;
   onOpenChange?: (isOpen: boolean) => void;
-  isChild?: boolean;
+  isNested?: boolean;
   fullWidth?: boolean;
   openOnHover?: boolean;
   focusTriggerOnClose?: boolean;
@@ -46,7 +46,6 @@ export type PopoverProps = {
     trapFocus?: boolean;
     autoFocus?: boolean;
   };
-  focusableTrigger?: boolean;
 };
 
 export type PopoverTriggerProps = {
@@ -83,6 +82,8 @@ type DropdownItemClassNames = {
   base?: string;
   startContent?: string;
   mainContent?: string;
+  textContent?: string;
+  descriptionContent?: string;
   endContent?: string;
 };
 
@@ -154,6 +155,10 @@ export type DropdownItemProps<T extends ElementType = 'div'> = {
   endContent?: React.ReactNode;
   as?: T;
   classNames?: DropdownItemClassNames;
+  /**
+   * The description of the select.
+   */
+  description?: string;
 } & Omit<ComponentPropsWithRef<T>, 'children' | 'className'>;
 
 export type DropdownTriggerProps = {
@@ -392,7 +397,7 @@ export type SelectProps<T extends OptionItem> = {
   | 'delayShow'
   | 'delayHide'
   | 'hoverableContent'
-  | 'isChild'
+  | 'isNested'
   | 'openOnHover'
   | 'children'
   | 'classNames'

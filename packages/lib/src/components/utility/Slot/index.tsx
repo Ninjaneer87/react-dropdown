@@ -6,16 +6,16 @@ import { composeRefs } from '../../../utils/compose-refs';
  * Slot
  * -----------------------------------------------------------------------------------------------*/
 
-interface SlotProps extends React.HTMLAttributes<HTMLElement> {
+type SlotProps = React.HTMLAttributes<HTMLElement> & {
   children?: React.ReactNode;
-}
+} & Record<string, unknown>;
 
 /* @__NO_SIDE_EFFECTS__ */ export function createSlot(ownerName: string) {
   const SlotClone = createSlotClone(ownerName);
   const Slot = React.forwardRef<HTMLElement, SlotProps>(
     (props, forwardedRef) => {
       const { children, ...slotProps } = props;
-      const childrenArray = React.Children.toArray(children);
+      const childrenArray = React.Children.toArray(children as React.ReactNode);
       const slottable = childrenArray.find(isSlottable);
 
       if (slottable) {
@@ -47,7 +47,7 @@ interface SlotProps extends React.HTMLAttributes<HTMLElement> {
 
       return (
         <SlotClone {...slotProps} ref={forwardedRef}>
-          {children}
+          {children as React.ReactNode}
         </SlotClone>
       );
     },

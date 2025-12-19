@@ -20,6 +20,7 @@ function DropdownItem<T extends ElementType = 'div'>(
     startContent,
     endContent,
     classNames,
+    description,
     ...rest
   } = props;
   const dropdownContext = useDropdownContext();
@@ -63,14 +64,22 @@ function DropdownItem<T extends ElementType = 'div'>(
     if (disabled) return;
 
     if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      if (onClick) handleClick();
+      if (event.key === ' ') event.preventDefault();
+
+      if (onClick) {
+        event.stopPropagation();
+        handleClick();
+
+        return;
+      }
+
+      // Trigger native click to support Link components and other clickable elements
+      event.stopPropagation();
+      (event.currentTarget as HTMLElement).click();
 
       if (closeOnSelection) {
         handleCloseRoot();
       }
-
-      return;
     }
   }
 
@@ -81,6 +90,8 @@ function DropdownItem<T extends ElementType = 'div'>(
   );
   const startContentClassName = cn('shrink-0 inline-flex');
   const mainContentClassName = cn('shrink-0 grow inline-block');
+  const textContentClassName = cn('');
+  const descriptionContentClassName = cn('text-xs opacity-60');
   const endContentClassName = cn('ml-auto shrink-0 inline-flex');
 
   return (
@@ -88,6 +99,7 @@ function DropdownItem<T extends ElementType = 'div'>(
       {...rest}
       ref={ref}
       data-focusable-item
+      data-highlighted-item={isHighlighted}
       tabIndex={disabled ? -1 : 0}
       data-disabled={disabled}
       aria-disabled={disabled}
@@ -119,7 +131,27 @@ function DropdownItem<T extends ElementType = 'div'>(
           classNames?.mainContent,
         )}
       >
-        {children}
+        <div
+          className={cn(
+            textContentClassName,
+            contextClassNames?.item?.textContent,
+            classNames?.textContent,
+          )}
+        >
+          {children}
+        </div>
+
+        {description && (
+          <div
+            className={cn(
+              descriptionContentClassName,
+              contextClassNames?.item?.descriptionContent,
+              classNames?.descriptionContent,
+            )}
+          >
+            {description}
+          </div>
+        )}
       </span>
 
       {endContent && (

@@ -7,9 +7,7 @@ export function useFocusTrap(isActive: boolean, shouldAutoFocus = true) {
 
   useEffect(() => {
     if (!isActive) {
-      return () => {
-        document.removeEventListener('keydown', trapFocus);
-      };
+      return;
     }
 
     function trapFocus(event: KeyboardEvent) {

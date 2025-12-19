@@ -1,70 +1,185 @@
-import type {ReactNode} from 'react';
+import type { ReactNode } from 'react';
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
-import styles from './styles.module.css';
+import styles from './styles.module.scss';
+import ByosComponentsSvg from '@site/src/components/HomepageFeatures/ByosComponentsSvg';
+import UtilityComponentsSvg from '@site/src/components/HomepageFeatures/UtilityComponentsSvg';
+import UseAnythingSvg from '@site/src/components/HomepageFeatures/UseAnythingSvg';
+import BlogSvg from '@site/src/components/HomepageFeatures/BlogSvg';
+import Link from '@docusaurus/Link';
+import Logo from '@site/src/components/Logo';
+import SiteDropdown from '@site/src/components/lib/SiteDropdown/SiteDropdown';
+import HomeSelectDemo from '@site/src/components/HomepageFeatures/HomeSelectDemo';
+import HomeDropdownDemo from '@site/src/components/HomepageFeatures/HomeDropdownDemo';
+import HomePopoverDemo from '@site/src/components/HomepageFeatures/HomePopoverDemo';
+import HomeResizableDemo from '@site/src/components/HomepageFeatures/HomeResizableDemo';
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
+  svgImage?: ReactNode;
   description: ReactNode;
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'BYOS Components',
+    svgImage: <ByosComponentsSvg />,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        <b>B</b>ring <b>Y</b>our <b>O</b>wn <b>S</b>tyles
+        <br />
+        Bring the components into your own design system. Customize each slot of
+        each component to fit your needs.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Utility Components',
+    svgImage: <UtilityComponentsSvg />,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Handy toolbox of plug-and-play components for ordinary and no-ordinary
+        everyday use cases.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Utility Hooks',
+    svgImage: <UseAnythingSvg />,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Constelation of all sorts of react hooks. Have your reusable pieces of
+        logic ready to use across any of your projects.{' '}
+      </>
+    ),
+  },
+  {
+    title: 'Blog',
+    svgImage: <BlogSvg />,
+    description: (
+      <>
+        Guides and tutorials on the latest trends and best practices in React.js
+        ecosystem and beyond.
       </>
     ),
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({ title, svgImage, description }: FeatureItem) {
   return (
-    <div className={clsx('col col--4')}>
-      <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+    <Link to="/blog" className={clsx(styles.feature)}>
+      <div className={styles.feature__header}>
+        <div className={styles.feature__image}>{svgImage}</div>
+        <Heading className={styles.feature__heading} as="h3">
+          {title}
+        </Heading>
       </div>
-      <div className="text--center padding-horiz--md">
-        <Heading as="h3">{title}</Heading>
+
+      <div className="padding-horiz--md">
         <p>{description}</p>
       </div>
-    </div>
+    </Link>
   );
 }
 
 export default function HomepageFeatures(): ReactNode {
   return (
     <section className={styles.features}>
+      {/* <WaveSvg /> */}
+      <Logo background />
       <div className="container">
-        <div className="row">
-          {FeatureList.map((props, idx) => (
-            <Feature key={idx} {...props} />
-          ))}
-        </div>
+        <section className={styles.featureSection}>
+          <Heading as="h2" className={styles.featureSectionHeading}>
+            Inside the{' '}
+            <span className={styles['featureSectionHeading--primary']}>
+              toolbox
+            </span>
+          </Heading>
+
+          <p className={styles.featureSectionDescription}>
+            Explore the hooks, components, utilities, tips and tricks you need
+            or didn't know you needed.
+          </p>
+
+          <div className={styles.featuresRow}>
+            {FeatureList.map((props, idx) => (
+              <Feature key={idx} {...props} />
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.featureSection}>
+          <Heading as="h2" className={styles.featureSectionHeading}>
+            Fresh from the{' '}
+            <span className={styles['featureSectionHeading--primary']}>
+              lab
+            </span>
+          </Heading>
+
+          <p className={styles.featureSectionDescription}>
+            See some of the latest experiments and ideas in action.
+          </p>
+
+          <div className="row">
+            <div className="col col--6 padding--md">
+              <Heading as={'h3'}>
+                <Link to="/docs/select">Select</Link>
+              </Heading>
+              <p>
+                Powerful select component with built-in support for some of the
+                most common use cases, like multiselect, infinite-scroll,
+                autocomplete, keyboard navigation, controlled/uncontrolled and
+                more.
+              </p>
+
+              <div>
+                <HomeSelectDemo />
+              </div>
+            </div>
+
+            <div className="col col--6 padding--md">
+              <Heading as="h3">
+                <Link to="/docs/dropdown">Dropdown</Link>
+              </Heading>
+              <p>
+                Highly customizable dropdown with features like infinite-scroll,
+                nested dropdowns, keyboard navigation, and more.
+              </p>
+
+              <div>
+                <HomeDropdownDemo />
+              </div>
+            </div>
+
+            <div className="col col--6 padding--md">
+              <Heading as="h3">
+                <Link to="/docs/popover">Popover</Link>
+              </Heading>
+              <p>
+                Mighty popover, the underlying component for Select and
+                Dropdown. Can be used as a tooltip.
+              </p>
+
+              <div>
+                <HomePopoverDemo />
+              </div>
+            </div>
+
+            <div className="col col--6 padding--md">
+              <Heading as="h3">
+                <Link to="/docs/resizable">Resizable</Link>
+              </Heading>
+              <p>
+                Resize horizontally any section or an element. Useful for side
+                panels, toolbars or any horizontally stacked sections.
+              </p>
+
+              <div>
+                <HomeResizableDemo />
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
   );

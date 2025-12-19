@@ -3,8 +3,15 @@
   "extends": "@docusaurus/tsconfig",
   "compilerOptions": {
     "baseUrl": ".",
-    "composite": true
+    "composite": true,
+    "types": ["docusaurus-plugin-sass"],
+    "paths": {
+      // "@andrejground/react-dropdown": ["../lib/src"],
+      // "@andrejground/react-dropdown/*": ["../lib/src/*"],
+      // "@/*": ["../lib/src/*"],
+      "@site/*": ["./*"]
+    }
   },
   "exclude": [".docusaurus", "build"],
-  "references": [{ "path": "../lib" }]
+  // "references": [{ "path": "../lib" }]
 }

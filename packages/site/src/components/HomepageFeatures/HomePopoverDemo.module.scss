@@ -1,0 +1,15 @@
+.flex {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.secondaryText {
+  color: var(--ifm-font-color-secondary);
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+}

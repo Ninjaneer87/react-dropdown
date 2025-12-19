@@ -1,0 +1,35 @@
+<svg
+    viewBox="0 0 1200 600"
+    xmlns="http://www.w3.org/2000/svg"
+    preserveAspectRatio="none"
+>
+    <defs>
+        <!-- soft fade -->
+        <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#00e5ff01" />
+            <stop offset="50%" stop-color="#00e5ff22" />
+            <stop offset="100%" stop-color="#00e5ff01" />
+        </linearGradient>
+    </defs>
+
+    <g
+        fill="none"
+        stroke="#00e5ff66"
+        stroke-width="1.25"
+    >
+        <!-- horizontal waves -->
+        <path d="M0 120 C 200 80, 400 160, 600 120 S 1000 160, 1200 120" />
+        <path d="M0 160 C 200 120, 400 200, 600 160 S 1000 200, 1200 160" />
+        <path d="M0 200 C 200 160, 400 240, 600 200 S 1000 240, 1200 200" />
+        <path d="M0 240 C 200 200, 400 280, 600 240 S 1000 280, 1200 240" />
+        <path d="M0 280 C 200 240, 400 320, 600 280 S 1000 320, 1200 280" />
+        <path d="M0 320 C 200 280, 400 360, 600 320 S 1000 360, 1200 320" />
+
+        <!-- vertical warp -->
+        <!-- <path d="M300 0 C 260 200, 340 400, 300 600" />
+        <path d="M450 0 C 410 200, 490 400, 450 600" />
+        <path d="M600 0 C 560 200, 640 400, 600 600" />
+        <path d="M750 0 C 710 200, 790 400, 750 600" />
+        <path d="M900 0 C 860 200, 940 400, 900 600" /> -->
+    </g>
+</svg>

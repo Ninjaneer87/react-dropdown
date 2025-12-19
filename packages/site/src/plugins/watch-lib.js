@@ -20,6 +20,8 @@ module.exports = function (context, options) {
               __dirname,
               '../../../lib/src',
             ),
+
+            '@/': path.resolve(__dirname, '../../../lib/src'),
           },
         },
       };

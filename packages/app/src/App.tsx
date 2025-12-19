@@ -400,7 +400,7 @@ function App() {
                 <Dropdown.Item onClick={() => console.log('Item 1 clicked')}>
                   Item 1
                 </Dropdown.Item>
-                <Dropdown placement="left-center" isChild isDisabled>
+                <Dropdown placement="left-center" isNested isDisabled>
                   <Dropdown.Trigger>Nested 1</Dropdown.Trigger>
 
                   <Dropdown.Menu>
@@ -410,7 +410,7 @@ function App() {
                       <Dropdown.Item>Item 2</Dropdown.Item>
                       <Dropdown.Item>Item 3</Dropdown.Item>
 
-                      <Dropdown placement="left-center" isChild>
+                      <Dropdown placement="left-center" isNested>
                         <Dropdown.Trigger>Nested 2</Dropdown.Trigger>
 
                         <Dropdown.Menu>
@@ -437,7 +437,7 @@ function App() {
                     </Dropdown.Section>
                   </Dropdown.Menu>
                 </Dropdown>
-                <Dropdown placement="left-center" isChild>
+                <Dropdown placement="left-center" isNested>
                   <Dropdown.Trigger>Nested 1</Dropdown.Trigger>
 
                   <Dropdown.Menu>
@@ -447,7 +447,7 @@ function App() {
                       <Dropdown.Item>Item 2</Dropdown.Item>
                       <Dropdown.Item>Item 3</Dropdown.Item>
 
-                      <Dropdown placement="left-center" isChild>
+                      <Dropdown placement="left-center" isNested>
                         <Dropdown.Trigger>Nested 2</Dropdown.Trigger>
 
                         <Dropdown.Menu>

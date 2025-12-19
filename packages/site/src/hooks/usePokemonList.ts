@@ -52,7 +52,6 @@ export function usePokemonList({ fetchDelay = 0 }: UsePokemonListProps = {}) {
         }
 
         const json: PokemonResponse = await res.json();
-        console.log({ json });
 
         setHasMore(json.next !== null);
         // Append new results to existing ones
@@ -89,7 +88,6 @@ export function usePokemonList({ fetchDelay = 0 }: UsePokemonListProps = {}) {
   );
 
   React.useEffect(() => {
-    console.log('mounted');
     loadPokemon(offset);
   }, []);
 

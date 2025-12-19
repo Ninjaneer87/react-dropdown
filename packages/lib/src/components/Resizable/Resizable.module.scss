@@ -1,0 +1,43 @@
+.resizable {
+  position: relative;
+}
+
+.resizer {
+  $self: &;
+
+  display: flex;
+  justify-content: center;
+  width: 32px;
+  height: 100%;
+  position: absolute;
+  z-index: 1;
+  cursor: col-resize;
+  top: 0;
+  bottom: 0;
+
+  &__indicator {
+    width: 2px;
+    background-color: dodgerblue;
+    opacity: 0;
+    transition: all 0.3s;
+  }
+
+  &--left {
+    left: -16px;
+  }
+
+  &--right {
+    right: -16px;
+  }
+
+  &:hover,
+  &--resizing {
+    #{$self}__indicator {
+      opacity: 1;
+    }
+  }
+
+  &--hidden {
+    display: none;
+  }
+}

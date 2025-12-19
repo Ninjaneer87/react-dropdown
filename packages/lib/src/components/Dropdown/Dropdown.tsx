@@ -10,6 +10,7 @@ import DropdownDivider from './DropdownDivider';
 import { DropdownComposition, DropdownProps } from '../../types';
 import Popover from '../Popover/Popover';
 import { defaultChildCaret, defaultRootCaret } from '../../utils/elements';
+import { Slot } from '@/components/utility/Slot';
 
 const Dropdown = ({
   caret,
@@ -22,17 +23,17 @@ const Dropdown = ({
   shouldCloseOnEsc = true,
   shouldCloseOnSelection = true,
   backdrop,
-  placement = 'bottom-center',
   isDisabled,
   isOpen: controlledIsOpen,
   onOpen,
   onClose,
   onBlur,
   onOpenChange,
-  isChild = false,
-  fullWidth = false,
-  showCaret = isChild,
-  openOnHover,
+  isNested = false,
+  fullWidth = isNested,
+  placement = isNested ? 'right-start' : 'bottom-center',
+  showCaret = isNested,
+  openOnHover = isNested,
   growContent,
   offset,
   autoFocus = 'menu',
@@ -93,15 +94,15 @@ const Dropdown = ({
   }
 
   const triggerCaretContent = showCaret
-    ? caret ?? (isChild ? defaultChildCaret : defaultRootCaret)
+    ? caret ?? (isNested ? defaultChildCaret : defaultRootCaret)
     : null;
 
   const dropdownJSX = (
     <Popover
       openOnHover={openOnHover}
-      isChild={isChild}
-      delayHide={isChild || openOnHover ? 300 : 0}
-      delayShow={isChild || openOnHover ? 100 : 0}
+      isNested={isNested}
+      delayHide={isNested || openOnHover ? 300 : 0}
+      delayShow={isNested || openOnHover ? 100 : 0}
       fullWidth={fullWidth}
       shouldFlip={shouldFlip}
       shouldBlockScroll={shouldBlockScroll}
@@ -134,15 +135,15 @@ const Dropdown = ({
       }}
     >
       <Popover.Trigger>
-        {isChild ? (
-          <Dropdown.Item
+        {isNested ? (
+          <Slot
             shouldCloseOnSelection={false}
             isHighlighted={isOpen}
             endContent={triggerCaretContent}
             disabled={isDisabled}
           >
             {dropdownTrigger}
-          </Dropdown.Item>
+          </Slot>
         ) : (
           dropdownTrigger
         )}

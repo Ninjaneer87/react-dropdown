@@ -151,37 +151,54 @@ export function buildPlacement(
   //! POSITION FITS CHECK
   let fitPosition = position;
 
+  const fitsTop = triggerRect.top - popoverRect.height >= offset;
+  const fitsBottom =
+    window.innerHeight - triggerRect.bottom - popoverRect.height >= offset;
+  const fitsLeft = triggerRect.left - popoverRect.width >= offset;
+  const fitsRight =
+    window.innerWidth - triggerRect.right - popoverRect.width >= offset;
+
   // Fits top check
   if (position === 'top') {
-    const fits = triggerRect.top - popoverRect.height >= offset;
-    if (!fits) {
+    if (fitsTop) {
+      fitPosition = 'top';
+    } else if (fitsBottom) {
       fitPosition = 'bottom';
     }
   }
 
   // Fits bottom check
   if (position === 'bottom') {
-    const fits =
-      window.innerHeight - triggerRect.bottom - popoverRect.height >= offset;
-    if (!fits) {
+    if (fitsBottom) {
+      fitPosition = 'bottom';
+    } else if (fitsTop) {
       fitPosition = 'top';
     }
   }
 
   // Fits left check
   if (position === 'left') {
-    const fits = triggerRect.left - popoverRect.width >= offset;
-    if (!fits) {
+    if (fitsLeft) {
+      fitPosition = 'left';
+    } else if (fitsRight) {
       fitPosition = 'right';
+    } else if (fitsBottom) {
+      fitPosition = 'bottom';
+    } else if (fitsTop) {
+      fitPosition = 'top';
     }
   }
 
   // Fits right check
   if (position === 'right') {
-    const fits =
-      window.innerWidth - triggerRect.right - popoverRect.width >= offset;
-    if (!fits) {
+    if (fitsRight) {
+      fitPosition = 'right';
+    } else if (fitsLeft) {
       fitPosition = 'left';
+    } else if (fitsBottom) {
+      fitPosition = 'bottom';
+    } else if (fitsTop) {
+      fitPosition = 'top';
     }
   }
 

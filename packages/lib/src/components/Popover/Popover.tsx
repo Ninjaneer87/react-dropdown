@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/refs */
 import React, {
   ReactNode,
   useCallback,
@@ -29,6 +30,7 @@ import {
 import { usePreventBodyScroll } from '../../hooks/usePreventBodyScroll';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
 import { usePositionObserver } from '../../hooks/usePositionObserver';
+import { Slot } from '@/components/utility/Slot';
 
 const Popover = ({
   children,
@@ -40,8 +42,8 @@ const Popover = ({
   shouldCloseOnBlur = true,
   shouldCloseOnEsc = true,
   backdrop,
-  isChild = false,
-  placement = isChild ? 'right-start' : 'bottom-center',
+  isNested = false,
+  placement = 'bottom-center',
   offset = 8,
   // showArrow = false,
   isDisabled,
@@ -50,7 +52,7 @@ const Popover = ({
   onClose,
   onBlur,
   onOpenChange,
-  openOnHover = isChild,
+  openOnHover,
   fullWidth = false,
   focusTriggerOnClose = true,
   delayShow = 0,
@@ -62,13 +64,17 @@ const Popover = ({
     autoFocus: true,
     trapFocus: true,
   },
-  focusableTrigger = true,
 }: PopoverProps & PopoverComposition) => {
   const { autoFocus, trapFocus } = focusTrapProps;
   const popoverContentRef = useRef<HTMLDivElement>(null);
   const popoverTriggerRef = useRef<HTMLDivElement>(null);
   const showDelayRef = useRef<NodeJS.Timeout | null>(null);
   const hideDelayRef = useRef<NodeJS.Timeout | null>(null);
+
+  const onOpenRef = useRef(onOpen);
+  const onCloseRef = useRef(onClose);
+  const onBlurRef = useRef(onBlur);
+  const onOpenChangeRef = useRef(onOpenChange);
 
   const popoverRootContext = usePopoverRootContext();
   const { isRootOpen, rootPopoverId } = popoverRootContext || {};
@@ -80,7 +86,6 @@ const Popover = ({
   const [popoverContentCoords, setPopoverContentCoords] = useState<Coords>({});
   const open = controlledIsOpen ?? isOpen;
   const isExpanded = open || isHoverOpen;
-  const contentOffset = isChild ? offset + 8 : offset;
 
   const isMounted = useDelayUnmount(isExpanded, 150);
 
@@ -138,11 +143,7 @@ const Popover = ({
   }
 
   const setContentCoords = useCallback(() => {
-    if (
-      !isRootExpanded ||
-      !popoverTriggerRef.current ||
-      !popoverContentRef.current
-    )
+    if (!isExpanded || !popoverTriggerRef.current || !popoverContentRef.current)
       return;
 
     const triggerRect = popoverTriggerRef.current.getBoundingClientRect();
@@ -160,39 +161,35 @@ const Popover = ({
       : placement;
     const coords = createPositionFromPlacement(
       fitPlacement,
-      contentOffset,
+      offset,
       triggerRect,
       popoverContentRef.current,
     );
 
     setPopoverContentCoords(coords);
-  }, [
-    contentOffset,
-    placement,
-    offset,
-    shouldFlip,
-    growContent,
-    isRootExpanded,
-  ]);
+  }, [placement, offset, shouldFlip, growContent, isExpanded]);
 
   // Handle onClose
   const handleClose = useCallback(
     (focusTrigger = focusTriggerOnClose) => {
       if (isDisabled) return;
 
-      if (onClose) {
-        onClose();
+      if (onCloseRef.current) {
+        onCloseRef.current();
       }
 
       setIsOpen(false);
       setIsHoverOpen(false);
-      onOpenChange?.(false);
+      onOpenChangeRef.current?.(false);
 
       if (focusTrigger) {
-        popoverTriggerRef.current?.focus();
+        // Delay focus to prevent the current keydown event from firing on the trigger
+        requestAnimationFrame(() => {
+          popoverTriggerRef.current?.focus();
+        });
       }
     },
-    [isDisabled, onClose, focusTriggerOnClose, onOpenChange],
+    [isDisabled, focusTriggerOnClose],
   );
 
   useWindowResize(setContentCoords);
@@ -207,22 +204,42 @@ const Popover = ({
     isActive: isRootExpanded,
   });
 
+  useEffect(() => {
+    onOpenRef.current = onOpen;
+    onCloseRef.current = onClose;
+    onBlurRef.current = onBlur;
+    onOpenChangeRef.current = onOpenChange;
+  }, [onOpen, onClose, onBlur, onOpenChange]);
+
   // Handle onBlur
   useEffect(() => {
+    if (isDisabled) return;
+    if (!isExpanded) return;
+
     function handleClickOutside(event: MouseEvent) {
-      if (isDisabled) return;
-      if (!isExpanded) return;
+      const popoverIdFromClosestTrigger = (event.target as Element)
+        .closest(`[data-popover-trigger-current-id]`)
+        ?.getAttribute('data-popover-trigger-current-id');
+      const popoverIdFromClosestContent = (event.target as Element)
+        .closest(`[data-popover-content-current-id]`)
+        ?.getAttribute('data-popover-content-current-id');
+      const id = popoverIdFromClosestTrigger || popoverIdFromClosestContent;
+
+      if (id && id !== popoverId) return;
 
       const isPopoverTrigger = !!(event.target as Element).closest(
-        `[data-popover-trigger="${popoverId}"]`,
+        `[data-popover-trigger-current-id="${popoverId}"]`,
       );
       const isPopoverContent = !!(event.target as Element).closest(
-        `[data-popover-content="${popoverId}"]`,
+        `[data-popover-content-current-id="${popoverId}"]`,
       );
-      if (isRootPopover && !isPopoverTrigger && !isPopoverContent) {
-        if (onBlur) onBlur();
-        if (shouldCloseOnBlur) handleClose();
+
+      if (isPopoverTrigger || isPopoverContent) {
+        return;
       }
+
+      if (onBlurRef.current) onBlurRef.current();
+      if (shouldCloseOnBlur) handleClose();
     }
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -230,28 +247,22 @@ const Popover = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [
-    shouldCloseOnBlur,
-    isExpanded,
-    isDisabled,
-    handleClose,
-    onBlur,
-    popoverId,
-    isRootPopover,
-  ]);
+  }, [shouldCloseOnBlur, isExpanded, isDisabled, handleClose, popoverId]);
 
   // Handle position and scroll
   useEffect(() => {
-    if (isRootExpanded) {
+    if (isExpanded) {
       setContentCoords();
     }
-  }, [isRootExpanded, setContentCoords]);
+  }, [isExpanded, setContentCoords]);
 
   useEffect(() => {
-    function handleScroll() {
-      if (!isRootExpanded) return;
+    if (!isExpanded) return;
 
-      if (shouldCloseOnScroll) handleClose();
+    function handleScroll() {
+      if (shouldCloseOnScroll) {
+        handleClose();
+      }
       setContentCoords();
     }
 
@@ -260,14 +271,14 @@ const Popover = ({
     return () => {
       document.removeEventListener('scroll', handleScroll);
     };
-  }, [isRootExpanded, shouldCloseOnScroll, handleClose, setContentCoords]);
+  }, [isExpanded, shouldCloseOnScroll, handleClose, setContentCoords]);
 
   // Handle onOpenChange
-  function handleToggle() {
+  const handleToggle = useCallback(() => {
     if (isDisabled) return;
 
-    if (onOpenChange) {
-      onOpenChange(!open);
+    if (onOpenChangeRef.current) {
+      onOpenChangeRef.current(!open);
     }
 
     if (open) {
@@ -275,46 +286,67 @@ const Popover = ({
       return;
     }
 
-    onOpen?.();
+    onOpenRef.current?.();
 
     setIsOpen((prev) => !prev);
-  }
+  }, [isDisabled, open, handleClose]);
 
   const handleOpen = useCallback(() => {
     if (isDisabled || open) return;
 
-    if (onOpenChange) onOpenChange(true);
-    if (onOpen) onOpen();
+    if (onOpenChangeRef.current) onOpenChangeRef.current(true);
+    if (onOpenRef.current) onOpenRef.current();
     setIsOpen(true);
-  }, [isDisabled, onOpen, onOpenChange, open]);
+  }, [isDisabled, open]);
 
-  function handleBackdropClick() {
+  const handleBackdropClick = useCallback(() => {
     if (shouldCloseOnBlur) {
       handleClose();
     }
-  }
+  }, [handleClose, shouldCloseOnBlur]);
 
-  function onTriggerKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    if (
-      event.key === 'Enter'
-      // || event.key === ' '
-    ) {
-      event.preventDefault();
-      handleToggle();
+  const onTriggerKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === 'Enter') {
+        // Only toggle if the event originated from the trigger itself
+        if (event.target !== event.currentTarget) return;
+
+        event.preventDefault();
+        handleToggle();
+      }
+    },
+    [handleToggle],
+  );
+
+  useEffect(() => {
+    if (!isExpanded) {
+      return;
     }
 
-    if (event.key === 'Escape' && shouldCloseOnEsc) {
-      handleClose();
-    }
-  }
+    function onPopoverKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape' && shouldCloseOnEsc) {
+        const openPopovers = [
+          ...document.querySelectorAll(`[data-popover-content-current-id]`),
+        ];
+        const lastOpenedPopover = openPopovers[openPopovers.length - 1] as
+          | HTMLDivElement
+          | undefined;
+        const currentPopoverId = lastOpenedPopover?.getAttribute(
+          `data-popover-content-current-id`,
+        );
 
-  function onPopoverKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    if (event.key === 'Escape' && shouldCloseOnEsc) {
-      handleClose();
+        if (currentPopoverId && currentPopoverId !== popoverId) return;
+        handleClose();
+      }
     }
-  }
+    document.addEventListener('keydown', onPopoverKeyDown);
 
-  function handleMouseEnter() {
+    return () => {
+      document.removeEventListener('keydown', onPopoverKeyDown);
+    };
+  }, [shouldCloseOnEsc, isExpanded, handleClose, popoverId]);
+
+  const handleMouseEnter = useCallback(() => {
     if (isDisabled) return;
 
     if (showDelayRef.current) clearTimeout(showDelayRef.current);
@@ -323,11 +355,11 @@ const Popover = ({
     showDelayRef.current = setTimeout(() => {
       setIsHoverOpen(true);
 
-      if (isRootPopover && openOnHover) onOpen?.();
+      if (isRootPopover && openOnHover) onOpenRef.current?.();
     }, delayShow);
-  }
+  }, [isDisabled, isRootPopover, openOnHover, delayShow]);
 
-  function handleMouseLeave() {
+  const handleMouseLeave = useCallback(() => {
     if (isDisabled) return;
 
     if (showDelayRef.current) clearTimeout(showDelayRef.current);
@@ -336,18 +368,11 @@ const Popover = ({
     hideDelayRef.current = setTimeout(() => {
       setIsHoverOpen(false);
 
-      if (isRootPopover && openOnHover) onClose?.();
-
-      if (focusTriggerOnClose) {
-        popoverTriggerRef.current?.focus({ preventScroll: true });
-      }
+      if (isRootPopover && openOnHover) onCloseRef.current?.();
     }, delayHide);
-  }
+  }, [isDisabled, isRootPopover, openOnHover, delayHide]);
 
-  const baseClassName = cn(
-    'relative',
-    fullWidth || isChild ? 'w-full' : 'w-fit',
-  );
+  const baseClassName = cn('relative', fullWidth ? 'w-full' : 'w-fit');
   const triggerClassName = cn(
     'flex items-center gap-2',
     !isDisabled ? 'cursor-pointer' : '',
@@ -355,8 +380,8 @@ const Popover = ({
   );
   const contentClassName = cn(
     'fixed z-10',
-    isRootExpanded ? 'scale-in' : 'scale-out',
-    'transition-opacity p-2 bg-white text-gray-800 rounded-lg',
+    isRootExpanded || (isExpanded && !isNested) ? 'scale-in' : 'scale-out',
+    'transition-opacity p-2 bg-white text-gray-800 rounded-lg shadow-md',
   );
   const backdropClassName = cn(
     'fixed z-0 inset-0',
@@ -384,7 +409,6 @@ const Popover = ({
 
         <div
           className={cn(baseClassName, classNames?.base)}
-          onKeyDown={onPopoverKeyDown}
           onScroll={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -395,12 +419,15 @@ const Popover = ({
               onMouseLeave: handleMouseLeave,
             })}
         >
-          <div
-            onClick={handleToggle}
-            data-popover-trigger={rootPopoverId ?? popoverId}
+          <Slot
+            onClick={(e: React.MouseEvent) => {
+              e?.stopPropagation();
+              handleToggle();
+            }}
+            data-popover-trigger-root-id={rootPopoverId ?? popoverId}
             data-trigger-open={isExpanded}
-            tabIndex={!focusableTrigger || isChild || isDisabled ? -1 : 0}
             onKeyDown={onTriggerKeyDown}
+            tabIndex={0}
             className={cn(triggerClassName, classNames?.trigger)}
             ref={popoverTriggerRef}
             {...(openOnHover &&
@@ -410,14 +437,16 @@ const Popover = ({
               })}
           >
             {popoverTrigger}
-          </div>
+          </Slot>
 
           <ClientPortal>
             {(isMounted || isExpanded) && (
               <div
-                data-popover-content={rootPopoverId ?? popoverId}
+                data-popover-content-root-id={rootPopoverId ?? popoverId}
+                data-popover-content-current-id={popoverId}
                 className={cn(contentClassName, classNames?.content)}
                 style={popoverContentCoords}
+                onClick={(e) => e.stopPropagation()}
                 ref={(node) => {
                   if (!node) return;
 
@@ -436,7 +465,7 @@ const Popover = ({
     </PopoverContext.Provider>
   );
 
-  if (isChild) {
+  if (isNested) {
     return popoverJSX;
   }
 

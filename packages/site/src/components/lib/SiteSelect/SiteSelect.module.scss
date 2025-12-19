@@ -1,0 +1,31 @@
+.popoverContent {
+  background-color: var(--ifm-card-background-color);
+  color: var(--ifm-font-color-base);
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.triggerBase {
+  background-color: var(--ifm-card-background-color);
+  color: var(--ifm-font-color-base);
+  border-color: var(--ifm-color-emphasis-500);
+}
+
+.sectionTitle {
+  background-color: var(--ifm-color-emphasis-200);
+}
+
+.itemBase {
+  &:hover,
+  &:active,
+  &:focus {
+    background-color: var(--ifm-color-emphasis-200);
+  }
+}
+
+.triggerValueChip {
+  background-color: var(--ifm-color-emphasis-200);
+  border-color: transparent;
+  outline-color: transparent;
+  border-radius: 4px;
+  color: inherit;
+}

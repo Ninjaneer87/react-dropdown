@@ -1,11 +1,25 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export function useWindowResize(callback: (e?: UIEvent) => void) {
+  const callbackRef = useRef(callback);
+
   useEffect(() => {
-    window.addEventListener('resize', callback);
+    callbackRef.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    const onResize = () => {
+      if (!callbackRef.current) {
+        return;
+      }
+
+      callbackRef.current();
+    };
+
+    window.addEventListener('resize', onResize);
 
     return () => {
-      window.removeEventListener('resize', callback);
+      window.removeEventListener('resize', onResize);
     };
-  }, [callback]);
+  }, []);
 }
