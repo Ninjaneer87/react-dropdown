@@ -19,10 +19,11 @@ function DropdownMenu({ children, classNames }: DropdownMenuProps) {
 
   const { autoFocus, classNames: contextClassNames } = dropdownContext;
   const { isOpen } = popoverContext;
-  const { containerRef, onKeyDown } = useKeyboardNavigation<HTMLDivElement>({
-    isActive: isOpen,
-    autoFocus,
-  });
+  const { containerRef, onKeyDown, mutationContainerRef } =
+    useKeyboardNavigation<HTMLDivElement>({
+      isActive: isOpen,
+      autoFocus,
+    });
 
   const baseClassName =
     'rounded-lg w-full min-w-[200px] relative outline-none! border-none!';
@@ -36,7 +37,10 @@ function DropdownMenu({ children, classNames }: DropdownMenuProps) {
           classNames?.base,
         )}
         onKeyDown={onKeyDown}
-        ref={containerRef}
+        ref={(node) => {
+          containerRef.current = node;
+          mutationContainerRef.current = node;
+        }}
         tabIndex={0}
       >
         {children}

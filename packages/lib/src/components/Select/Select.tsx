@@ -115,13 +115,18 @@ function Select<T extends OptionItem>({
     onLoadMore: () => infiniteScrollProps?.onLoadMore(searchValue),
   });
 
-  const { containerRef, onKeyDown, setFocusedIndex, focusableItemsLength } =
-    useKeyboardNavigation<HTMLDivElement>({
-      autoFocus,
-      onFirstUp: search ? focusSearch : undefined,
-      onLastDown: search ? focusSearch : undefined,
-      isActive: open,
-    });
+  const {
+    lastFocusedIndex,
+    containerRef,
+    onKeyDown,
+    focusItem,
+    mutationContainerRef,
+  } = useKeyboardNavigation<HTMLDivElement>({
+    autoFocus,
+    onFirstUp: search ? focusSearch : undefined,
+    onLastDown: search ? focusSearch : undefined,
+    isActive: open,
+  });
 
   useEffect(() => {
     if (!value) return;
@@ -245,13 +250,13 @@ function Select<T extends OptionItem>({
       items,
       searchValue,
       setSearchValue,
-      setFocusedIndex,
-      focusableItemsLength,
+      focusItem,
       search,
       onSearchChange,
       focusSearch: search ? focusSearch : undefined,
       popOnSelection,
       currentOptions: filteredItems,
+      lastFocusedIndex,
     }),
     [
       multiple,
@@ -265,13 +270,13 @@ function Select<T extends OptionItem>({
       items,
       searchValue,
       setSearchValue,
-      setFocusedIndex,
-      focusableItemsLength,
+      focusItem,
       search,
       onSearchChange,
       focusSearch,
       popOnSelection,
       filteredItems,
+      lastFocusedIndex,
     ],
   );
 
@@ -426,7 +431,10 @@ function Select<T extends OptionItem>({
                   contentWrapperClassName,
                   classNames?.contentWrapper,
                 )}
-                ref={containerRef}
+                ref={(node) => {
+                  containerRef.current = node;
+                  mutationContainerRef.current = node;
+                }}
                 onKeyDown={onKeyDown}
                 tabIndex={0}
               >

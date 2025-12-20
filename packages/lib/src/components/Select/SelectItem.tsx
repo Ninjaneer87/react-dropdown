@@ -38,8 +38,9 @@ function SelectItem<T extends OptionItem>({
     renderOption,
     truncate,
     itemClassNames,
-    setFocusedIndex,
+    focusItem,
     focusSearch,
+    lastFocusedIndex,
     popOnSelection,
     currentOptions,
     search,
@@ -62,8 +63,6 @@ function SelectItem<T extends OptionItem>({
 
   function handleSelection() {
     if (disabled) return;
-
-    const focusedIndex = selectItemRef.current?.dataset.focusableIndex;
 
     if (onSelectionChange) {
       const selectedValues = selected.map((item) => item.value);
@@ -92,13 +91,10 @@ function SelectItem<T extends OptionItem>({
       });
 
       setSelected(newSelectedOptions);
+    }
 
-      if (focusedIndex && !search) {
-        setFocusedIndex(undefined);
-        setTimeout(() => {
-          setFocusedIndex(+focusedIndex);
-        }, 1);
-      }
+    if (!search) {
+      focusItem({ index: lastFocusedIndex });
     }
 
     if (multiple && popOnSelection && search && focusSearch) {

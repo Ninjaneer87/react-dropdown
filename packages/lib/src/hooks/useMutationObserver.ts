@@ -1,30 +1,36 @@
 import { useEffect, useRef } from 'react';
 
-type Props<T extends Element> = {
-  element: T | null;
+type Props = {
   onMutation: (list?: MutationRecord[]) => void;
+  isActive?: boolean;
 };
 export function useMutationObserver<T extends Element>({
-  element,
   onMutation,
-}: Props<T>) {
+  isActive,
+}: Props) {
   const onMutationRef = useRef(onMutation);
+  const mutationContainerRef = useRef<T>(null);
 
   useEffect(() => {
     onMutationRef.current = onMutation;
   }, [onMutation]);
 
   useEffect(() => {
-    if (!element) return;
+    if (!isActive || !mutationContainerRef.current) return;
 
     const observer = new MutationObserver((mutations) => {
       onMutationRef.current(mutations);
     });
 
-    observer.observe(element, { childList: true, subtree: true });
+    observer.observe(mutationContainerRef.current, {
+      childList: true,
+      subtree: true,
+    });
 
     return () => {
       observer.disconnect();
     };
-  }, [element]);
+  }, [isActive]);
+
+  return { mutationContainerRef };
 }

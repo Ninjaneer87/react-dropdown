@@ -1,7 +1,14 @@
-/* eslint-disable react-hooks/immutability */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMutationObserver } from './useMutationObserver';
 import { ListAutoFocus } from '../types';
+
+export type FocusItemProps =
+  | {
+      index?: number;
+    }
+  | {
+      focusLast?: boolean;
+    };
 
 type Props = {
   autoFocus?: ListAutoFocus;
@@ -19,46 +26,82 @@ export function useKeyboardNavigation<T extends HTMLElement>({
   isActive,
 }: Props) {
   const containerRef = useRef<T>(null);
-  const [focusedIndex, setFocusedIndex] = useState<number | undefined>();
-  const [focusableItems, setFocusableItems] = useState<T[]>([]);
-  const focusableItemsLength = focusableItems.length;
+  const [lastFocusedIndex, setLastFocusedIndex] = useState<
+    number | undefined
+  >();
+  const focusableItemsRef = useRef<T[]>([]);
+
+  const onEscRef = useRef(onEsc);
+  const onFirstUpRef = useRef(onFirstUp);
+  const onLastDownRef = useRef(onLastDown);
+
+  useEffect(() => {
+    onEscRef.current = onEsc;
+    onFirstUpRef.current = onFirstUp;
+    onLastDownRef.current = onLastDown;
+  }, [onEsc, onFirstUp, onLastDown]);
 
   const getItems = useCallback(() => {
     const containerElement = containerRef.current;
     if (!containerElement) return;
 
     const items = [
-      ...containerElement.querySelectorAll('[data-focusable-item="true"]'),
-    ].filter(
-      (element) =>
-        !element.hasAttribute('disabled') &&
-        element.getAttribute('data-disabled') !== 'true',
-    ) as T[];
+      ...containerElement.querySelectorAll(
+        '[data-focusable-item="true"]:not([disabled]):not([data-disabled="true"])',
+      ),
+    ] as T[];
 
-    items.forEach((item, i) =>
-      item.setAttribute('data-focusable-index', i.toString()),
-    );
+    focusableItemsRef.current = items;
+  }, []);
 
-    setFocusableItems(items);
-  }, [containerRef]);
+  const focusItem = useCallback((props: FocusItemProps) => {
+    requestAnimationFrame(() => {
+      if (!focusableItemsRef.current) return;
 
-  useMutationObserver({ element: containerRef.current, onMutation: getItems });
+      if ('index' in props) {
+        if (props.index === undefined) return;
+
+        if (focusableItemsRef.current.length > 0) {
+          const firstFocusableElement = focusableItemsRef.current[props.index];
+          firstFocusableElement?.focus();
+          firstFocusableElement?.scrollIntoView({ block: 'nearest' });
+          setLastFocusedIndex(props.index);
+        }
+        return;
+      }
+
+      if ('focusLast' in props) {
+        if (props.focusLast === undefined) return;
+
+        const lastIndex = focusableItemsRef.current.length - 1;
+        const firstFocusableElement = focusableItemsRef.current[lastIndex];
+        firstFocusableElement?.focus();
+        firstFocusableElement?.scrollIntoView({ block: 'nearest' });
+        setLastFocusedIndex(lastIndex);
+      }
+    });
+  }, []);
+
+  const { mutationContainerRef } = useMutationObserver({
+    onMutation: getItems,
+    isActive,
+  });
 
   useEffect(() => {
     if (!isActive || !autoFocus || autoFocus === 'none') return;
 
     if (autoFocus === 'first-item') {
-      if (!focusableItems) return;
+      if (!focusableItemsRef.current) return;
 
-      setFocusedIndex(0);
+      focusItem({ index: 0 });
 
       return;
     }
 
     if (autoFocus === 'last-item') {
-      if (!focusableItems) return;
+      if (!focusableItemsRef.current) return;
 
-      setFocusedIndex(focusableItems.length - 1);
+      focusItem({ focusLast: true });
 
       return;
     }
@@ -66,124 +109,102 @@ export function useKeyboardNavigation<T extends HTMLElement>({
     if (autoFocus === 'menu') {
       containerRef.current?.focus();
     }
-  }, [autoFocus, isActive]);
+  }, [autoFocus, isActive, focusItem]);
 
   useEffect(() => {
     if (!isActive) {
-      setFocusedIndex(undefined);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLastFocusedIndex(undefined);
       return;
     }
-
-    focusItem(focusedIndex);
-  }, [focusedIndex, isActive]);
-
-  useEffect(() => {
-    if (!isActive) return;
 
     getItems();
   }, [getItems, isActive]);
 
-  function focusItem(index: number | undefined) {
-    if (!focusableItems) return;
+  const onKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      switch (event.key) {
+        case 'Escape': {
+          onEscRef.current?.();
 
-    if (index === undefined) return;
-
-    if (focusableItems.length > 0) {
-      const firstFocusableElement = focusableItems[index];
-      firstFocusableElement?.focus();
-      firstFocusableElement?.scrollIntoView({ block: 'nearest' });
-    }
-  }
-
-  function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    switch (event.key) {
-      case 'Escape': {
-        onEsc?.();
-
-        break;
-      }
-
-      case 'Home': {
-        event.preventDefault();
-        event.stopPropagation();
-
-        setFocusedIndex(0);
-        break;
-      }
-
-      case 'End': {
-        event.preventDefault();
-        event.stopPropagation();
-
-        setFocusedIndex(focusableItemsLength - 1);
-        break;
-      }
-
-      case 'ArrowUp': {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (focusedIndex === undefined) {
-          setFocusedIndex(focusableItemsLength - 1);
-          return;
+          break;
         }
 
-        const newIndex = focusedIndex - 1;
-        if (newIndex < 0) {
-          if (onFirstUp) {
-            setFocusedIndex(undefined);
-            onFirstUp();
-          } else {
-            setFocusedIndex(focusableItemsLength - 1);
+        case 'Home': {
+          event.preventDefault();
+          event.stopPropagation();
+
+          focusItem({ index: 0 });
+          break;
+        }
+
+        case 'End': {
+          event.preventDefault();
+          event.stopPropagation();
+
+          focusItem({ focusLast: true });
+          break;
+        }
+
+        case 'ArrowUp': {
+          event.preventDefault();
+          event.stopPropagation();
+
+          if (lastFocusedIndex === undefined) {
+            focusItem({ focusLast: true });
+            return;
           }
-        } else {
-          setFocusedIndex(newIndex);
-        }
 
-        break;
-      }
-
-      case 'ArrowDown': {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (focusedIndex === undefined) {
-          setFocusedIndex(0);
-          return;
-        }
-
-        const newIndex = focusedIndex + 1;
-        if (newIndex > focusableItemsLength - 1) {
-          if (onLastDown) {
-            setFocusedIndex(undefined);
-            onLastDown();
+          const newIndex = lastFocusedIndex - 1;
+          if (newIndex < 0) {
+            if (onFirstUpRef.current) {
+              onFirstUpRef.current();
+            } else {
+              focusItem({ focusLast: true });
+            }
           } else {
-            setFocusedIndex(0);
+            focusItem({ index: newIndex });
           }
-        } else {
-          setFocusedIndex(newIndex);
+
+          break;
         }
 
-        break;
+        case 'ArrowDown': {
+          event.preventDefault();
+          event.stopPropagation();
+
+          if (lastFocusedIndex === undefined) {
+            focusItem({ index: 0 });
+            return;
+          }
+
+          const newIndex = lastFocusedIndex + 1;
+          if (newIndex > focusableItemsRef.current.length - 1) {
+            if (onLastDownRef.current) {
+              onLastDownRef.current();
+            } else {
+              focusItem({ index: 0 });
+            }
+          } else {
+            focusItem({ index: newIndex });
+          }
+
+          break;
+        }
+
+        default: {
+          break;
+        }
       }
-
-      //   case ' ': {
-      //     event.preventDefault();
-
-      //     break;
-      //   }
-
-      default: {
-        break;
-      }
-    }
-  }
+    },
+    [focusItem, lastFocusedIndex],
+  );
 
   return {
     onKeyDown,
+    mutationContainerRef,
     containerRef,
-    focusedIndex,
-    setFocusedIndex,
-    focusableItemsLength,
+    lastFocusedIndex,
+    focusItem,
   };
 }

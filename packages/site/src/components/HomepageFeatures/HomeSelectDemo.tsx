@@ -1,4 +1,4 @@
-import { debounceCallback, Dropdown } from '@andrejground/react-dropdown';
+import { debounceCallback } from '@andrejground/react-dropdown';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import SiteSelect from '@site/src/components/lib/SiteSelect/SiteSelect';
 import { usePokemonList } from '@site/src/hooks/usePokemonList';
@@ -82,8 +82,7 @@ function HomeSelectDemoContent() {
   });
 
   const { callback: debouncedSearch } = debounceCallback(
-    (searchQuery?: string) =>
-      onLoadMore({ newOffset: 0, search: searchQuery }),
+    (searchQuery?: string) => onLoadMore({ newOffset: 0, search: searchQuery }),
     500,
   );
 
@@ -92,10 +91,11 @@ function HomeSelectDemoContent() {
       <SiteSelect
         openOnLabelClick
         items={items}
-        onSelectionChange={(value) => console.log(value)}
+        onSelectionChange={() => {}}
         multiple
         label="Multi-select autocomplete & infinite scroll"
         search
+        // popOnSelection={false}
         onSearchChange={debouncedSearch}
         placeholder="Select pokemons"
         onClose={() => console.log('onClose')}

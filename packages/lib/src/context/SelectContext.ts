@@ -7,6 +7,7 @@ import {
   SelectSectionClassNames,
   SelectTruncate,
 } from '../types';
+import { FocusItemProps } from '@/hooks/useKeyboardNavigation';
 
 export type SelectContextType<T extends OptionItem = OptionItem> = {
   multiple: boolean;
@@ -20,8 +21,8 @@ export type SelectContextType<T extends OptionItem = OptionItem> = {
   items?: T[];
   setSearchValue: React.Dispatch<React.SetStateAction<string>>;
   searchValue: string;
-  setFocusedIndex: React.Dispatch<React.SetStateAction<number | undefined>>;
-  focusableItemsLength: number;
+  focusItem: (props: FocusItemProps) => void;
+  lastFocusedIndex?: number;
   search?: boolean | ((items: T[]) => T[]);
   onSearchChange?: (searchQuery: string) => void;
   focusSearch?: () => void;

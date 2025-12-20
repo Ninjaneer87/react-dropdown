@@ -28,10 +28,9 @@ function SelectSearch({
   const {
     selected,
     setSelected,
-    setFocusedIndex,
+    focusItem,
     setSearchValue,
     searchValue,
-    focusableItemsLength,
     onSearchChange,
   } = selectContext;
 
@@ -79,19 +78,18 @@ function SelectSearch({
     if (e.key === 'ArrowUp') {
       e.preventDefault();
       e.stopPropagation();
-      setFocusedIndex(focusableItemsLength - 1);
+      focusItem({ focusLast: true });
     }
 
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       e.stopPropagation();
-      setFocusedIndex(0);
+      focusItem({ index: 0 });
     }
   }
 
   function onFocus() {
     handleOpen();
-    setFocusedIndex(undefined);
   }
 
   const baseClassName =
