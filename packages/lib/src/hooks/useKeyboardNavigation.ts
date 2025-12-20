@@ -35,12 +35,6 @@ export function useKeyboardNavigation<T extends HTMLElement>({
   const onFirstUpRef = useRef(onFirstUp);
   const onLastDownRef = useRef(onLastDown);
 
-  useEffect(() => {
-    onEscRef.current = onEsc;
-    onFirstUpRef.current = onFirstUp;
-    onLastDownRef.current = onLastDown;
-  }, [onEsc, onFirstUp, onLastDown]);
-
   const getItems = useCallback(() => {
     const containerElement = containerRef.current;
     if (!containerElement) return;
@@ -86,6 +80,12 @@ export function useKeyboardNavigation<T extends HTMLElement>({
     onMutation: getItems,
     isActive,
   });
+
+  useEffect(() => {
+    onEscRef.current = onEsc;
+    onFirstUpRef.current = onFirstUp;
+    onLastDownRef.current = onLastDown;
+  }, [onEsc, onFirstUp, onLastDown]);
 
   useEffect(() => {
     if (!isActive || !autoFocus || autoFocus === 'none') return;
