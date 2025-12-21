@@ -12,6 +12,7 @@ import HomeSelectDemo from '@site/src/components/HomepageFeatures/HomeSelectDemo
 import HomeDropdownDemo from '@site/src/components/HomepageFeatures/HomeDropdownDemo';
 import HomePopoverDemo from '@site/src/components/HomepageFeatures/HomePopoverDemo';
 import HomeResizableDemo from '@site/src/components/HomepageFeatures/HomeResizableDemo';
+import WaveSvg from '@site/src/components/HomepageFeatures/WaveSvg';
 
 type FeatureItem = {
   title: string;
@@ -84,8 +85,9 @@ function Feature({ title, svgImage, description }: FeatureItem) {
 export default function HomepageFeatures(): ReactNode {
   return (
     <section className={styles.features}>
-      {/* <WaveSvg /> */}
       <Logo background />
+      <WaveSvg />
+
       <div className="container">
         <section className={styles.featureSection}>
           <Heading as="h2" className={styles.featureSectionHeading}>

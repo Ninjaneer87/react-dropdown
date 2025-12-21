@@ -1,0 +1,273 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "@andrejground/lab",
+  "homepage": "https://github.com/Ninjaneer87/react-dropdown",
+  "items": [
+    {
+      "name": "dropdown",
+      "type": "registry:ui",
+      "title": "Dropdown",
+      "description": "A fully-featured dropdown component with nested menus, sections, and keyboard navigation.",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "src/components/Dropdown/Dropdown.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/Dropdown.tsx"
+        },
+        {
+          "path": "src/components/Dropdown/DropdownMenu.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/DropdownMenu.tsx"
+        },
+        {
+          "path": "src/components/Dropdown/DropdownItem.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/DropdownItem.tsx"
+        },
+        {
+          "path": "src/components/Dropdown/DropdownTrigger.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/DropdownTrigger.tsx"
+        },
+        {
+          "path": "src/components/Dropdown/DropdownHeader.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/DropdownHeader.tsx"
+        },
+        {
+          "path": "src/components/Dropdown/DropdownFooter.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/DropdownFooter.tsx"
+        },
+        {
+          "path": "src/components/Dropdown/DropdownSection.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/DropdownSection.tsx"
+        },
+        {
+          "path": "src/components/Dropdown/DropdownDivider.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/DropdownDivider.tsx"
+        },
+        {
+          "path": "src/components/Dropdown/index.ts",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown/index.ts"
+        }
+      ],
+      "registryDependencies": ["popover"]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "A flexible popover component with positioning, focus trap, and scroll handling.",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "src/components/Popover/Popover.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/popover/Popover.tsx"
+        },
+        {
+          "path": "src/components/Popover/PopoverContent.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/popover/PopoverContent.tsx"
+        },
+        {
+          "path": "src/components/Popover/PopoverTrigger.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/popover/PopoverTrigger.tsx"
+        },
+        {
+          "path": "src/components/Popover/PopoverFocusTrapper.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/popover/PopoverFocusTrapper.tsx"
+        },
+        {
+          "path": "src/components/Popover/index.ts",
+          "type": "registry:ui",
+          "target": "components/ui/popover/index.ts"
+        }
+      ],
+      "registryDependencies": ["use-focus-trap", "use-prevent-body-scroll", "use-position-observer"]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "A customizable select component with search, sections, and keyboard navigation.",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "src/components/Select/Select.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/select/Select.tsx"
+        },
+        {
+          "path": "src/components/Select/SelectItem.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/select/SelectItem.tsx"
+        },
+        {
+          "path": "src/components/Select/SelectSearch.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/select/SelectSearch.tsx"
+        },
+        {
+          "path": "src/components/Select/SelectSection.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/select/SelectSection.tsx"
+        },
+        {
+          "path": "src/components/Select/SelectDivider.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/select/SelectDivider.tsx"
+        },
+        {
+          "path": "src/components/Select/Select.module.css",
+          "type": "registry:ui",
+          "target": "components/ui/select/Select.module.css"
+        },
+        {
+          "path": "src/components/Select/index.ts",
+          "type": "registry:ui",
+          "target": "components/ui/select/index.ts"
+        }
+      ],
+      "registryDependencies": ["popover"]
+    },
+    {
+      "name": "resizable",
+      "type": "registry:ui",
+      "title": "Resizable",
+      "description": "A resizable panel component.",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "src/components/Resizable",
+          "type": "registry:ui",
+          "target": "components/ui/resizable"
+        }
+      ]
+    },
+    {
+      "name": "use-focus-trap",
+      "type": "registry:hook",
+      "title": "useFocusTrap",
+      "description": "A hook to trap focus within a container.",
+      "files": [
+        {
+          "path": "src/hooks/useFocusTrap.ts",
+          "type": "registry:hook",
+          "target": "hooks/useFocusTrap.ts"
+        }
+      ]
+    },
+    {
+      "name": "use-prevent-body-scroll",
+      "type": "registry:hook",
+      "title": "usePreventBodyScroll",
+      "description": "A hook to prevent body scroll.",
+      "files": [
+        {
+          "path": "src/hooks/usePreventBodyScroll.ts",
+          "type": "registry:hook",
+          "target": "hooks/usePreventBodyScroll.ts"
+        }
+      ]
+    },
+    {
+      "name": "use-position-observer",
+      "type": "registry:hook",
+      "title": "usePositionObserver",
+      "description": "A hook to observe element position changes.",
+      "files": [
+        {
+          "path": "src/hooks/usePositionObserver.ts",
+          "type": "registry:hook",
+          "target": "hooks/usePositionObserver.ts"
+        }
+      ]
+    },
+    {
+      "name": "use-debounced-callback",
+      "type": "registry:hook",
+      "title": "useDebouncedCallback",
+      "description": "A hook for debouncing callbacks.",
+      "files": [
+        {
+          "path": "src/hooks/useDebouncedCallback.ts",
+          "type": "registry:hook",
+          "target": "hooks/useDebouncedCallback.ts"
+        }
+      ]
+    },
+    {
+      "name": "use-debounced-value",
+      "type": "registry:hook",
+      "title": "useDebouncedValue",
+      "description": "A hook for debouncing values.",
+      "files": [
+        {
+          "path": "src/hooks/useDebouncedValue.ts",
+          "type": "registry:hook",
+          "target": "hooks/useDebouncedValue.ts"
+        }
+      ]
+    },
+    {
+      "name": "use-delay-unmount",
+      "type": "registry:hook",
+      "title": "useDelayUnmount",
+      "description": "A hook to delay unmounting for exit animations.",
+      "files": [
+        {
+          "path": "src/hooks/useDelayUnmount.ts",
+          "type": "registry:hook",
+          "target": "hooks/useDelayUnmount.ts"
+        }
+      ]
+    },
+    {
+      "name": "use-infinite-scroll",
+      "type": "registry:hook",
+      "title": "useInfiniteScroll",
+      "description": "A hook for infinite scroll functionality.",
+      "files": [
+        {
+          "path": "src/hooks/useInfiniteScroll.ts",
+          "type": "registry:hook",
+          "target": "hooks/useInfiniteScroll.ts"
+        }
+      ]
+    },
+    {
+      "name": "use-resize-observer",
+      "type": "registry:hook",
+      "title": "useResizeObserver",
+      "description": "A hook to observe element resize.",
+      "files": [
+        {
+          "path": "src/hooks/useResizeObserver.ts",
+          "type": "registry:hook",
+          "target": "hooks/useResizeObserver.ts"
+        }
+      ]
+    },
+    {
+      "name": "use-local-storage",
+      "type": "registry:hook",
+      "title": "useLocalStorage",
+      "description": "A hook for localStorage with React state.",
+      "files": [
+        {
+          "path": "src/hooks/useLocalStorage.ts",
+          "type": "registry:hook",
+          "target": "hooks/useLocalStorage.ts"
+        }
+      ]
+    }
+  ]
+}

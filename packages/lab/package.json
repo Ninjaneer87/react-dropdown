@@ -12,10 +12,14 @@
       "require": "./dist/index.umd.js",
       "types": "./dist/index.d.ts"
     },
-    "./style.css": "./dist/lab.css"
+    "./style.css": "./dist/lab.css",
+    "./registry.json": "./registry.json",
+    "./src/*": "./src/*"
   },
   "files": [
-    "dist"
+    "dist",
+    "src",
+    "registry.json"
   ],
   "scripts": {
     "dev": "vite build --watch",
