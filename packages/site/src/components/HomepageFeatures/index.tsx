@@ -13,6 +13,9 @@ import HomeDropdownDemo from '@site/src/components/HomepageFeatures/HomeDropdown
 import HomePopoverDemo from '@site/src/components/HomepageFeatures/HomePopoverDemo';
 import HomeResizableDemo from '@site/src/components/HomepageFeatures/HomeResizableDemo';
 import WaveSvg from '@site/src/components/HomepageFeatures/WaveSvg';
+import CodeBlock from '@theme/CodeBlock';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 type FeatureItem = {
   title: string;
@@ -99,7 +102,7 @@ export default function HomepageFeatures(): ReactNode {
 
           <p className={styles.featureSectionDescription}>
             Explore the hooks, components, utilities, tips and tricks you need
-            or didn't know you needed.
+            or didn't know you need.
           </p>
 
           <div className={styles.featuresRow}>
@@ -184,21 +187,105 @@ export default function HomepageFeatures(): ReactNode {
 
         <section className={styles.featureSection}>
           <Heading as="h2" className={styles.featureSectionHeading}>
-            More about{' '}
+            Use the lab in{' '}
             <span className={styles['featureSectionHeading--primary']}>
-              Andrej
-            </span>
+              your project
+            </span>{' '}
+            now
           </Heading>
 
           <p className={styles.featureSectionDescription}>
-            Andrej is a frontend developer specialized in React.js and its
-            ecosystem with a focus on UI/UX.
+            There are two ways of adding the lab to your project:
           </p>
 
-          <div className={styles.featuresRow}>
-            {FeatureList.map((props, idx) => (
-              <Feature key={idx} {...props} />
-            ))}
+          <div className="row">
+            <div className="col col--6 padding--md">
+              <Heading as="h3">
+                <a
+                  href="https://ui.shadcn.com/docs/registry"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Shadcn registry
+                </a>
+              </Heading>
+              <p>
+                Best option for tailwind projects. Will add the components/hooks
+                source code to your project, so you can fine tune them to your
+                needs.
+              </p>
+
+              <Heading as="h4">Add the lab to your project</Heading>
+
+              <div>
+                <CodeBlock language="bash">
+                  npx shadcn@latest add https://andrejground.com/registry.json
+                </CodeBlock>
+              </div>
+
+              <Heading as="h4">Add a single component to your project</Heading>
+
+              <div>
+                <CodeBlock language="bash">
+                  npx shadcn@latest add https://andrejground.com/registry.json
+                  dropdown
+                </CodeBlock>
+              </div>
+            </div>
+
+            <div className="col col--6 padding--md">
+              <Heading as="h3">
+                <a
+                  href="https://www.npmjs.com/package/@andrejground/lab"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  NPM package
+                </a>
+              </Heading>
+
+              <p>
+                Best option for non-tailwind projects. Install it as a standard
+                NPM package.
+              </p>
+
+              <Heading as="h4">Install the lab</Heading>
+
+              <Tabs groupId="package-manager">
+                <TabItem value="npm" label="npm" default>
+                  <CodeBlock language="bash">
+                    npm install @andrejground/lab
+                  </CodeBlock>
+                </TabItem>
+                <TabItem value="pnpm" label="pnpm">
+                  <CodeBlock language="bash">
+                    pnpm install @andrejground/lab
+                  </CodeBlock>
+                </TabItem>
+                <TabItem value="yarn" label="Yarn">
+                  <CodeBlock language="bash">
+                    yarn add @andrejground/lab
+                  </CodeBlock>
+                </TabItem>
+              </Tabs>
+
+              <Heading as="h4">
+                Import the styles in the root of your app
+              </Heading>
+
+              <div>
+                <CodeBlock
+                  language="tsx"
+                  title="App.tsx"
+                  // metastring='{1} class="code-block-add-line"'
+                >
+                  {`//...
+// add-next-line
+import '@andrejground/lab/style.css';
+//...`}
+                </CodeBlock>
+              </div>
+            </div>
           </div>
         </section>
       </div>
