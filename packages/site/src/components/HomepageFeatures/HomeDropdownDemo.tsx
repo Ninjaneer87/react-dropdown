@@ -13,8 +13,8 @@ import {
   mdiNotePlus,
 } from '@mdi/js';
 import Icon from '@mdi/react';
-import SiteDropdown from '@site/src/components/lib/SiteDropdown/SiteDropdown';
-import SitePopover from '@site/src/components/lib/SitePopover/SitePopover';
+import SiteDropdown from '@site/src/components/lab/SiteDropdown/SiteDropdown';
+import SitePopover from '@site/src/components/lab/SitePopover/SitePopover';
 import React from 'react';
 
 function HomeDropdownDemo() {

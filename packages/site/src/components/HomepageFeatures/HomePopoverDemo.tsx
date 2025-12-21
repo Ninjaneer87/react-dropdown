@@ -1,5 +1,5 @@
 import BrowserOnly from '@docusaurus/BrowserOnly';
-import SitePopover from '@site/src/components/lib/SitePopover/SitePopover';
+import SitePopover from '@site/src/components/lab/SitePopover/SitePopover';
 import styles from './HomePopoverDemo.module.scss';
 
 function HomePopoverDemo() {

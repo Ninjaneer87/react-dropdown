@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import '@fontsource-variable/montserrat';
-import '@andrejground/react-dropdown/style.css';
+import '@andrejground/lab/style.css';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';

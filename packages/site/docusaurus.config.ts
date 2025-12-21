@@ -1,4 +1,3 @@
-import path from 'node:path';
 import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
@@ -11,7 +10,7 @@ const config: Config = {
     'Enhance your frontend skills, apps and tools, speed up the development with',
   favicon: 'img/favicon.ico',
   plugins: [
-    // require.resolve('./src/plugins/watch-lib'),
+    // require.resolve('./src/plugins/watch-lab'),
     'docusaurus-plugin-sass',
   ],
 
@@ -26,7 +25,7 @@ const config: Config = {
   baseUrl: '/',
   // ? clientModules if direct import is not working
   // clientModules: [
-  //   require.resolve('./src/client/load-lib-styles.js')
+  //   require.resolve('./src/client/load-lab-styles.js')
   // ],
 
   // GitHub pages deployment config.

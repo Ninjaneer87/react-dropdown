@@ -6,12 +6,12 @@
     "composite": true,
     "types": ["docusaurus-plugin-sass"],
     "paths": {
-      // "@andrejground/react-dropdown": ["../lib/src"],
-      // "@andrejground/react-dropdown/*": ["../lib/src/*"],
-      // "@/*": ["../lib/src/*"],
+      // "@andrejground/lab": ["../lab/src"],
+      // "@andrejground/lab/*": ["../lab/src/*"],
+      // "@/*": ["../lab/src/*"],
       "@site/*": ["./*"]
     }
   },
   "exclude": [".docusaurus", "build"],
-  // "references": [{ "path": "../lib" }]
+  // "references": [{ "path": "../lab" }]
 }

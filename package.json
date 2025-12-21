@@ -1,5 +1,5 @@
 {
-  "name": "react-dropdown-monorepo",
+  "name": "andrejground-monorepo",
   "private": true,
   "workspaces": [
     "packages/*"
@@ -8,7 +8,7 @@
     "app": "npm run dev --workspace=app",
     "build": "turbo run build",
     "dev": "turbo run dev --parallel --color | grep --line-buffered '\\S'",
-    "build:lib": "npm run build --workspace=@andrejground/react-dropdown",
+    "build:lab": "npm run build --workspace=@andrejground/lab",
     "site": "npm run start --workspace=site",
     "lint": "npm run lint --workspaces --if-present"
   },

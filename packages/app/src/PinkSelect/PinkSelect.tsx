@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react';
 import styles from './PinkSelect.module.css';
-import { Select } from '@andrejground/react-dropdown';
+import { Select } from '@andrejground/lab';
 
 type PinkSelectProps = ComponentProps<typeof Select>;
 

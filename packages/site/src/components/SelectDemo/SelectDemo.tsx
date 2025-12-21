@@ -2,7 +2,7 @@ import {
   debounceCallback,
   Dropdown,
   Select,
-} from '@andrejground/react-dropdown';
+} from '@andrejground/lab';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { usePokemonList } from '@site/src/hooks/usePokemonList';
 import styles from './SelectDemo.module.scss';

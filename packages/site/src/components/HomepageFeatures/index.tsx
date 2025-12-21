@@ -8,7 +8,6 @@ import UseAnythingSvg from '@site/src/components/HomepageFeatures/UseAnythingSvg
 import BlogSvg from '@site/src/components/HomepageFeatures/BlogSvg';
 import Link from '@docusaurus/Link';
 import Logo from '@site/src/components/Logo';
-import SiteDropdown from '@site/src/components/lib/SiteDropdown/SiteDropdown';
 import HomeSelectDemo from '@site/src/components/HomepageFeatures/HomeSelectDemo';
 import HomeDropdownDemo from '@site/src/components/HomepageFeatures/HomeDropdownDemo';
 import HomePopoverDemo from '@site/src/components/HomepageFeatures/HomePopoverDemo';
@@ -123,7 +122,7 @@ export default function HomepageFeatures(): ReactNode {
           <div className="row">
             <div className="col col--6 padding--md">
               <Heading as={'h3'}>
-                <Link to="/docs/select">Select</Link>
+                <Link to="/blog">Select</Link>
               </Heading>
               <p>
                 Powerful select component with built-in support for some of the
@@ -139,7 +138,7 @@ export default function HomepageFeatures(): ReactNode {
 
             <div className="col col--6 padding--md">
               <Heading as="h3">
-                <Link to="/docs/dropdown">Dropdown</Link>
+                <Link to="/blog">Dropdown</Link>
               </Heading>
               <p>
                 Highly customizable dropdown with features like infinite-scroll,
@@ -153,7 +152,7 @@ export default function HomepageFeatures(): ReactNode {
 
             <div className="col col--6 padding--md">
               <Heading as="h3">
-                <Link to="/docs/popover">Popover</Link>
+                <Link to="/blog">Popover</Link>
               </Heading>
               <p>
                 Mighty popover, the underlying component for Select and
@@ -167,7 +166,7 @@ export default function HomepageFeatures(): ReactNode {
 
             <div className="col col--6 padding--md">
               <Heading as="h3">
-                <Link to="/docs/resizable">Resizable</Link>
+                <Link to="/blog">Resizable</Link>
               </Heading>
               <p>
                 Resize horizontally any section or an element. Useful for side
@@ -178,6 +177,26 @@ export default function HomepageFeatures(): ReactNode {
                 <HomeResizableDemo />
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className={styles.featureSection}>
+          <Heading as="h2" className={styles.featureSectionHeading}>
+            More about{' '}
+            <span className={styles['featureSectionHeading--primary']}>
+              Andrej
+            </span>
+          </Heading>
+
+          <p className={styles.featureSectionDescription}>
+            Andrej is a frontend developer specialized in React.js and its
+            ecosystem with a focus on UI/UX.
+          </p>
+
+          <div className={styles.featuresRow}>
+            {FeatureList.map((props, idx) => (
+              <Feature key={idx} {...props} />
+            ))}
           </div>
         </section>
       </div>

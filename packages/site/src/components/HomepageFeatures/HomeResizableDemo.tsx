@@ -1,4 +1,4 @@
-import { Resizable } from '@andrejground/react-dropdown';
+import { Resizable } from '@andrejground/lab';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React from 'react';
 import styles from './HomeResizableDemo.module.scss';

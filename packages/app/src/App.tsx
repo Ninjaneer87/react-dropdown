@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
-import '@andrejground/react-dropdown/style.css';
+import '@andrejground/lab/style.css';
 import {
   debounceCallback,
   Dropdown,
   Popover,
   Select,
-} from '@andrejground/react-dropdown';
+} from '@andrejground/lab';
 import styles from '~/App.module.css';
 import { Option, usePokemonList } from '~/hooks/usePokemonList';
 import PinkSelect from '~/PinkSelect/PinkSelect';
@@ -38,7 +38,7 @@ function App() {
         ${
           doubleViewportSize
             ? 'min-h-[200vh] min-w-[200vw]'
-            : 'min-h-[100vh] w-[100vw]'
+            : 'min-h-screen w-screen'
         }`}
       >
         <h1 className="w-full py-4 text-center">React dropdown</h1>
@@ -237,7 +237,7 @@ function App() {
 
         <Dropdown shouldCloseOnSelection={false} autoFocus="first-item">
           <Dropdown.Trigger>
-            <button className="w-full cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
+            <button className="w-full cursor-pointer p-4 rounded-lg border-solid border bg-black">
               Dropdown with pokemons
             </button>
           </Dropdown.Trigger>
@@ -312,7 +312,7 @@ function App() {
           autoFocus="first-item"
         >
           <Dropdown.Trigger>
-            <button className="w-full cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
+            <button className="w-full cursor-pointer p-4 rounded-lg border-solid border bg-black">
               DropdownTrigger
             </button>
           </Dropdown.Trigger>
@@ -377,7 +377,7 @@ function App() {
           autoFocus="first-item"
         >
           <Dropdown.Trigger>
-            <button className="w-full cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
+            <button className="w-full cursor-pointer p-4 rounded-lg border-solid border bg-black">
               DropdownTrigger Nested
             </button>
           </Dropdown.Trigger>
@@ -503,7 +503,7 @@ function App() {
           // hoverableContent={false}
         >
           <Popover.Trigger>
-            <button className="cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
+            <button className="cursor-pointer p-4 rounded-lg border-solid border bg-black">
               TooltipTrigger
             </button>
           </Popover.Trigger>
@@ -531,7 +531,7 @@ function App() {
                 // hoverableContent={false}
               >
                 <Popover.Trigger>
-                  <button className="cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
+                  <button className="cursor-pointer p-4 rounded-lg border-solid border bg-black">
                     PopoverTrigger
                   </button>
                 </Popover.Trigger>
@@ -568,7 +568,7 @@ function App() {
             // hoverableContent={false}
           >
             <Popover.Trigger>
-              <button className="cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
+              <button className="cursor-pointer p-4 rounded-lg border-solid border bg-black">
                 Fullscreen PopoverTrigger
               </button>
             </Popover.Trigger>
@@ -605,7 +605,7 @@ function App() {
             // hoverableContent={false}
           >
             <Popover.Trigger>
-              <button className="cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
+              <button className="cursor-pointer p-4 rounded-lg border-solid border bg-black">
                 Fullscreen PopoverTrigger
               </button>
             </Popover.Trigger>
@@ -642,7 +642,7 @@ function App() {
             // hoverableContent={false}
           >
             <Popover.Trigger>
-              <button className="cursor-pointer p-4 rounded-lg border-solid border-[1px] bg-black">
+              <button className="cursor-pointer p-4 rounded-lg border-solid border bg-black">
                 Fullscreen PopoverTrigger
               </button>
             </Popover.Trigger>
