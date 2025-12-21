@@ -25,10 +25,12 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'src/index.ts'),
-      name: 'ReactDropdown',
-      formats: ['es', 'umd'],
-      fileName: (format) => `index.${format}.js`,
+      entry: {
+        index: path.resolve(__dirname, 'src/index.ts'),
+      },
+      name: 'Lab',
+      formats: ['es'],
+      fileName: (_format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
       external: ['react', 'react-dom'],
