@@ -16,6 +16,7 @@ import WaveSvg from '@site/src/components/HomepageFeatures/WaveSvg';
 import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import { REGISTRY_URL } from '@site/src/utils/constants';
 
 type FeatureItem = {
   title: string;
@@ -219,7 +220,7 @@ export default function HomepageFeatures(): ReactNode {
 
               <div>
                 <CodeBlock language="bash">
-                  npx shadcn@latest add https://andrejground.com/registry.json
+                  npx shadcn@latest add {REGISTRY_URL}
                 </CodeBlock>
               </div>
 
@@ -227,7 +228,7 @@ export default function HomepageFeatures(): ReactNode {
 
               <div>
                 <CodeBlock language="bash">
-                  npx shadcn@latest add https://andrejground.com/registry.json
+                  npx shadcn@latest add {REGISTRY_URL}
                   dropdown
                 </CodeBlock>
               </div>
@@ -235,13 +236,9 @@ export default function HomepageFeatures(): ReactNode {
 
             <div className="col col--6 padding--md">
               <Heading as="h3">
-                <a
-                  href="https://www.npmjs.com/package/@andrejground/lab"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <Link to="docs/getting-started/installation#install-as-npm-package">
                   NPM package
-                </a>
+                </Link>
               </Heading>
 
               <p>

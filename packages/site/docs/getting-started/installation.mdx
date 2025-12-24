@@ -1,0 +1,76 @@
+---
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+import {
+  installationAppTsx,
+  installationMyPopoverTsx,
+  installationMyPopoverScss,
+} from './_snippets/installation';
+import { REGISTRY_URL } from '@site/src/utils/constants';
+
+# Installation
+
+Requirements:
+
+- **React 18.2** or later
+- **React DOM 18.2** or later
+
+## Install as NPM package
+
+The easiest way to start with AndrejGround Lab is to install it as a NPM package.
+
+### Install the package
+
+Run one of the following commands in your terminal:
+
+<Tabs groupId="package-manager">
+  <TabItem value="npm" label="npm" default>
+    <CodeBlock language="bash">npm install @andrejground/lab</CodeBlock>
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+    <CodeBlock language="bash">pnpm install @andrejground/lab</CodeBlock>
+  </TabItem>
+  <TabItem value="yarn" label="Yarn">
+    <CodeBlock language="bash">yarn add @andrejground/lab</CodeBlock>
+  </TabItem>
+</Tabs>
+
+### Import the styles
+
+Add the following line to the root of your app:
+
+```tsx title="App.tsx"
+// add-next-line
+import '@andrejground/lab/style.css';
+```
+
+### Use the components
+
+Add your styles and your component is ready to be used.
+
+<div className="code-tabs">
+  <Tabs>
+    <TabItem value="App.tsx" label="App.tsx" default>
+      <CodeBlock language="tsx">{installationAppTsx}</CodeBlock>
+    </TabItem>
+    <TabItem value="MyPopover.tsx" label="MyPopover.tsx" default>
+      <CodeBlock language="tsx">{installationMyPopoverTsx}</CodeBlock>
+    </TabItem>
+    <TabItem value="MyPopover.module.scss" label="MyPopover.module.scss">
+      <CodeBlock language="scss">{installationMyPopoverScss}</CodeBlock>
+    </TabItem>
+  </Tabs>
+</div>
+
+## Install as Shadcn Registry
+
+This will add installed components/hooks source code to your project.
+
+### Add the entire lab to your project
+
+<CodeBlock language="bash">npx shadcn@latest add {REGISTRY_URL}</CodeBlock>
+

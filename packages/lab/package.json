@@ -12,17 +12,18 @@
       "types": "./dist/index.d.ts"
     },
     "./style.css": "./dist/lab.css",
-    "./registry.json": "./registry.json",
+    "./registry/*": "./registry/*",
     "./src/*": "./src/*"
   },
   "files": [
     "dist",
     "src",
-    "registry.json"
+    "registry"
   ],
   "scripts": {
     "dev": "vite build --watch",
     "build": "vite build",
+    "build:registry": "npx tsx scripts/build-registry.ts",
     "lint": "eslint ."
   },
   "peerDependencies": {

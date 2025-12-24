@@ -93,15 +93,13 @@ const config: Config = {
         alt: 'AndrejGround logo',
         src: 'img/logo.svg',
         srcDark: 'img/logo-dark.svg',
-        // height: '48px',
-        // width: '48px',
       },
       items: [
         {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Docs',
         },
         { to: '/blog', label: 'Blog', position: 'left' },
         {
@@ -159,7 +157,7 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.oceanicNext,
-      additionalLanguages: ['powershell', 'bash'],
+      additionalLanguages: ['powershell', 'bash', 'scss'],
       magicComments: [
         {
           className: 'theme-code-block-highlighted-line',

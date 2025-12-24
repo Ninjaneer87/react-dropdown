@@ -1,5 +1,6 @@
 {
   // These settings are specific to the react-dropdown workspace
+  "mdx.experimentalLanguageServer": true,
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "tailwindCSS.classAttributes": [
     ".*class.*",

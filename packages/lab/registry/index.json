@@ -1,0 +1,43 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "@andrejground/lab",
+  "homepage": "https://github.com/Ninjaneer87/react-dropdown",
+  "items": [
+    {
+      "name": "dropdown",
+      "type": "registry:ui",
+      "title": "Dropdown",
+      "description": "A fully-featured dropdown component with nested menus, sections, and keyboard navigation.",
+      "dependencies": [
+        "clsx",
+        "tailwind-merge"
+      ],
+      "registryDependencies": [
+        "https://raw.githubusercontent.com/Ninjaneer87/react-dropdown/main/packages/lab/registry/popover.json"
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "A flexible popover component with positioning, focus trap, and scroll handling.",
+      "dependencies": [
+        "clsx",
+        "tailwind-merge"
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "A customizable select component with search, sections, and keyboard navigation.",
+      "dependencies": [
+        "clsx",
+        "tailwind-merge"
+      ],
+      "registryDependencies": [
+        "https://raw.githubusercontent.com/Ninjaneer87/react-dropdown/main/packages/lab/registry/popover.json"
+      ]
+    }
+  ]
+}
