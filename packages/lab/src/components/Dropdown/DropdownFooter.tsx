@@ -1,3 +1,5 @@
+'use client';
+
 import { useDropdownContext } from '../../context/DropdownContext';
 import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
 import { DropdownFooterProps } from '../../types';

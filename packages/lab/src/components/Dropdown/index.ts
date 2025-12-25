@@ -1,3 +1,5 @@
+'use client';
+
 export { default as Dropdown } from './Dropdown';
 export { default as DropdownDivider } from './DropdownDivider';
 export { default as DropdownFooter } from './DropdownFooter';

@@ -1,3 +1,5 @@
+'use client';
+
 /* eslint-disable react-hooks/refs */
 import React, {
   ReactNode,

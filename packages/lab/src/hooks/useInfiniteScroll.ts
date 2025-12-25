@@ -1,3 +1,5 @@
+'use client';
+
 import { useLayoutEffect, useRef, useCallback, useEffect } from 'react';
 import { debounceCallback } from '../utils/common';
 

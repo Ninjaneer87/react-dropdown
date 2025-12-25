@@ -1,3 +1,5 @@
+'use client';
+
 import { PopoverContentProps } from '../../types';
 import { usePopoverContext } from '../../context/PopoverContext';
 

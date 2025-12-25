@@ -1,3 +1,5 @@
+'use client';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { composeRefs } from '../../../utils/compose-refs';

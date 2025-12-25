@@ -1,3 +1,5 @@
+'use client';
+
 import { ElementType } from 'react';
 import { useDropdownContext } from '../../context/DropdownContext';
 import { useDropdownMenuContext } from '../../context/DropdownMenuContext';

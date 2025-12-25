@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef } from 'react';
 import { usePopoverRootContext } from '../../context/PopoverRootContext';
 import { useSelectContext } from '../../context/SelectContext';

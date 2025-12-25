@@ -1,3 +1,5 @@
+'use client';
+
 import { useDropdownContext } from '../../context/DropdownContext';
 import { DropdownTriggerProps } from '../../types';
 import { Slot } from '@/components/utility/Slot';

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useSelectContext } from '../../context/SelectContext';
 import { SelectSectionProps } from '../../types';

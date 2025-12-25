@@ -1,3 +1,5 @@
+'use client';
+
 import React, { ReactNode, useState } from 'react';
 import { DropdownContext } from '../../context/DropdownContext';
 import DropdownMenu from './DropdownMenu';
