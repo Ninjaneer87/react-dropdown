@@ -94,9 +94,9 @@ export default function HomepageFeatures(): ReactNode {
       <div className="container">
         <section className={styles.featureSection}>
           <Heading as="h2" className={styles.featureSectionHeading}>
-            Inside the{' '}
+            Take a{' '}
             <span className={styles['featureSectionHeading--primary']}>
-              toolbox
+              look inside
             </span>
           </Heading>
 
@@ -230,11 +230,7 @@ export default function HomepageFeatures(): ReactNode {
                 2. Import the styles in the root of your app
               </Heading>
 
-              <CodeBlock
-                language="tsx"
-                title="App.tsx"
-                // metastring='{1} class="code-block-add-line"'
-              >
+              <CodeBlock language="tsx" title="App.tsx">
                 {`//...
 // add-next-line
 import '@andrejground/lab/style.css';
@@ -242,6 +238,7 @@ import '@andrejground/lab/style.css';
               </CodeBlock>
             </div>
           </div>
+          <p>Happy coding! 🫡</p>
         </section>
       </div>
     </section>

@@ -13,7 +13,8 @@
   &:hover,
   &:active,
   &:focus-visible,
-  &:focus-within{
+  &:focus-within,
+  &[data-highlighted-item='true'] {
     background-color: var(--ifm-color-emphasis-200);
   }
 }

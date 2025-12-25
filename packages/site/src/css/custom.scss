@@ -52,7 +52,7 @@ html[data-theme='dark'] {
   --bg-color-hover: #3f3f3f;
   --ifm-color-primary-bg: #00e5ff22;
 
-  --prism-background-color: #282c34;
+  --prism-background-color: #1e1e1e;
 }
 
 #__docusaurus {
@@ -109,6 +109,7 @@ hr {
   opacity: 0.3;
 }
 
+// Code line remove/add
 .code-block-remove-line,
 .code-block-add-line {
   display: block;
@@ -125,22 +126,23 @@ hr {
   border-color: #00ff0080;
 }
 
-/* Container to merge tabs and code blocks */
+// Code tabs
 .code-tabs .tabs {
   margin-bottom: -1rem;
   border: none;
-  // padding: 0px 8px 0 8px;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   background: var(--prism-background-color);
   border-bottom: 1px solid var(--ifm-color-emphasis-200);
 }
 
+// Code block
 .code-tabs .theme-code-block {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
 
+// Code tab item
 .code-tabs .tabs__item {
   font-size: 0.9rem;
   font-weight: 500;
@@ -151,25 +153,19 @@ hr {
   border-radius: 0;
   border-bottom: 1px solid var(--ifm-color-emphasis-200);
   border-top: none;
+  border-color: transparent;
 }
 
+// Code tab item active
 .code-tabs .tabs__item--active {
-  // font-weight: bold;
-  // border-radius: 4px 4px 0 0;
-
-  border-color: var(--ifm-color-emphasis-400);
+  border-color: var(--ifm-color-primary);
   background-color: var(--ifm-color-emphasis-200);
 }
 
-/* Targets the container around the Prism code block */
+// Code block content
 .theme-code-block {
   pre.prism-code {
-    max-height: 400px; /* Adjust this value to your preference */
+    max-height: clamp(400px, 50vh, 800px);
     overflow-y: auto;
   }
-}
-
-/* Optional: Ensure the copy button stays visible or behaves correctly */
-.theme-code-block div {
-  overflow: visible;
 }

@@ -156,7 +156,7 @@ const config: Config = {
     },
     prism: {
       theme: prismThemes.github,
-      darkTheme: prismThemes.oceanicNext,
+      darkTheme: prismThemes.vsDark,
       additionalLanguages: ['powershell', 'bash', 'scss'],
       magicComments: [
         {
