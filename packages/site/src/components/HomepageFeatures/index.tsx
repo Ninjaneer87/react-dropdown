@@ -16,7 +16,6 @@ import WaveSvg from '@site/src/components/HomepageFeatures/WaveSvg';
 import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import { REGISTRY_URL } from '@site/src/utils/constants';
 
 type FeatureItem = {
   title: string;
@@ -196,57 +195,16 @@ export default function HomepageFeatures(): ReactNode {
           </Heading>
 
           <p className={styles.featureSectionDescription}>
-            There are two ways of adding the lab to your project:
+            AndrejGround Lab is available as an{' '}
+            <Link to="docs/getting-started/installation#install-as-npm-package">
+              NPM package
+            </Link>
+            . Set it up in these two steps:
           </p>
 
           <div className="row">
             <div className="col col--6 padding--md">
-              <Heading as="h3">
-                <a
-                  href="https://ui.shadcn.com/docs/registry"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Shadcn registry
-                </a>
-              </Heading>
-              <p>
-                Best option for tailwind projects. Will add the components/hooks
-                source code to your project, so you can fine tune them to your
-                needs.
-              </p>
-
-              <Heading as="h4">Add the lab to your project</Heading>
-
-              <div>
-                <CodeBlock language="bash">
-                  npx shadcn@latest add {REGISTRY_URL}
-                </CodeBlock>
-              </div>
-
-              <Heading as="h4">Add a single component to your project</Heading>
-
-              <div>
-                <CodeBlock language="bash">
-                  npx shadcn@latest add {REGISTRY_URL}
-                  dropdown
-                </CodeBlock>
-              </div>
-            </div>
-
-            <div className="col col--6 padding--md">
-              <Heading as="h3">
-                <Link to="docs/getting-started/installation#install-as-npm-package">
-                  NPM package
-                </Link>
-              </Heading>
-
-              <p>
-                Best option for non-tailwind projects. Install it as a standard
-                NPM package.
-              </p>
-
-              <Heading as="h4">Install the lab</Heading>
+              <Heading as="h3">1. Install the package</Heading>
 
               <Tabs groupId="package-manager">
                 <TabItem value="npm" label="npm" default>
@@ -265,23 +223,23 @@ export default function HomepageFeatures(): ReactNode {
                   </CodeBlock>
                 </TabItem>
               </Tabs>
+            </div>
 
-              <Heading as="h4">
-                Import the styles in the root of your app
+            <div className="col col--6 padding--md">
+              <Heading as="h3">
+                2. Import the styles in the root of your app
               </Heading>
 
-              <div>
-                <CodeBlock
-                  language="tsx"
-                  title="App.tsx"
-                  // metastring='{1} class="code-block-add-line"'
-                >
-                  {`//...
+              <CodeBlock
+                language="tsx"
+                title="App.tsx"
+                // metastring='{1} class="code-block-add-line"'
+              >
+                {`//...
 // add-next-line
 import '@andrejground/lab/style.css';
 //...`}
-                </CodeBlock>
-              </div>
+              </CodeBlock>
             </div>
           </div>
         </section>
