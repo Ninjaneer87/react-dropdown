@@ -196,7 +196,7 @@ export default function HomepageFeatures(): ReactNode {
 
           <p className={styles.featureSectionDescription}>
             AndrejGround Lab is available as an{' '}
-            <Link to="docs/getting-started/installation#install-as-npm-package">
+            <Link to="docs/getting-started/installation">
               NPM package
             </Link>
             . Set it up in these two steps:

@@ -100,6 +100,7 @@ const config: Config = {
           sidebarId: 'tutorialSidebar',
           position: 'left',
           label: 'Docs',
+          href: '/docs/getting-started/introduction',
         },
         { to: '/blog', label: 'Blog', position: 'left' },
         {
@@ -117,7 +118,7 @@ const config: Config = {
           items: [
             {
               label: 'Tutorial',
-              to: '/docs/intro',
+              to: '/docs/getting-started/introduction',
             },
           ],
         },
@@ -156,7 +157,7 @@ const config: Config = {
     },
     prism: {
       theme: prismThemes.github,
-      darkTheme: prismThemes.vsDark,
+      darkTheme: prismThemes.oceanicNext,
       additionalLanguages: ['powershell', 'bash', 'scss'],
       magicComments: [
         {

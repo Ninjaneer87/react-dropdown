@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 3
 ---
 
 import Tabs from '@theme/Tabs';
@@ -18,11 +18,11 @@ Requirements:
 - **React 18.2** or later
 - **React DOM 18.2** or later
 
-## Install as NPM package
+## Installing the package
 
 The easiest way to start with AndrejGround Lab is to install it as a NPM package.
 
-### Install the package
+### Install
 
 Run one of the following commands in your terminal:
 
@@ -64,3 +64,22 @@ Add your styles and your component is ready to be used.
     </TabItem>
   </Tabs>
 </div>
+
+## Frameworks
+
+AndrejGround Lab is compatible with your preferred framework.
+
+### Next.js
+
+All the components and hooks already include the `"use client"` directive, which means you can import and use them directly in your RSC.
+
+### Astro
+
+In Astro, you can use the `client:load` or `client:only` directives for your React components - meaning they'll only run in the browser.
+
+```tsx title="MyComponent.astro" highlight="{12-22}"
+<MyPopover client:load>
+  <MyPopover.Trigger>Popover Trigger</MyPopover.Trigger>
+  <MyPopover.Content>Popover Content</MyPopover.Content>
+</MyPopover>
+```

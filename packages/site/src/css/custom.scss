@@ -52,7 +52,7 @@ html[data-theme='dark'] {
   --bg-color-hover: #3f3f3f;
   --ifm-color-primary-bg: #00e5ff22;
 
-  --prism-background-color: #1e1e1e;
+  --prism-background-color: #282c34;
 }
 
 #__docusaurus {
@@ -133,7 +133,7 @@ hr {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   background: var(--prism-background-color);
-  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
 }
 
 // Code block
