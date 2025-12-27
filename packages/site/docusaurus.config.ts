@@ -6,8 +6,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'AndrejGround',
-  tagline:
-    'Enhance your frontend skills, apps and tools, speed up the development with',
+  tagline: 'A lightweight, accessible React toolkit for custom designs',
   favicon: 'img/favicon.ico',
   plugins: [
     // require.resolve('./src/plugins/watch-lab'),

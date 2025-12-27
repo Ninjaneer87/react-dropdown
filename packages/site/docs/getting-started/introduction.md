@@ -8,47 +8,44 @@ Welcome to AndrejGround Lab documentation!
 
 ## What is AndrejGround Lab?
 
-AndrejGround Lab is a collection of React components and hooks to help you build your smooth and accessible interfaces.
+AndrejGround Lab is a specialized suite of React components and hooks engineered for developers who need **structure without the overhead**.
 
-AndrejGround Lab's main goal is to provide a set of tools that will help you streamline the development process. There is **no design system**, the components contain only the base easily-overridable styles, and are built with accessibility in mind.
+Rather than imposing a rigid design system, this library provides high-quality building blocks that adapt to your design requirements. It’s the "middle ground" between building from scratch and being locked into a heavy UI framework.
 
 <hr />
 
 ## FAQ
 
-### Why no design system?
+### Why take a "Design-Agnostic" approach?
 
-The idea behind AndrejGround Lab was not to be a fully-fledged batteries-included UI framework, but rather a set of individual components to be used in any React supported environment with minimum customization effort.
+Most UI libraries come with a "look" you have to fight to change. AndrejGround Lab provides only the essential structural styles. It is designed to be a foundation, not a finished house, making it perfect for projects that already have a unique brand identity or custom CSS requirements.
 
-### Does AndrejGround Lab use runtime CSS?
+### How are styles handled?
 
-**No**, AndrejGround Lab uses TailwindCSS in combination with CSS modules for styles. All the CSS is generated at build time thus is fully compatible with the latest React and Next.js versions.
+To avoid the performance pitfalls of runtime CSS-in-JS, AndrejGround Lab uses TailwindCSS and CSS Modules, generating all styles at build time. This ensures full compatibility with modern environments like Next.js (App Router) and Astro without sacrificing performance.
 
-### What about TailwindCSS classes conflicts?
+### How do you handle class conflicts?
 
-AndrejGround Lab uses `tailwind-merge` library to solve any TailwindCSS classes conflicts, and even exports the `cn` utility function for easier composition of classes.
+AndrejGround Lab uses the industry-standard `tailwind-merge` and `clsx` to handle class conflicts and even exports the `cn` utility function for easier composition of classes.
 
 ```ts
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { cn } from '@andrejground/lab';
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(...inputs));
-}
-
-// Example usage
-const baseClassNames = cn(
-  'p-2',
-  isSticky ? 'sticky bottom-0 z-10 bg-inherit shadow-sm' : '',
+// Defaults are merged seamlessly with your overrides
+const className = cn(
+  'p-4 bg-blue-500',
+  customStyles && 'p-2 bg-red-500', // 'p-2' and 'bg-red-500' win
 );
 ```
 
-### Is TypeScript supported?
+### Is it Type-Safe?
 
-**Yes**, AndrejGround Lab is written in TypeScript and has full support for it. Every component and hook has proper type definitions.
+**Yes**. AndrejGround Lab is TypeScript-first. Every component, prop, and hook is strictly typed to provide a first-class developer experience with autocomplete and compile-time safety.
 
 ### Can I use AndrejGround Lab outside of React ecosystem?
 
-**No**, AndrejGround Lab is built on top of React and is not compatible with other non-React frameworks or libraries such as Svelte, Vue, or Angular.
+**No**. To provide the best possible developer experience, AndrejGround Lab is built exclusively for the React ecosystem. It is not compatible with Vue, Svelte, or Angular.
 
-But it is compatible with meta frameworks like Next.js or Astro.
+## What about Meta-Frameworks?
+
+**Yes**. AndrejGround Lab is compatible with meta frameworks like Next.js or Astro.
