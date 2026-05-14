@@ -1,0 +1,47 @@
+.errorCode {
+  color: var(--ifm-color-danger);
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+
+  font-weight: 400;
+  font-size: clamp(5rem, 8vw, 8rem);
+  max-width: clamp(400px, 50vw, 800px);
+  margin-bottom: 2rem;
+
+  height: fit-content;
+  width: fit-content;
+  margin: auto;
+  aspect-ratio: 1 / 1;
+
+  border: 2px solid var(--ifm-color-danger);
+  border-radius: 50%;
+  padding: 2rem;
+}
+
+.section {
+  min-height: 70svh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.heading {
+  font-weight: 400;
+  font-size: clamp(2rem, 8vw, 5rem);
+  max-width: clamp(400px, 50vw, 800px);
+  margin-bottom: 2rem;
+}
+
+.headingAccent {
+  color: var(--ifm-color-danger);
+}
+
+.description {
+  font-size: clamp(1.3rem, 4vw, 1.6rem);
+  max-width: clamp(400px, 50vw, 800px);
+  margin-bottom: 2rem;
+}
