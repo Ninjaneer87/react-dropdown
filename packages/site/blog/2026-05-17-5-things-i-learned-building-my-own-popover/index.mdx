@@ -12,6 +12,8 @@ Building a [Popover](/lab/components/popover) from scratch taught me more about 
 
 import PopoverPositioningDemo from './PopoverPositioningDemo';
 import HomeDropdownDemo from '@site/src/components/HomepageFeatures/HomeDropdownDemo';
+import SitePopover from '@site/src/components/site-lab/SitePopover/SitePopover';
+import PopoverWithForm from '@site/src/components/lab/Popover/PopoverWithForm';
 
 When you think about a popover, you might assume it's just a box that opens near a button and closes when you click away. But building a production-grade popover is a bit trickier than that.
 
@@ -33,9 +35,9 @@ The simplest approach is to make the trigger's wrapper `position: relative` and 
 
 The problem shows up the moment your trigger lives inside a container with `overflow: auto` or `overflow: hidden` - which is most real-world layouts. The popover content is part of the container's flow, so it either **creates extra scroll space** or **gets clipped at the container edge**.
 
-`position: fixed` solves the overflow problem - it positions the element relative to the **viewport**, not the nearest positioned ancestor. But it introduces a new one: the coordinates are calculated once on open and never updated. **If the trigger moves (via scrolling, layout shifts, or resizing), the popover stays frozen in place.**
+`position: fixed` solves the overflow problem - it positions the element relative to the **viewport**, not the nearest positioned ancestor. But it introduces a new one: the popover coordinates are calculated once on open and become stale. **If the trigger moves (via scrolling, layout shifts, or resizing), the popover stays frozen in place because its computed position isn't updated.**
 
-The approach I landed on combines three things: `position: fixed` to escape overflow, a **React Portal** to escape ancestor DOM constraints (like CSS `transform` creating a new containing block), and **dynamic repositioning** to keep the content anchored to the trigger.
+The approach I took combines three things: `position: fixed` to escape overflow, a **React Portal** to escape CSS containing-block constraints (like a `transform` on an ancestor creating a new containing block for `position: fixed` elements), and **dynamic repositioning** to keep the content anchored to the trigger.
 
 Click the triggers below and see it in action:
 
@@ -47,7 +49,7 @@ As the demo above shows, calculating the position once isn't enough. The trigger
 
 #### Window resize
 
-The simplest case - when the browser window is resized, everything shifts ([`useWindowResize`](/lab/hooks/useWindowResize)):
+The simplest case - when the browser window is resized, everything shifts (see how in [`useWindowResize`](/lab/hooks/useWindowResize)):
 
 ```ts
 useWindowResize(setContentCoords);
@@ -108,7 +110,7 @@ const checkPosition = () => {
 };
 ```
 
-This runs every frame while the popover is open and stops when it closes. Sounds more expensive than it is - it runs only for expanded instances (which usually is just one at a time) and it catches **every** type of movement - CSS transitions, sibling DOM changes, flex/grid reflows, you name it (see how in [`usePositionObserver`](/lab/hooks/usePositionObserver)):
+This runs every frame while the popover is open and stops when it closes. Sounds more expensive than it is - it runs only for expanded instances (usually just one at a time), and `getBoundingClientRect()` can trigger layout work if other DOM writes happen in the same frame. But it catches **every** type of movement - CSS transitions, sibling DOM changes, flex/grid reflows, you name it (see how in [`usePositionObserver`](/lab/hooks/usePositionObserver)):
 
 ```ts
 usePositionObserver({
@@ -138,7 +140,7 @@ Position calculation is not a one-time thing. It's a continuous process that nee
 
 The visual part of a popover is not the only challenge - what about accessibility?
 
-For a popover, focus management is more or less straight forward - it gets quite trickier when popover gets extended into a dropdown or a select.
+For modal-like popover behavior, focus management is more or less straightforward - it gets quite trickier when a popover gets extended into a dropdown or a select.
 
 ### Focus trapping
 
@@ -159,6 +161,10 @@ const { startTrapRef, trapContainerRef, endTrapRef } =
 
 When the user tabs past the last content element, focus lands on the last sentinel - its focus listener immediately redirects focus back to the first content element. The reverse happens with `Shift+Tab`. The sentinels never actually hold focus, it just passes through them. The hook queries the container for focusable elements dynamically, so it handles content changes automatically.
 
+Use `Tab` and `Shift+Tab` to navigate through the popover content.
+
+<PopoverWithForm />
+
 ### Focus restoration
 
 When the popover closes, focus should return to the trigger. I ran into a subtle racing-conditions issue here - if you close the popover with `Enter` (can happen in dropdown or select), the keydown event can fire on the newly focused trigger - which can cause the popover to open again. Wrapping the focus call in `requestAnimationFrame` worked for me (deferring the focus call to the next frame avoids the race condition):
@@ -173,7 +179,7 @@ if (focusTrigger) {
 
 ### ARIA attributes
 
-The trigger needs `aria-expanded` and `aria-describedby` pointing to the popover content's `id` (generated with `useId`). Without these, screen readers won't know the trigger controls a popover.
+The trigger will often benefit from `aria-expanded` to communicate its state, along with a semantic relationship to the popover content. For simple informational popovers, `aria-describedby` pointing to the popover content's id (generated with `useId`) can work well. However, if the popover contains interactive UI like menus or forms, more explicit semantics such as `aria-controls`, `aria-haspopup`, appropriate roles (`menu`, `dialog`, etc.), or even a native `<dialog>` element may be more appropriate depending on the interaction pattern. Without these relationships, assistive technologies may not clearly communicate how the trigger and popover content are connected.
 
 :::info[Takeaway]
 Keyboard and screen reader support is what turns a demo into something you can actually ship. Focus trapping, focus restoration, and ARIA attributes are the minimum.
@@ -324,7 +330,30 @@ Even though dynamic repositioning keeps the popover attached to its trigger whil
 I ended up supporting two strategies:
 
 1. **Block scroll entirely** - [`usePreventBodyScroll`](/lab/hooks/usePreventBodyScroll) sets `overflow-y: hidden` and `touch-action: none` on the body, and restores the original values on cleanup
+
+<SitePopover>
+  <SitePopover.Trigger>
+    <button className="button button--secondary button--outline">Block scroll</button>
+  </SitePopover.Trigger>
+  <SitePopover.Content>
+    <div>Scroll is locked while this popover is open</div>
+  </SitePopover.Content>
+</SitePopover>
+<br />
+<br />
+
 2. **Close on scroll** - alternatively, the popover can close itself when the page scrolls
+
+<SitePopover shouldCloseOnScroll shouldBlockScroll={false}>
+  <SitePopover.Trigger>
+    <button className="button button--secondary button--outline">Close on scroll</button>
+  </SitePopover.Trigger>
+  <SitePopover.Content>
+    Scroll will close this popover
+  </SitePopover.Content>
+</SitePopover>
+<br />
+<br />
 
 The choice between these is controlled by `shouldBlockScroll` and `shouldCloseOnScroll` props.
 
@@ -338,7 +367,7 @@ Portal solves stacking problems but is not a silver bullet. Every container you 
 
 One design decision I'm glad I made early on is adopting the **Slot pattern** (inspired by Radix UI) for the trigger element.
 
-Instead of wrapping the trigger in an extra `<span>`, the [`Slot`](https://github.com/Ninjaneer87/andrejground-lab/blob/main/packages/lab/src/components/utility/Slot/index.tsx) component merges its props (event handlers, refs, aria attributes) directly onto the trigger's child element. This avoids extra DOM nodes, improves keyboard focus experience, keeps styles intact, and the trigger retains its original element type:
+Instead of wrapping the trigger in an extra `<span>`, the [`Slot`](https://github.com/Ninjaneer87/andrejground-lab/blob/main/packages/lab/src/components/utility/Slot/index.tsx) component merges its props (event handlers, refs, aria attributes) directly onto the trigger's child element. This avoids extra DOM nodes that could interrupt focus flow, keeps styles intact, and the trigger retains its original element type:
 
 ```tsx
 // Slot merges popover props onto the button - no wrapper element

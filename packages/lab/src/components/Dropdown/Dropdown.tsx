@@ -151,7 +151,7 @@ const Dropdown = ({
         if (onOpenChange) onOpenChange(isOpen);
       }}
     >
-      <Popover.Trigger data-dropdown-trigger>
+      <Popover.Trigger data-dropdown-trigger aria-haspopup="menu">
         {isNested ? (
           <Slot
             shouldCloseOnSelection={false}

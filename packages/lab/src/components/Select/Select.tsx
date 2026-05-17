@@ -427,7 +427,11 @@ function Select<T extends OptionItem>({
           triggerWrapper={triggerWrapper}
           fullWidthTriggerWrapper={fullWidthTriggerWrapper}
         >
-          <Popover.Trigger data-select-trigger {...rest}>
+          <Popover.Trigger
+            data-select-trigger
+            aria-haspopup="listbox"
+            {...rest}
+          >
             {trigger ? (
               trigger
             ) : (
@@ -556,6 +560,7 @@ function Select<T extends OptionItem>({
             >
               {topContent && topContent}
               <ul
+                role="listbox"
                 data-select-listbox
                 ref={scrollerRef}
                 className={cn(listboxClassName, classNames?.listbox)}

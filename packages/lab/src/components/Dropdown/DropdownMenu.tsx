@@ -33,6 +33,7 @@ function DropdownMenu({ children, classNames }: DropdownMenuProps) {
   return (
     <DropdownMenuContext.Provider value={{}}>
       <div
+        role="menu"
         data-dropdown-menu
         className={cn(
           baseClassName,

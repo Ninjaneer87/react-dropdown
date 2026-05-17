@@ -2,22 +2,18 @@
 
 import { useEffect, useRef } from 'react';
 
+type Props = {
+  element: HTMLElement | null;
+  callback: () => void;
+  isActive: boolean;
+};
+
 /**
  * Observes an element's viewport position (top/left) and calls a callback
  * if the position changes, which is useful for detecting movement caused
  * by DOM changes outside of the element's subtree.
- * * @param element The HTML element to observe.
- * @param callback The function to call when the position changes.
  */
-export const usePositionObserver = ({
-  element,
-  callback,
-  isActive,
-}: {
-  element: HTMLElement | null;
-  callback: () => void;
-  isActive: boolean;
-}) => {
+export const usePositionObserver = ({ element, callback, isActive }: Props) => {
   const callbackRef = useRef(callback);
 
   useEffect(() => {
