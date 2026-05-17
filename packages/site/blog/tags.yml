@@ -22,3 +22,15 @@ devtools:
   label: DevTools
   permalink: /devtools
   description: Developer tools, CLI utilities, and productivity
+react:
+  label: React
+  permalink: /react
+  description: React patterns, hooks, and component design
+lab:
+  label: Lab
+  permalink: /lab
+  description: AndrejGround Lab component deep-dives
+accessibility:
+  label: Accessibility
+  permalink: /accessibility
+  description: Web accessibility patterns and best practices

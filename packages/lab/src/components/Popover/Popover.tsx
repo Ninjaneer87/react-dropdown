@@ -23,14 +23,12 @@ import PopoverContent from './PopoverContent';
 import {
   createPositionFromPlacement,
   Coords,
-  buildPlacement,
+  buildDynamicPlacement,
   growContentPosition,
   cn,
 } from '../../utils/common';
 import ClientPortal from '../utility/ClientPortal';
 import { useWindowResize } from '../../hooks/useWindowResize';
-import { useFocusTrap } from '../../hooks/useFocusTrap';
-import PopoverFocusTrapper from './PopoverFocusTrapper';
 import {
   PopoverRootContext,
   usePopoverRootContext,
@@ -39,7 +37,7 @@ import { usePreventBodyScroll } from '../../hooks/usePreventBodyScroll';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
 import { usePositionObserver } from '../../hooks/usePositionObserver';
 import { Slot } from '@/components/utility/Slot';
-import { usePrevValue } from '@/hooks';
+import { useFocusTrap, usePrevValue } from '@/hooks';
 
 const PopoverBase = forwardRef<
   HTMLSpanElement,
@@ -94,7 +92,7 @@ const PopoverBase = forwardRef<
     const popoverTriggerRef = useRef<HTMLDivElement>(null);
     const showDelayRef = useRef<NodeJS.Timeout | null>(null);
     const hideDelayRef = useRef<NodeJS.Timeout | null>(null);
-    const fitPlacementRef = useRef<PopoverPlacement | null>(null);
+    const resolvedPlacementRef = useRef<PopoverPlacement | null>(null);
 
     const onOpenRef = useRef(onOpen);
     const onCloseRef = useRef(onClose);
@@ -126,8 +124,11 @@ const PopoverBase = forwardRef<
     let popoverTrigger: ReactNode | null = trigger ?? null;
     let popoverContent: ReactNode | null = content ?? null;
 
-    const { firstFocusableItemRef, focusContainerRef, lastFocusableItemRef } =
-      useFocusTrap(open && !!trapFocus, !!autoFocus);
+    const { startTrapRef, trapContainerRef, endTrapRef } =
+      useFocusTrap({
+        isActive: open && !!trapFocus,
+        shouldAutoFocus: !!autoFocus,
+      });
 
     // Validate children
     React.Children.forEach(children, (child) => {
@@ -201,8 +202,8 @@ const PopoverBase = forwardRef<
         return;
       }
 
-      const fitPlacement = shouldFlip
-        ? buildPlacement(
+      const resolvedPlacement = shouldFlip
+        ? buildDynamicPlacement(
             placement,
             offset,
             triggerRect,
@@ -211,14 +212,14 @@ const PopoverBase = forwardRef<
           )
         : placement;
       const coords = createPositionFromPlacement(
-        fitPlacement,
+        resolvedPlacement,
         offset,
         triggerRect,
         popoverContentRef.current,
         portalContainer,
       );
 
-      fitPlacementRef.current = fitPlacement;
+      resolvedPlacementRef.current = resolvedPlacement;
 
       setPopoverContentCoords(coords);
     }, [
@@ -283,6 +284,7 @@ const PopoverBase = forwardRef<
     const onTriggerKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === 'Enter') {
+          if (openOnHover) return;
           // Only toggle if the event originated from the trigger itself
           if (event.target !== event.currentTarget) return;
 
@@ -291,7 +293,7 @@ const PopoverBase = forwardRef<
           handleToggle();
         }
       },
-      [handleToggle],
+      [handleToggle, openOnHover],
     );
 
     const onTriggerFocusHandler = useCallback(
@@ -396,19 +398,6 @@ const PopoverBase = forwardRef<
         const rootId = rootPopoverId || popoverId;
         const clickedTarget = event.target as Element;
 
-        const popoverIdFromClosestTrigger = clickedTarget
-          .closest(`[data-popover-trigger-root-id]`)
-          ?.getAttribute('data-popover-trigger-root-id');
-        const popoverIdFromClosestContent = clickedTarget
-          .closest(`[data-popover-content-root-id]`)
-          ?.getAttribute('data-popover-content-root-id');
-        const clickedRootId =
-          popoverIdFromClosestTrigger || popoverIdFromClosestContent;
-
-        if (clickedRootId && clickedRootId !== rootId && isNested) {
-          return;
-        }
-
         const isPopoverTrigger = clickedTarget.closest(
           `[data-popover-trigger-root-id="${rootId}"]`,
         );
@@ -435,7 +424,6 @@ const PopoverBase = forwardRef<
       isDisabled,
       handleClose,
       popoverId,
-      isNested,
       rootPopoverId,
     ]);
 
@@ -621,7 +609,7 @@ const PopoverBase = forwardRef<
                   data-popover-content
                   data-popover-content-root-id={rootPopoverId ?? popoverId}
                   data-popover-content-current-id={popoverId}
-                  data-popover-placement={fitPlacementRef.current}
+                  data-popover-placement={resolvedPlacementRef.current}
                   className={cn(contentClassName, classNames?.content)}
                   style={popoverContentCoords}
                   onClick={(e) => e.stopPropagation()}
@@ -629,12 +617,12 @@ const PopoverBase = forwardRef<
                     if (!node) return;
 
                     popoverContentRef.current = node;
-                    focusContainerRef.current = node;
+                    trapContainerRef.current = node;
                   }}
                 >
-                  <PopoverFocusTrapper ref={firstFocusableItemRef} />
+                  <div ref={startTrapRef} />
                   {popoverContent}
-                  <PopoverFocusTrapper ref={lastFocusableItemRef} />
+                  <div ref={endTrapRef} />
                 </div>
               </ClientPortal>
             )}

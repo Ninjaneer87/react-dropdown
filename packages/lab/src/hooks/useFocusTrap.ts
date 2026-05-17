@@ -1,44 +1,147 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-export function useFocusTrap(isActive: boolean, shouldAutoFocus = true) {
-  const focusContainerRef = useRef<HTMLDivElement>(null);
-  const firstFocusableItemRef = useRef<HTMLDivElement>(null);
-  const lastFocusableItemRef = useRef<HTMLDivElement>(null);
+const FOCUSABLE_SELECTOR = [
+  'a[href]',
+  'button:not(:disabled)',
+  'input:not(:disabled)',
+  'select:not(:disabled)',
+  'textarea:not(:disabled)',
+  '[contenteditable]:not([contenteditable="false"])',
+  'audio[controls]',
+  'video[controls]',
+  'summary',
+  '[tabindex]:not([tabindex="-1"]):not([data-focus-trapper])',
+].join(', ');
 
-  useEffect(() => {
-    if (!isActive) {
-      return;
-    }
+function getEdgeFocusables(container: HTMLElement | null) {
+  if (!container) return { first: null, last: null };
+  const focusables = [
+    ...container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+  ];
+  return {
+    first: focusables[0] ?? null,
+    last: focusables[focusables.length - 1] ?? null,
+  };
+}
+function configureSentinel(sentinel: HTMLDivElement | null) {
+  if (!sentinel) return;
 
-    function trapFocus(event: KeyboardEvent) {
-      if (event.key !== 'Tab') return;
+  sentinel.setAttribute('tabindex', '0');
+  sentinel.setAttribute('data-focus-trapper', 'true');
+  sentinel.style.width = '0';
+  sentinel.style.height = '0';
+  sentinel.style.position = 'fixed';
+}
 
-      const firstElement = firstFocusableItemRef.current;
-      const lastElement = lastFocusableItemRef.current;
+type Props = {
+  /**
+   * Whether the focus trap is active
+   */
+  isActive: boolean;
+  /**
+   * Whether to automatically focus the container on mount
+   */
+  shouldAutoFocus?: boolean;
+};
 
-      if (!firstElement || !lastElement) return;
+export function useFocusTrap({ isActive, shouldAutoFocus = true }: Props) {
+  const trapContainerRef = useRef<HTMLDivElement>(null);
+  const startTrapRef = useRef<HTMLDivElement>(null);
+  const endTrapRef = useRef<HTMLDivElement>(null);
 
-      if (event.shiftKey && document.activeElement === firstElement) {
-        event.preventDefault();
-        lastElement.focus();
-      } else if (!event.shiftKey && document.activeElement === lastElement) {
-        event.preventDefault();
-        firstElement.focus();
+  const focusLastFocusableElement = useCallback(() => {
+    const { last } = getEdgeFocusables(trapContainerRef.current);
+
+    requestAnimationFrame(() => {
+      last?.focus();
+    });
+  }, []);
+
+  const focusFirstFocusableElement = useCallback(() => {
+    const { first } = getEdgeFocusables(trapContainerRef.current);
+
+    requestAnimationFrame(() => {
+      first?.focus();
+    });
+  }, []);
+
+  const handleFocusContainerKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Tab' && e.target === e.currentTarget) {
+        e.preventDefault();
+        focusFirstFocusableElement();
       }
-    }
 
-    if (shouldAutoFocus) {
-      firstFocusableItemRef.current?.focus(); // Auto-focus first element when mounted
-    }
+      if (e.key === 'Tab' && e.shiftKey && e.target === e.currentTarget) {
+        e.preventDefault();
+        focusLastFocusableElement();
+      }
+    },
+    [focusFirstFocusableElement, focusLastFocusableElement],
+  );
 
-    document.addEventListener('keydown', trapFocus);
+  // Handle autofocus container
+  useEffect(() => {
+    if (!isActive || !shouldAutoFocus || !trapContainerRef.current) return;
+
+    trapContainerRef.current.setAttribute('tabindex', '0');
+    requestAnimationFrame(() => {
+      trapContainerRef.current?.focus();
+    });
+
+    trapContainerRef.current.addEventListener(
+      'keydown',
+      handleFocusContainerKeyDown,
+    );
 
     return () => {
-      document.removeEventListener('keydown', trapFocus);
+      trapContainerRef.current?.removeEventListener(
+        'keydown',
+        handleFocusContainerKeyDown,
+      );
     };
-  }, [isActive, shouldAutoFocus]);
+  }, [isActive, shouldAutoFocus, handleFocusContainerKeyDown]);
 
-  return { focusContainerRef, firstFocusableItemRef, lastFocusableItemRef };
+  // Handle focus trap sentinels
+  useEffect(() => {
+    if (!isActive || !startTrapRef.current || !endTrapRef.current)
+      return;
+
+    configureSentinel(startTrapRef.current);
+    startTrapRef.current.addEventListener(
+      'focus',
+      focusLastFocusableElement,
+    );
+
+    configureSentinel(endTrapRef.current);
+    endTrapRef.current.addEventListener(
+      'focus',
+      focusFirstFocusableElement,
+    );
+
+    return () => {
+      startTrapRef.current?.removeEventListener(
+        'focus',
+        focusLastFocusableElement,
+      );
+
+      endTrapRef.current?.removeEventListener(
+        'focus',
+        focusFirstFocusableElement,
+      );
+    };
+  }, [
+    focusFirstFocusableElement,
+    focusLastFocusableElement,
+    configureSentinel,
+    isActive,
+  ]);
+
+  return {
+    trapContainerRef,
+    startTrapRef,
+    endTrapRef,
+  };
 }

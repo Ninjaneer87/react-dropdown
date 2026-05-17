@@ -4,7 +4,11 @@ import SourceLink from '@site/src/components/shared/SourceLink';
 
 <SourceLink entity="hook" name="useFocusTrap" />
 
-Traps keyboard focus within a container element by cycling Tab navigation between the first and last focusable items. Optionally auto-focuses the first element when activated. Used internally by the `Popover` component.
+Traps keyboard focus within a container element using sentinel elements. Automatically detects focusable elements inside the container and cycles Tab navigation between them. The hook configures sentinel `div`s imperatively (setting `tabIndex`, `data-focus-trapper`, and focus event listeners). The sentinels never keep the focus, they just forward it to the first/last focusable element.
+
+By default auto-focuses the container when activated.
+
+Used internally by the `Popover` component.
 
 ## Import
 
@@ -20,20 +24,22 @@ import { useFocusTrap } from '@andrejground/lab';
 
 export default function App() {
   const [isActive, setIsActive] = React.useState(false);
-  const { focusContainerRef, firstFocusableItemRef, lastFocusableItemRef } =
-    useFocusTrap(isActive);
+  const { trapContainerRef, startTrapRef, endTrapRef } =
+    useFocusTrap({ isActive });
 
   return (
     <div>
       <button onClick={() => setIsActive(true)}>Open dialog</button>
 
       {isActive && (
-        <div ref={focusContainerRef}>
-          <input ref={firstFocusableItemRef} placeholder="First field" />
+        <div ref={trapContainerRef}>
+          <div ref={startTrapRef} />
+
+          <input placeholder="First field" />
           <input placeholder="Middle field" />
-          <button ref={lastFocusableItemRef} onClick={() => setIsActive(false)}>
-            Close
-          </button>
+          <button onClick={() => setIsActive(false)}>Close</button>
+
+          <div ref={endTrapRef} />
         </div>
       )}
     </div>
@@ -44,19 +50,19 @@ export default function App() {
 ## API
 
 ```tsx
-const { focusContainerRef, firstFocusableItemRef, lastFocusableItemRef } =
-  useFocusTrap(isActive, shouldAutoFocus);
+const { trapContainerRef, startTrapRef, endTrapRef } =
+  useFocusTrap({ isActive, shouldAutoFocus });
 ```
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `isActive` | `boolean` | - | Whether the focus trap is active |
-| `shouldAutoFocus` | `boolean` | `true` | Auto-focus the first focusable element on activation |
+| `shouldAutoFocus` | `boolean` | `true` | Auto-focus the container on activation |
 
 ### Returns
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `focusContainerRef` | `RefObject<HTMLDivElement>` | Ref for the trap container |
-| `firstFocusableItemRef` | `RefObject<HTMLDivElement>` | Ref for the first focusable element |
-| `lastFocusableItemRef` | `RefObject<HTMLDivElement>` | Ref for the last focusable element |
+| `trapContainerRef` | `RefObject<HTMLDivElement>` | Ref for the trap container |
+| `startTrapRef` | `RefObject<HTMLDivElement>` | Ref for the first sentinel element |
+| `endTrapRef` | `RefObject<HTMLDivElement>` | Ref for the last sentinel element |

@@ -1,0 +1,363 @@
+---
+slug: 5-things-i-learned-building-my-own-popover
+title: 5 Things I Learned Building My Own Popover
+authors: [andrej]
+tags: [lab, react, accessibility]
+draft: true
+---
+
+Building a [Popover](/lab/components/popover) from scratch taught me more about the browser than any tutorial ever did.
+
+{/* truncate */}
+
+import PopoverPositioningDemo from './PopoverPositioningDemo';
+import HomeDropdownDemo from '@site/src/components/HomepageFeatures/HomeDropdownDemo';
+
+When you think about a popover, you might assume it's just a box that opens near a button and closes when you click away. But building a production-grade popover is a bit trickier than that.
+
+Here are 5 things I learned along the way.
+
+---
+
+## 1. Dynamic positioning
+
+Placing a floating element next to a trigger sounds simple until you consider:
+
+- **12 placement options** - every combination of `top | bottom | left | right` (position) with `start | center | end` (alignment)
+- **Viewport flipping** - when the popover doesn't fit in the preferred direction, it needs to automatically flip to the opposite side
+- **Dynamic repositioning** - the trigger can move (scrolling, layout shifts, window resize), and the popover must follow
+
+### Why not just use `position: absolute`?
+
+The simplest approach is to make the trigger's wrapper `position: relative` and the popover content `position: absolute`. No coordinate math, no JavaScript - just CSS. And for basic cases, it works.
+
+The problem shows up the moment your trigger lives inside a container with `overflow: auto` or `overflow: hidden` - which is most real-world layouts. The popover content is part of the container's flow, so it either **creates extra scroll space** or **gets clipped at the container edge**.
+
+`position: fixed` solves the overflow problem - it positions the element relative to the **viewport**, not the nearest positioned ancestor. But it introduces a new one: the coordinates are calculated once on open and never updated. **If the trigger moves (via scrolling, layout shifts, or resizing), the popover stays frozen in place.**
+
+The approach I landed on combines three things: `position: fixed` to escape overflow, a **React Portal** to escape ancestor DOM constraints (like CSS `transform` creating a new containing block), and **dynamic repositioning** to keep the content anchored to the trigger.
+
+Click the triggers below and see it in action:
+
+<PopoverPositioningDemo />
+
+### Tracking movement
+
+As the demo above shows, calculating the position once isn't enough. The trigger can move for many reasons, and the popover must follow. All of these call the same `setContentCoords` function that recalculates placement from the trigger's `getBoundingClientRect()`.
+
+#### Window resize
+
+The simplest case - when the browser window is resized, everything shifts ([`useWindowResize`](/lab/hooks/useWindowResize)):
+
+```ts
+useWindowResize(setContentCoords);
+```
+
+#### Trigger resize
+
+The trigger itself can change size (responsive text, dynamic content). [`useResizeObserver`](/lab/hooks/useResizeObserver) watches the trigger element and fires when its dimensions change:
+
+```ts
+useResizeObserver({
+  element: popoverTriggerRef.current,
+  onResize: setContentCoords,
+});
+```
+
+#### Document scroll and Visual Viewport
+
+Page scrolling changes the trigger's viewport position. The handler also supports `shouldCloseOnScroll` - optionally closing the popover on scroll instead of repositioning:
+
+```ts
+function updateCoords() {
+  if (shouldCloseOnScroll) {
+    handleClose();
+  }
+  setContentCoords();
+}
+
+document.addEventListener('scroll', updateCoords);
+```
+
+On mobile, the virtual keyboard can resize or scroll the visual viewport without firing a regular `resize` event. The `window.visualViewport` API catches these cases:
+
+```ts
+const vv = window.visualViewport;
+if (vv) {
+  vv.addEventListener('resize', updateCoords);
+  vv.addEventListener('scroll', updateCoords);
+}
+```
+
+#### Position drift - the invisible edge case
+
+The trickiest one. The trigger can move without resizing, without the window resizing, and without scrolling - imagine an accordion above the trigger expanding, or dynamic content being injected above. A `ResizeObserver` on the trigger won't fire because the trigger's size didn't change. Document scroll didn't fire either.
+
+The approach I took was polling `getBoundingClientRect()` via a `requestAnimationFrame` loop:
+
+```ts
+const checkPosition = () => {
+  const currentRect = element.getBoundingClientRect();
+
+  if (currentRect.top !== lastTop || currentRect.left !== lastLeft) {
+    callback(); // reposition the popover
+  }
+
+  lastPositionRef.current = { top: currentRect.top, left: currentRect.left };
+  animationFrameRef.current = requestAnimationFrame(checkPosition);
+};
+```
+
+This runs every frame while the popover is open and stops when it closes. Sounds more expensive than it is - it runs only for expanded instances (which usually is just one at a time) and it catches **every** type of movement - CSS transitions, sibling DOM changes, flex/grid reflows, you name it (see how in [`usePositionObserver`](/lab/hooks/usePositionObserver)):
+
+```ts
+usePositionObserver({
+  element: popoverTriggerRef.current,
+  callback: setContentCoords,
+  isActive: isRootExpanded,
+});
+```
+
+### The flipping problem
+
+Initially, I was calculating the position once on open. That broke immediately when a popover at the bottom of the page clipped below the viewport. The solution was a `buildDynamicPlacement` function that measures the trigger and popover rectangles against the viewport and flips the placement axis when there isn't enough room. You can find this function in [common utilities file](https://github.com/Ninjaneer87/andrejground-lab/blob/main/packages/lab/src/utils/common.ts).
+
+```ts
+const resolvedPlacement = shouldFlip
+  ? buildDynamicPlacement(placement, offset, triggerRect, popoverRect, portalContainer)
+  : placement;
+```
+
+:::info[Takeaway]
+Position calculation is not a one-time thing. It's a continuous process that needs to react to scrolling, resizing, layout shifts, and viewport changes - five different hooks/listeners, all calling the same repositioning function.
+:::
+
+---
+
+## 2. Focus management
+
+The visual part of a popover is not the only challenge - what about accessibility?
+
+For a popover, focus management is more or less straight forward - it gets quite trickier when popover gets extended into a dropdown or a select.
+
+### Focus trapping
+
+When a popover opens, `Tab` should cycle through its focusable elements without escaping into the page behind it. There are different ways to achieve this - I went with **sentinel elements**, invisible zero-size `div`s placed at the start and end of the popover content. The [`useFocusTrap`](/lab/hooks/useFocusTrap) hook takes care of everything - it configures the sentinels imperatively (setting `tabIndex`, styles, and focus event listeners) so the consumer just passes empty `div` refs:
+
+```tsx
+const { startTrapRef, trapContainerRef, endTrapRef } =
+  useFocusTrap({ isActive: open && trapFocus, shouldAutoFocus: autoFocus });
+
+// ...
+
+<div ref={trapContainerRef}>
+  <div ref={startTrapRef} />
+  {popoverContent}
+  <div ref={endTrapRef} />
+</div>
+```
+
+When the user tabs past the last content element, focus lands on the last sentinel - its focus listener immediately redirects focus back to the first content element. The reverse happens with `Shift+Tab`. The sentinels never actually hold focus, it just passes through them. The hook queries the container for focusable elements dynamically, so it handles content changes automatically.
+
+### Focus restoration
+
+When the popover closes, focus should return to the trigger. I ran into a subtle racing-conditions issue here - if you close the popover with `Enter` (can happen in dropdown or select), the keydown event can fire on the newly focused trigger - which can cause the popover to open again. Wrapping the focus call in `requestAnimationFrame` worked for me (deferring the focus call to the next frame avoids the race condition):
+
+```ts
+if (focusTrigger) {
+  requestAnimationFrame(() => {
+    popoverTriggerRef.current?.focus();
+  });
+}
+```
+
+### ARIA attributes
+
+The trigger needs `aria-expanded` and `aria-describedby` pointing to the popover content's `id` (generated with `useId`). Without these, screen readers won't know the trigger controls a popover.
+
+:::info[Takeaway]
+Keyboard and screen reader support is what turns a demo into something you can actually ship. Focus trapping, focus restoration, and ARIA attributes are the minimum.
+:::
+
+---
+
+## 3. Click outside detection breaks with nesting
+
+Detecting a click outside a popover is simple in isolation - listen for `mousedown` on the document and check if the target is inside the popover.
+
+But when popovers nest (think: a dropdown inside a popover), naive click-outside detection closes **all** of them.
+
+Or, clicking on a nested popover's content can cause the parent popover to close (still considered a click "outside" from the DOM tree's perspective).
+
+This means that the component needs to keep track of the popover hierarchy.
+
+### The `popoverId` propagation
+
+Every popover instance gets a unique `popoverId` (via `useId`). This ID is stamped onto its trigger and content elements as data attributes, so any popover can identify which elements belong to it:
+
+```tsx
+data-popover-content-current-id={popoverId}
+data-popover-trigger-current-id={popoverId}
+```
+
+The key to nesting is **root ID propagation**. The outermost popover shares its `popoverId` through a `PopoverRootContext`. When a nested popover renders inside, it reads the parent's ID and uses it as a shared `rootPopoverId`. This way every element in the tree - no matter how deeply nested - carries the same root ID, linking them all to the same family:
+
+```tsx
+data-popover-trigger-root-id={rootPopoverId ?? popoverId}
+data-popover-content-root-id={rootPopoverId ?? popoverId}
+```
+
+So each element ends up with two IDs: its **own** `popoverId` (who am I?) and the **root** `popoverId` (which family do I belong to?).
+
+When a click event fires, the handler walks up from the clicked target using `closest()` to check if it landed on an element that shares the same root ID. If it did, it's not an "outside" click:
+
+```ts
+const isPopoverTrigger = clickedTarget.closest(
+  `[data-popover-trigger-root-id="${rootId}"]`,
+);
+const isPopoverContent = clickedTarget.closest(
+  `[data-popover-content-root-id="${rootId}"]`,
+);
+
+if (isPopoverTrigger || isPopoverContent) {
+  return; // click is inside the same popover family
+}
+```
+
+### `Escape` key stacking
+
+A similar problem exists with `Escape` - pressing `Escape` should close only the **topmost** popover, not all of them. My approach was to query all open popover content elements and compare the last one's `data-popover-content-current-id` with the current popover's ID:
+
+```ts
+const openPopovers = [
+  ...document.querySelectorAll(`[data-popover-content-current-id]`),
+];
+const lastOpenedPopover = openPopovers[openPopovers.length - 1];
+const currentPopoverId = lastOpenedPopover?.getAttribute(
+  'data-popover-content-current-id',
+);
+
+if (currentPopoverId && currentPopoverId !== popoverId) return;
+```
+Useful in nested dropdowns:
+
+<HomeDropdownDemo />
+<br />
+<br />
+
+:::info[Takeaway]
+Nesting forces you to think in terms of **ownership trees**, not just parent-child DOM relationships. Data attributes + `closest()` worked well as a lightweight alternative to complex context hierarchies.
+:::
+
+---
+
+## 4. Animating mount/unmount requires a state split
+
+CSS transitions can't animate an element that doesn't exist in the DOM. But keeping the popover in the DOM when closed means it can interfere with layout, focus order, and screen readers.
+
+### The delayed unmount pattern
+
+What worked for me was splitting "open" into two states (see how in [useDelayUnmount](/lab/hooks/useDelayUnmount)):
+
+- **`isExpanded`** - the logical open state (controls animations)
+- **`isMounted`** - whether the DOM node exists (delayed behind `isExpanded`)
+
+```ts
+const isExpanded = open || isHoverOpen;
+const isMounted = useDelayUnmount(isExpanded, 150);
+```
+
+When `isExpanded` becomes `true`, `isMounted` also becomes `true` immediately → the element enters the DOM and the enter animation plays. When `isExpanded` becomes `false`, the exit animation class (`scale-out`) kicks in, and `isMounted` stays `true` for 150ms before removing the element:
+
+```ts
+useEffect(() => {
+  let timeoutId;
+
+  if (isMounted && !shouldRender) {
+    setShouldRender(true);
+  } else if (!isMounted && shouldRender) {
+    timeoutId = setTimeout(() => setShouldRender(false), delayTime);
+  }
+
+  return () => clearTimeout(timeoutId);
+}, [isMounted, delayTime, shouldRender]);
+```
+
+The rendering condition then uses both:
+
+```tsx
+{(isMounted || isExpanded) && (
+  <ClientPortal>
+    <div className={isExpanded ? 'scale-in' : 'scale-out'}>
+      {popoverContent}
+    </div>
+  </ClientPortal>
+)}
+```
+
+:::info[Takeaway]
+Animating appearance/disappearance requires separating the **visual state** from the **DOM presence**. The delay between the two is your animation window.
+:::
+
+---
+
+## 5. Portals and scroll locking have sharp edges
+
+Rendering the popover content into `document.body` via a portal helps escape `overflow: hidden` containers and stacking contexts. But doesn't solve everything.
+
+### The `<dialog>` edge case
+
+If the trigger is inside a `<dialog>` element, portaling to `document.body` puts the popover **behind** the dialog's top-layer. I worked around this by detecting the closest `<dialog>` ancestor and portaling into it instead:
+
+```ts
+setPortalContainer(popoverTriggerRef.current?.closest('dialog') ?? null);
+```
+
+### Scroll locking
+
+Even though dynamic repositioning keeps the popover attached to its trigger while scrolling, there are good UX reasons to lock scrolling when a popover is open:
+
+- **Scroll chaining** is the biggest culprit. When a user reaches the bottom of a scrollable dropdown, the browser starts scrolling the main page behind it. Imagine trying to find "Zimbabwe" at the bottom of a country list and accidentally scrolling your entire form away - a bit disorienting.
+- **Losing visual context** - if the user scrolls the background freely, they might move the viewport to a place where the trigger (and the popover) are no longer visible, breaking the connection between the interaction and the page.
+- **Signaling focus** - locking the scroll tells the user (and the browser) that the current interaction is the primary task. It needs to be completed or dismissed before returning to the underlying page.
+
+I ended up supporting two strategies:
+
+1. **Block scroll entirely** - [`usePreventBodyScroll`](/lab/hooks/usePreventBodyScroll) sets `overflow-y: hidden` and `touch-action: none` on the body, and restores the original values on cleanup
+2. **Close on scroll** - alternatively, the popover can close itself when the page scrolls
+
+The choice between these is controlled by `shouldBlockScroll` and `shouldCloseOnScroll` props.
+
+:::info[Takeaway]
+Portal solves stacking problems but is not a silver bullet. Every container you portal into has its own coordinate system and scrolling behavior.
+:::
+
+---
+
+## Bonus: The Slot pattern
+
+One design decision I'm glad I made early on is adopting the **Slot pattern** (inspired by Radix UI) for the trigger element.
+
+Instead of wrapping the trigger in an extra `<span>`, the [`Slot`](https://github.com/Ninjaneer87/andrejground-lab/blob/main/packages/lab/src/components/utility/Slot/index.tsx) component merges its props (event handlers, refs, aria attributes) directly onto the trigger's child element. This avoids extra DOM nodes, improves keyboard focus experience, keeps styles intact, and the trigger retains its original element type:
+
+```tsx
+// Slot merges popover props onto the button - no wrapper element
+<Popover trigger={<button>Open</button>} content={<div>Content</div>} />
+```
+
+The prop merging handles event handler composition (both handlers run), className concatenation, and style merging - details that took some iteration to get right.
+
+There's one catch: `Slot` needs to attach a ref to the trigger element. For native HTML elements this just works, but if the trigger is a custom React component, that component needs to accept a ref. In React 19 refs are passed along with props automatically, but in earlier versions the component needs to use `forwardRef`. Most third-party libraries already support this for buttons and other interactive elements - but if you run into one that doesn't, the `triggerWrapper` prop falls back to wrapping the trigger in a `<span>`:
+
+```tsx
+// If the trigger component doesn't support ref forwarding
+<Popover triggerWrapper trigger={<CustomButton>Open</CustomButton>} content={<div>Content</div>} />
+```
+
+---
+
+## Wrapping up
+
+Building a Popover taught me that the **hardest problems in UI aren't visual - they're behavioral**. Positioning, focus management, event delegation across nested trees, animation lifecycles, and edge cases - I'm sure there are other (and probably better) ways to solve some of these, but working through them from scratch was the best learning experience I could ask for.
+
+If you want to see the full implementation, check out the [Popover source code](https://github.com/Ninjaneer87/andrejground-lab/tree/main/packages/lab/src/components/Popover) and the [interactive docs](/lab/components/popover).

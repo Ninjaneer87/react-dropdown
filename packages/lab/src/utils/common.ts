@@ -192,7 +192,7 @@ export function createPositionFromPlacement(
   };
 }
 
-export function buildPlacement(
+export function buildDynamicPlacement(
   placement: PopoverPlacement,
   offset: number,
   triggerRect: DOMRect,
@@ -335,9 +335,7 @@ export function buildPlacement(
     }
   }
 
-  const fitPlacement = `${fitPosition}-${fitAlign}` as PopoverPlacement;
-
-  return fitPlacement;
+  return `${fitPosition}-${fitAlign}` as const;
 }
 
 let debounceTimer: ReturnType<typeof setTimeout>;

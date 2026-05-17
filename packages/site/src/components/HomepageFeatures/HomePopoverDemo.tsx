@@ -73,7 +73,7 @@ function HomePopoverDemo() {
               </div>
 
               <div>
-                <b>415</b>{' '}
+                <b>500+</b>{' '}
                 <span className={styles.secondaryText}>connections</span>
               </div>
             </SitePopover.Content>
