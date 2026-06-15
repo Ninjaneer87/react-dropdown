@@ -1,0 +1,88 @@
+import SourceLink from '@site/src/components/shared/SourceLink';
+
+# useKeyboardNavigation
+
+<SourceLink entity="hook" name="useKeyboardNavigation" />
+
+Provides arrow-key, Home/End, and Escape keyboard navigation for a list of focusable items inside a container. Items are discovered from the DOM via `[data-focusable-item]` attributes, and the list is automatically kept in sync with DOM changes through a `MutationObserver`.
+
+Used internally by `Dropdown` and `Select` components, but can be used standalone for any list-like UI that needs keyboard navigation.
+
+## Import
+
+```tsx
+import { useKeyboardNavigation } from '@andrejground/lab';
+```
+
+## Usage
+
+```tsx
+import React from 'react';
+import { useKeyboardNavigation } from '@andrejground/lab';
+
+export default function App() {
+  const [isActive, setIsActive] = React.useState(true);
+
+  const { containerRef, onKeyDown, mutationContainerRef } =
+    useKeyboardNavigation<HTMLDivElement>({
+      isActive,
+      autoFocus: 'first-item',
+    });
+
+  return (
+    <div
+      ref={(node) => {
+        containerRef.current = node;
+        mutationContainerRef.current = node;
+      }}
+      onKeyDown={onKeyDown}
+      tabIndex={0}
+    >
+      <div data-focusable-item tabIndex={0}>Item 1</div>
+      <div data-focusable-item tabIndex={0}>Item 2</div>
+      <div data-focusable-item tabIndex={0}>Item 3</div>
+    </div>
+  );
+}
+```
+
+### Item requirements
+
+Each focusable item must have the `data-focusable-item` attribute set to `"true"`. Items with `disabled` or `data-disabled="true"` are automatically skipped.
+
+## API
+
+```tsx
+const { containerRef, mutationContainerRef, onKeyDown, lastFocusedIndex, focusItem } =
+  useKeyboardNavigation<HTMLDivElement>({ isActive, autoFocus, onFirstUp, onLastDown, onEsc });
+```
+
+### Parameters
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `isActive` | `boolean` | - | Whether keyboard navigation is active |
+| `autoFocus` | `"first-item" \| "last-item" \| "menu" \| "none"` | `"menu"` | Which item receives focus when activated |
+| `onFirstUp` | `() => void` | - | Callback fired when pressing ArrowUp on the first item |
+| `onLastDown` | `() => void` | - | Callback fired when pressing ArrowDown on the last item |
+| `onEsc` | `() => void` | - | Callback fired when pressing Escape |
+
+### Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `containerRef` | `RefObject<T>` | Ref to attach to the navigable container |
+| `mutationContainerRef` | `RefObject<T>` | Ref for the MutationObserver (can be the same node as `containerRef`) |
+| `onKeyDown` | `(event: React.KeyboardEvent) => void` | Key event handler to attach to the container |
+| `lastFocusedIndex` | `number \| undefined` | Index of the last focused item |
+| `focusItem` | `(props: FocusItemProps) => void` | Imperatively focus an item by index or focus the last item |
+
+### Keyboard support
+
+| Key | Behavior |
+|-----|----------|
+| `ArrowDown` | Move focus to the next item (wraps to first) |
+| `ArrowUp` | Move focus to the previous item (wraps to last) |
+| `Home` | Move focus to the first item |
+| `End` | Move focus to the last item |
+| `Escape` | Fires `onEsc` callback |

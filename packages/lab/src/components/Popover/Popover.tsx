@@ -49,7 +49,6 @@ const PopoverBase = forwardRef<
       trigger,
       content,
       backdrop = 'none',
-      isNested = false,
       placement = 'bottom-center',
       offset = 8,
       showArrow = false,
@@ -124,11 +123,10 @@ const PopoverBase = forwardRef<
     let popoverTrigger: ReactNode | null = trigger ?? null;
     let popoverContent: ReactNode | null = content ?? null;
 
-    const { startTrapRef, trapContainerRef, endTrapRef } =
-      useFocusTrap({
-        isActive: open && !!trapFocus,
-        shouldAutoFocus: !!autoFocus,
-      });
+    const { startTrapRef, trapContainerRef, endTrapRef } = useFocusTrap({
+      isActive: open && !!trapFocus,
+      shouldAutoFocus: !!autoFocus,
+    });
 
     // Validate children
     React.Children.forEach(children, (child) => {
@@ -265,7 +263,7 @@ const PopoverBase = forwardRef<
 
     // Handle onOpenChange
     const handleToggle = useCallback(() => {
-      if (isDisabled || (openOnHover && !isNested)) return;
+      if (isDisabled || (openOnHover && isRootPopover)) return;
 
       if (open) {
         handleClose();
@@ -273,13 +271,7 @@ const PopoverBase = forwardRef<
       }
 
       handleOpen();
-    }, [isDisabled, open, handleClose, openOnHover, isNested, handleOpen]);
-
-    const handleBackdropClick = useCallback(() => {
-      if (shouldCloseOnClickOutside) {
-        handleClose();
-      }
-    }, [handleClose, shouldCloseOnClickOutside]);
+    }, [isDisabled, open, handleClose, openOnHover, isRootPopover, handleOpen]);
 
     const onTriggerKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -352,6 +344,14 @@ const PopoverBase = forwardRef<
         }
       }, delayHide);
     }, [isDisabled, isRootPopover, openOnHover, delayHide]);
+
+    useEffect(
+      () => () => {
+        if (showDelayRef.current) clearTimeout(showDelayRef.current);
+        if (hideDelayRef.current) clearTimeout(hideDelayRef.current);
+      },
+      [],
+    );
 
     useEffect(() => {
       const shouldFocusTriggerOnControlledClose =
@@ -443,6 +443,13 @@ const PopoverBase = forwardRef<
     }, [isExpanded]);
 
     useEffect(() => {
+      if (!isRootOpen || !open) {
+        setIsHoverOpen(false);
+        return;
+      }
+    }, [open, isRootOpen]);
+
+    useEffect(() => {
       if (!isExpanded) return;
 
       function updateCoords() {
@@ -513,8 +520,8 @@ const PopoverBase = forwardRef<
       classNames?.triggerWrapper,
     );
     const contentClassName = cn(
-      'fixed z-1010 popover-content border border-gray-100',
-      isRootExpanded || (isExpanded && !isNested) ? 'scale-in' : 'scale-out',
+      'fixed z-1000 popover-content border border-gray-100',
+      isExpanded ? 'scale-in' : 'scale-out',
       'transition-opacity p-2 bg-white text-gray-800 rounded-lg shadow-md',
       showArrow && 'popover-arrow',
       size && sizeClassMap[size],
@@ -523,7 +530,7 @@ const PopoverBase = forwardRef<
       'fixed z-1000 inset-0',
       backdrop !== 'transparent' ? 'bg-black/30' : '',
       backdrop === 'blur' ? 'backdrop-blur-xs' : '',
-      isRootExpanded ? 'fade-in' : 'fade-out',
+      isExpanded ? 'fade-in' : 'fade-out',
     );
 
     const commonTriggerProps = {
@@ -555,15 +562,9 @@ const PopoverBase = forwardRef<
         value={{ isOpen: isExpanded, handleClose, popoverId, handleOpen }}
       >
         <>
-          {isMounted && !!backdrop && backdrop !== 'none' && (
+          {(isMounted || isExpanded) && !!backdrop && backdrop !== 'none' && (
             <ClientPortal container={portalContainer}>
-              <div
-                className={cn(backdropClassName, classNames?.backdrop)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleBackdropClick();
-                }}
-              />
+              <div className={cn(backdropClassName, classNames?.backdrop)} />
             </ClientPortal>
           )}
 
@@ -631,7 +632,7 @@ const PopoverBase = forwardRef<
       </PopoverContext.Provider>
     );
 
-    if (isNested) {
+    if (!isRootPopover) {
       return popoverJSX;
     }
 

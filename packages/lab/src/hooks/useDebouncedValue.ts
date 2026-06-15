@@ -1,6 +1,5 @@
 'use client';
 
-/* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from 'react';
 
 let debounceTimer: ReturnType<typeof setTimeout>;

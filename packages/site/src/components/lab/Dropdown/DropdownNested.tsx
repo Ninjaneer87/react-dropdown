@@ -14,7 +14,7 @@ function DropdownNestedContent() {
         <SiteDropdown.Item>New file</SiteDropdown.Item>
         <SiteDropdown.Item>Copy link</SiteDropdown.Item>
 
-        <SiteDropdown isNested>
+        <SiteDropdown>
           <SiteDropdown.Trigger>
             <SiteDropdown.Item shouldCloseOnSelection={false}>
               Export

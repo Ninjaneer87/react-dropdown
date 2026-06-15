@@ -4,9 +4,9 @@ import { ElementType, forwardRef, ForwardedRef } from 'react';
 import { useDropdownContext } from '../../context/DropdownContext';
 import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
 import { DropdownItemProps } from '../../types';
-import { usePopoverRootContext } from '../../context/PopoverRootContext';
 import { cn } from '../../utils/common';
 import styles from './DropdownItem.module.scss';
+import { useDropdownRootContext } from '@/context/DropdownRootContext';
 
 type DropdownItemComponent = {
   <T extends ElementType = 'div'>(
@@ -35,7 +35,7 @@ const DropdownItemInner = forwardRef<
   } = props;
   const dropdownContext = useDropdownContext();
   const dropdownMenuContext = useDropdownMenuContext();
-  const popoverRootContext = usePopoverRootContext();
+  const dropdownRootContext = useDropdownRootContext();
 
   if (!dropdownContext) {
     throw new Error('DropdownItem should be used within a Dropdown component');
@@ -47,13 +47,13 @@ const DropdownItemInner = forwardRef<
     );
   }
 
-  if (!popoverRootContext) {
+  if (!dropdownRootContext) {
     throw new Error('DropdownItem should be used within a Popover component');
   }
 
   const { classNames: contextClassNames } = dropdownContext;
 
-  const { handleCloseRoot } = popoverRootContext;
+  const { handleCloseRoot } = dropdownRootContext;
 
   const closeOnSelection =
     shouldCloseOnSelection ?? dropdownContext.shouldCloseOnSelection;

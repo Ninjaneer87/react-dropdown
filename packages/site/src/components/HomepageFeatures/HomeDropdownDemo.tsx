@@ -22,7 +22,7 @@ function HomeDropdownDemo() {
   return (
     <BrowserOnly>
       {() => (
-        <SiteDropdown>
+        <SiteDropdown shouldBlockScroll={false} shouldCloseOnScroll={false}>
           <SiteDropdown.Trigger>
             <SiteTooltip content="Open actions menu">
               <button className="button button--secondary button--outline">
@@ -75,7 +75,7 @@ function HomeDropdownDemo() {
                 Edit
               </SiteDropdown.Item>
 
-              <SiteDropdown isNested placement="right-start">
+              <SiteDropdown placement="right-start">
                 <SiteDropdown.Trigger>
                   <SiteDropdown.Item
                     startContent={<Icon path={mdiExport} size={1} />}
@@ -107,7 +107,7 @@ function HomeDropdownDemo() {
                     PDF
                   </SiteDropdown.Item>
 
-                  <SiteDropdown isNested placement="right-start">
+                  <SiteDropdown placement="right-start">
                     <SiteDropdown.Trigger>
                       <SiteDropdown.Item
                         startContent={<Icon path={mdiExport} size={1} />}
@@ -278,7 +278,7 @@ function NestedAndComposedHomeDropdownDemo() {
                           Edit
                         </SiteDropdown.Item>
 
-                        <SiteDropdown isNested placement="right-start">
+                        <SiteDropdown placement="right-start">
                           <SiteDropdown.Trigger>
                             <SiteDropdown.Item
                               startContent={<Icon path={mdiExport} size={1} />}
@@ -314,7 +314,7 @@ function NestedAndComposedHomeDropdownDemo() {
                               PDF
                             </SiteDropdown.Item>
 
-                            <SiteDropdown isNested placement="right-start">
+                            <SiteDropdown placement="right-start">
                               <SiteDropdown.Trigger>
                                 <SiteDropdown.Item
                                   startContent={
@@ -425,7 +425,7 @@ function NestedAndComposedHomeDropdownDemo() {
                 Edit
               </SiteDropdown.Item>
 
-              <SiteDropdown isNested placement="right-start">
+              <SiteDropdown placement="right-start">
                 <SiteDropdown.Trigger>
                   <SiteDropdown.Item
                     startContent={<Icon path={mdiExport} size={1} />}
@@ -457,7 +457,7 @@ function NestedAndComposedHomeDropdownDemo() {
                     PDF
                   </SiteDropdown.Item>
 
-                  <SiteDropdown isNested placement="right-start">
+                  <SiteDropdown placement="right-start">
                     <SiteDropdown.Trigger>
                       <SiteDropdown.Item
                         startContent={<Icon path={mdiExport} size={1} />}

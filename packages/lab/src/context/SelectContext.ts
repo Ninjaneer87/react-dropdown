@@ -31,6 +31,7 @@ export type SelectContextType<T extends OptionItem = OptionItem> = {
   popOnSelection?: boolean;
   clearSearchOnSelection?: boolean;
   currentOptions?: T[];
+  handleClose: () => void;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

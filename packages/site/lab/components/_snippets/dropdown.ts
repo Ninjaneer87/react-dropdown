@@ -145,7 +145,7 @@ export default function App() {
         <Dropdown.Item>New file</Dropdown.Item>
         <Dropdown.Item>Copy link</Dropdown.Item>
 
-        <Dropdown isNested>
+        <Dropdown>
           <Dropdown.Trigger>
             <Dropdown.Item shouldCloseOnSelection={false}>
               Export
@@ -175,6 +175,73 @@ export default function App() {
         <Dropdown.Item disabled>Copy link (disabled)</Dropdown.Item>
         <Dropdown.Item>Edit</Dropdown.Item>
         <Dropdown.Item disabled>Delete (disabled)</Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+}`;
+
+export const dropdownInfiniteScrollTsx = `import React from 'react';
+import { Dropdown } from '@andrejground/lab';
+
+// Example hook that fetches paginated data
+function usePokemonList() {
+  const [items, setItems] = React.useState<{ text: string; value: string }[]>([]);
+  const [hasMore, setHasMore] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [offset, setOffset] = React.useState(0);
+  const limit = 8;
+
+  const loadPokemon = React.useCallback(async (currentOffset: number) => {
+    setIsLoading(true);
+    const res = await fetch(
+      \`https://pokeapi.co/api/v2/pokemon?offset=\${currentOffset}&limit=\${limit}\`,
+    );
+    const json = await res.json();
+    setHasMore(json.next !== null);
+    setItems((prev) => {
+      const loaded = json.results.map((p) => ({ text: p.name, value: p.url }));
+      return [...new Map([...prev, ...loaded].map((i) => [i.value, i])).values()];
+    });
+    setIsLoading(false);
+  }, []);
+
+  React.useEffect(() => { loadPokemon(0); }, []);
+
+  const onLoadMore = React.useCallback(() => {
+    const next = offset + limit;
+    setOffset(next);
+    loadPokemon(next);
+  }, [offset, loadPokemon]);
+
+  return { items, hasMore, isLoading, onLoadMore };
+}
+
+export default function App() {
+  const { items, isLoading, onLoadMore, hasMore } = usePokemonList();
+
+  return (
+    <Dropdown>
+      <Dropdown.Trigger>
+        <button>
+          Pokémons ▾
+        </button>
+      </Dropdown.Trigger>
+      <Dropdown.Menu>
+        <Dropdown.Section
+          title="Pokémons"
+          scrolling
+          infiniteScrollProps={{
+            onLoadMore,
+            hasMore,
+            isLoading,
+          }}
+        >
+          {items.map((item) => (
+            <Dropdown.Item key={item.value}>
+              {item.text}
+            </Dropdown.Item>
+          ))}
+        </Dropdown.Section>
       </Dropdown.Menu>
     </Dropdown>
   );

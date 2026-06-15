@@ -1,0 +1,440 @@
+---
+slug: from-popover-to-dropdown
+title: "From Popover to Dropdown"
+authors: [andrej]
+tags: [lab, react, accessibility]
+draft: false
+---
+
+Having a [Popover](/lab/components/popover) - component that handles positioning, portals, click-outside, focus trapping, and transitions (see how in [5 Things I Learned Building My Own Popover](/blog/5-things-i-learned-building-my-own-popover)) - unlocks a solid foundation for building more complex UI components on top of it.
+
+The first natural candidate for that is a [Dropdown](/lab/components/dropdown) - one of the key building blocks of modern UIs.
+
+{/* truncate */}
+
+import HomeDropdownDemo from '@site/src/components/HomepageFeatures/HomeDropdownDemo';
+import DropdownInfiniteScroll from '@site/src/components/lab/Dropdown/DropdownInfiniteScroll';
+import SiteDropdown from '@site/src/components/site-lab/SiteDropdown/SiteDropdown';
+
+The interesting work is in what the Dropdown adds on top: keyboard navigation over dynamic content, nested menu semantics, polymorphic item rendering, and a few API boundaries worth getting right.
+
+---
+
+## Composing on top of the Popover
+
+The Dropdown is a Popover with `role="menu"` semantics, keyboard navigation, and item selection layered on top. Everything the Popover already handles - positioning, scroll locking, click-outside, backdrop, transitions - comes for free:
+
+```tsx
+const dropdownJSX = (
+  <Popover
+    openOnHover={openOnHover}
+    shouldFlip={shouldFlip}
+    shouldBlockScroll={shouldBlockScroll}
+    shouldCloseOnScroll={shouldCloseOnScroll}
+    shouldCloseOnClickOutside={shouldCloseOnClickOutside}
+    shouldCloseOnEsc={shouldCloseOnEsc}
+    placement={placement}
+    focusTrapProps={focusTrapProps}
+    // ... everything else
+  >
+    <Popover.Trigger data-dropdown-trigger aria-haspopup="menu">
+      {dropdownTrigger}
+    </Popover.Trigger>
+    <Popover.Content data-dropdown-menu>{dropdownMenu}</Popover.Content>
+  </Popover>
+);
+```
+
+The alternative - reimplementing floating behavior inside the Dropdown - means duplicating positioning logic, portal handling, and event management. Every Popover bug fix gets mirrored. The tradeoff is coupling: the Dropdown is bound to Popover's API surface. If that changes, the Dropdown adapts. In practice, that coupling is cheap compared to maintaining two parallel implementations.
+
+### Compound component pattern
+
+The API uses compound components with strict children validation:
+
+```tsx
+<Dropdown>
+  <Dropdown.Trigger>
+    <button>Actions</button>
+  </Dropdown.Trigger>
+  <Dropdown.Menu>
+    <Dropdown.Section title="Actions">
+      <Dropdown.Item>New file</Dropdown.Item>
+      <Dropdown.Item>Copy link</Dropdown.Item>
+    </Dropdown.Section>
+    <Dropdown.Divider />
+    <Dropdown.Item>Settings</Dropdown.Item>
+  </Dropdown.Menu>
+</Dropdown>
+```
+
+The component iterates `React.Children` and validates that only `DropdownTrigger` and `DropdownMenu` are present - anything else throws. A dropdown has exactly two structural concerns (trigger + menu), and enforcing that at the component boundary catches misuse early instead of producing silent visual bugs.
+
+:::info[Takeaway]
+If the primitive already handles the hard parts, build on top of it. The less you own, the less you maintain.
+:::
+
+---
+
+## Keyboard navigation and dynamic content
+
+Keyboard navigation is the most involved part. Handling ArrowUp/ArrowDown is straightforward for static lists - the challenge is keeping navigation flow predictable when (number of) items change while the menu is open.
+
+### The `data-focusable-item` approach
+
+Rather than tracking items by index in React state, every focusable item gets a `data-focusable-item="true"` attribute, and the [`useKeyboardNavigation`](/lab/hooks/useKeyboardNavigation) hook queries the container for matching elements:
+
+```ts
+const focusableItems = [
+  ...containerElement.querySelectorAll(
+    '[data-focusable-item="true"]:not([disabled]):not([data-disabled="true"])',
+  ),
+] as T[];
+```
+
+The advantage: the hook is decoupled from React's render cycle. Items can be added, removed, or reordered - filtered search results, lazy-loaded sections - and the item list stays current via a `MutationObserver` that re-queries the DOM on every change. Disabled items are excluded by the selector.
+
+### MutationObserver keeps the item list fresh
+
+The initial DOM query runs on open, but items can change mid-session. A [`useMutationObserver`](/lab/hooks/useMutationObserver) watches the menu container for `childList` and `subtree` mutations and calls `getFocusableItems` whenever the DOM changes:
+
+```ts
+const { mutationContainerRef } = useMutationObserver({
+  onMutation: getFocusableItems,
+  isActive,
+});
+```
+
+`getFocusableItems` re-runs the `querySelectorAll` and writes the result into `focusableItemsRef` - a ref, not state. Arrow key handlers read from that ref directly, so they always see the latest item set without triggering a re-render.
+
+When async results arrive or an infinite scroll batch appends items, the observer fires, the ref updates, and the next keypress navigates the correct list.
+
+```
+ DOM mutation
+ (items added/removed)
+        │
+        ▼
+ MutationObserver
+        │  fires onMutation
+        ▼
+    getFocusableItems()
+        │  querySelectorAll(...)
+        ▼
+ focusableItemsRef.current = [...]
+        │
+        ▼
+ ↑ / ↓ key handler
+   reads ref → focuses correct item
+```
+
+No React state, no subscriptions, no manual wiring.
+
+### Full key map
+
+A proper menu goes beyond arrows:
+
+- **ArrowDown** - focus next item, wrap to first if at the end
+- **ArrowUp** - focus previous item, wrap to last if at the start
+- **Home** - jump to the first item
+- **End** - jump to the last item
+- **Enter / Space** - select the focused item
+- **Escape** - close the dropdown
+
+Each focused item is scrolled into view with `scrollIntoView({ block: 'nearest' })`, which matters when sections are scrollable - it keeps the focused item in the viewport.
+
+:::info[Takeaway]
+Querying the DOM for focusable items instead of tracking them in React state, combined with a MutationObserver, handles dynamic content without extra wiring.
+:::
+
+---
+
+## How nesting works
+
+Nesting a dropdown inside another `Dropdown.Menu` looks trivial, but several interaction defaults need to change simultaneously. The component auto-detects its depth via `DropdownRootContext` and adjusts:
+
+### Root detection via context absence
+
+The detection mechanism is a single line:
+
+```ts
+const dropdownRootContext = useDropdownRootContext();
+const isRootDropdown = !dropdownRootContext;
+```
+
+It's as simple as: 
+- if it's **not** wrapped in the root context provider (`dropdownRootContext === null`), it's the root dropdown → Wrap it in the provider.
+- if it **is** already wrapped in the root context provider, it's a child dropdown → Do not wrap it again.
+
+```tsx
+if (isRootDropdown) {
+  return (
+    <DropdownRootContext.Provider
+      value={{
+        handleCloseRoot: () => setIsOpen(false),
+        isRootOpen: open,
+      }}
+    >
+      {dropdownJSX}
+    </DropdownRootContext.Provider>
+  );
+}
+
+return dropdownJSX;
+```
+
+This means `DropdownRootContext` carries two things: `handleCloseRoot` (so any leaf item can collapse the whole tree) and `isRootOpen` (so nested dropdowns can react when the root closes):
+
+```ts
+useEffect(() => {
+  if (!isRootDropdown && !isRootOpen) {
+    setIsOpen(false);
+  }
+}, [isRootOpen, isRootDropdown]);
+```
+
+When the root closes - click-outside, Escape, selection - `isRootOpen` flips to `false`, and every nested dropdown closes itself (with transitions). No event bus, no imperative refs, no prop drilling. The same `Dropdown` component behaves correctly at any depth purely based on what's in context.
+
+The auto-adjusted defaults follow directly from this:
+
+```ts
+placement = !isRootDropdown ? 'right-start' : 'bottom-center',
+showCaret = !isRootDropdown,
+openOnHover = !isRootDropdown,
+```
+
+Root dropdowns open on click, menu below the trigger. Nested dropdowns open on hover (pin on click), submenu to the right, caret indicating depth. Two distinct interaction patterns, same component, zero additional props.
+
+### Hover timing
+
+Hover-triggered submenus require timing sensitivity. A quick cursor movement over the trigger can cause the submenu to open non-intentionally, or the parent to close before the user can reach the submenu. Popover delay props handle this:
+
+```ts
+delayHide={openOnHover ? 300 : 0}
+delayShow={openOnHover ? 100 : 0}
+```
+
+**Show delay** prevents accidental opens on cursor pass-through. **Hide delay** gives the user time to traverse from trigger to submenu content.
+
+### Close-on-selection cascades through the root
+
+Selecting a leaf item should close the entire menu tree, not just the immediate dropdown. `DropdownRootContext` provides a `handleCloseRoot` function that every `DropdownItem` calls on selection:
+
+```ts
+const { handleCloseRoot } = dropdownRootContext;
+
+function handleClick() {
+  if (disabled) return;
+
+  if (onClick) onClick();
+
+  if (closeOnSelection) {
+    handleCloseRoot();
+  }
+}
+```
+
+The nested trigger item sets `shouldCloseOnSelection={false}` - clicking it opens the submenu rather than closing the parent:
+
+```tsx
+<Dropdown>
+  <Dropdown.Trigger>
+    <Dropdown.Item shouldCloseOnSelection={false}>
+      Export
+    </Dropdown.Item>
+  </Dropdown.Trigger>
+  <Dropdown.Menu>
+    <Dropdown.Item>JSON</Dropdown.Item>  {/* closes entire tree */}
+    <Dropdown.Item>CSV</Dropdown.Item>   {/* closes entire tree */}
+  </Dropdown.Menu>
+</Dropdown>
+```
+
+Select a leaf item below - the entire tree collapses:
+
+<HomeDropdownDemo />
+<br />
+<br />
+
+:::info[Takeaway]
+Nesting flips a couple of defaults. Hover timing, placement, carets, and close-on-selection all shift together - auto-detected via context, no flags required.
+:::
+
+---
+
+## Polymorphic Items
+
+A dropdown item isn't always a `div` - it might be an anchor, a router `Link`, or any other element. The `as` prop makes `DropdownItem` polymorphic:
+
+```tsx
+<Dropdown.Item as={Link} to="/settings">
+  Settings
+</Dropdown.Item>
+
+<Dropdown.Item as="a" href="https://example.com" target="_blank">
+  External link
+</Dropdown.Item>
+```
+
+### Why not just wrap a Link inside the item?
+
+Nesting a `Link` inside a `DropdownItem` creates two problems. The outer `div` handles keyboard events (`Enter`/`Space`) and click, while the inner `Link` has its own click behavior - they collide. And the focus outline wraps the `div`, but the clickable area is the `Link`, creating a visual/functional mismatch.
+
+With `as`, the `DropdownItem` **is** the `Link`. One element, one click handler, one focus target.
+
+### Typing gotchas
+
+The challenge is getting TypeScript to infer correct props from the `as` value. The item accepts `ComponentPropsWithRef<T>`, where `T` is the element type:
+
+```ts
+export type DropdownItemProps<T extends ElementType = 'div'> = {
+  isHighlighted?: boolean;
+  shouldCloseOnSelection?: boolean;
+  disabled?: boolean;
+  as?: T;
+  // ...
+} & Omit<ComponentPropsWithRef<T>, 'className'>;
+```
+
+Pass `as={Link}` and TypeScript knows `to` is valid, `href` is not. Pass `as="a"` and the inverse holds.
+
+The complication is `forwardRef` - it erases generic parameters. The workaround is a type assertion:
+
+```ts
+const DropdownItemInner = forwardRef<HTMLElement, DropdownItemProps<ElementType>>(
+  (props, ref) => { /* ... */ }
+);
+
+const DropdownItem = DropdownItemInner as DropdownItemComponent;
+```
+
+The `DropdownItemComponent` type is a call signature that preserves the generic:
+
+```ts
+type DropdownItemComponent = {
+  <T extends ElementType = 'div'>(
+    props: DropdownItemProps<T> & { ref?: ForwardedRef<HTMLElement> },
+  ): React.ReactNode;
+  displayName?: string;
+};
+```
+
+Standard pattern in the React ecosystem. Not elegant, but it preserves full generic inference for consumers.
+
+:::info[Takeaway]
+The `as` prop eliminates wrapper elements and event conflicts. The `forwardRef` generic workaround is ugly but buys proper autocompletion for consumers.
+:::
+
+---
+
+## Where should focus go when the dropdown opens?
+
+"Just focus the menu" breaks down quickly. Different use cases demand different strategies, so the component supports four:
+
+- **`'menu'`** (default) - focuses the menu container itself. Arrow keys start navigation from there. Good for general-purpose dropdowns where the user might want to read the options first.
+- **`'first-item'`** - immediately focuses the first item. Good when the user is expected to pick something quickly.
+- **`'last-item'`** - focuses the last item. Useful for "recent items" or chronological lists where the newest entry is at the bottom.
+- **`'none'`** - no auto-focus. The dropdown opens but focus stays on the trigger. Useful for hover-triggered dropdowns where stealing focus would be disorienting.
+
+```ts
+useEffect(() => {
+  if (!isActive || !autoFocus || autoFocus === 'none') return;
+
+  requestAnimationFrame(() => {
+    if (autoFocus === 'first-item') {
+      focusItem({ index: 0 });
+      return;
+    }
+    if (autoFocus === 'last-item') {
+      focusItem({ focusLast: true });
+      return;
+    }
+    if (autoFocus === 'menu') {
+      containerRef.current?.focus();
+    }
+  });
+}, [autoFocus, isActive, focusItem]);
+```
+
+### Why `requestAnimationFrame`?
+
+The dropdown renders through a portal. On the frame when `isActive` becomes `true`, the portal may not have committed to the DOM yet. Without the RAF wrapper, `containerRef.current` is `null` and the focus call silently fails.
+
+To understand why RAF fixes this, it helps to think about the order of work in a single browser frame:
+
+```
+1. JS task runs       ← React setState, useEffect callbacks run here
+2. Microtasks flush   ← Promises, queueMicrotask
+3. Render / layout    ← Browser paints, DOM is committed
+4. requestAnimationFrame callbacks ← run before the NEXT paint
+```
+
+When `isActive` flips to `true`, the `useEffect` fires as a JS task (step 1). At that point, React has scheduled the portal render but the browser hasn't committed the new DOM nodes yet (step 3 hasn't happened). `containerRef.current` is still `null`.
+
+`requestAnimationFrame` schedules the callback to run at step 4 - after the browser has painted and the portal nodes are in the DOM. By then, `containerRef.current` is populated and `.focus()` lands on the right element.
+
+A `setTimeout(fn, 0)` would also work mechanically, but RAF is semantically correct: "run this after the current render is committed and visible", which is exactly the guarantee needed here.
+
+### Focus trap interaction
+
+The auto-focus strategy must coordinate with the focus trap inherited from Popover. When `autoFocus` is `'none'`, the focus trap's own `autoFocus` takes over. Otherwise, the keyboard navigation hook owns initial focus:
+
+```ts
+focusTrapProps = {
+  autoFocus: autoFocus === 'none',
+  trapFocus: true,
+},
+```
+
+Without this coordination, the two systems compete for initial focus.
+
+:::info[Takeaway]
+Different dropdown use cases need different focus strategies, and the timing of portal rendering adds constraints that CSS alone can't solve.
+:::
+
+---
+
+## Infinite scroll in dropdown sections
+
+Dropdowns with hundreds of options (countries, users, products) can't load everything upfront. `DropdownSection` supports an `infiniteScrollProps` config that wires up an `IntersectionObserver` in [`useInfiniteScroll`](/lab/hooks/useInfiniteScroll) hook to a sentinel at the bottom of the scrollable area:
+
+```tsx
+<Dropdown>
+  <Dropdown.Trigger>
+    <button>Pokémons ▾</button>
+  </Dropdown.Trigger>
+  <Dropdown.Menu>
+    <Dropdown.Section
+      title="Pokémons"
+      scrolling
+      infiniteScrollProps={{
+        onLoadMore,
+        hasMore,
+        isLoading,
+      }}
+    >
+      {items.map((item) => (
+        <Dropdown.Item key={item.value}>
+          {item.text}
+        </Dropdown.Item>
+      ))}
+    </Dropdown.Section>
+  </Dropdown.Menu>
+</Dropdown>
+```
+
+The observer fires `onLoadMore` when the sentinel enters the scrollable viewport. Combined with the `MutationObserver` in `useKeyboardNavigation`, newly loaded items are automatically keyboard-navigable - no extra wiring.
+
+The `scrolling` prop adds `max-height` and `overflow-y: auto` to the section. Section titles are sticky by default (`isStickyTitle`) so they stay visible during scroll.
+
+See it in action - scroll to the bottom of the list and watch new items load:
+
+<DropdownInfiniteScroll />
+<br />
+<br />
+
+---
+
+## Wrapping up
+
+The Popover solves positioning, portals, and focus. The Dropdown is about layering behavior on top of that foundation - keyboard navigation, nesting semantics, polymorphic rendering, and drawing clear boundaries between responsibilities. Less browser wrangling, more API design.
+
+Full source: [Dropdown on GitHub](https://github.com/Ninjaneer87/andrejground-lab/tree/main/packages/lab/src/components/Dropdown). Interactive docs: [Dropdown](/lab/components/dropdown).

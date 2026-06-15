@@ -51,9 +51,8 @@ function SelectItem<T extends OptionItem>({
     currentOptions,
     search,
     setSearchValue,
+    handleClose,
   } = selectContext;
-
-  const { handleCloseRoot } = popoverRootContext;
 
   const isOptionSelected = selected.some((item) => item.value === value);
   const optionItem: T = {
@@ -118,7 +117,7 @@ function SelectItem<T extends OptionItem>({
     }
 
     if (!multiple && shouldCloseOnSelection && isNewSelection) {
-      handleCloseRoot();
+      handleClose();
     }
   }
 

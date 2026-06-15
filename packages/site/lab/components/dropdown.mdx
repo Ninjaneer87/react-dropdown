@@ -3,6 +3,7 @@ import DropdownSections from '@site/src/components/lab/Dropdown/DropdownSections
 import DropdownControlled from '@site/src/components/lab/Dropdown/DropdownControlled';
 import DropdownNested from '@site/src/components/lab/Dropdown/DropdownNested';
 import DropdownDisabledItems from '@site/src/components/lab/Dropdown/DropdownDisabledItems';
+import DropdownInfiniteScroll from '@site/src/components/lab/Dropdown/DropdownInfiniteScroll';
 import DropdownPolymorphic from '@site/src/components/lab/Dropdown/DropdownPolymorphic';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -27,6 +28,7 @@ import {
   dropdownControlledTsx,
   dropdownNestedTsx,
   dropdownDisabledItemsTsx,
+  dropdownInfiniteScrollTsx,
   dropdownPolymorphicTsx,
 } from '@site/lab/components/_snippets/dropdown';
 import SourceLink from '@site/src/components/shared/SourceLink';
@@ -40,7 +42,7 @@ A Dropdown is an interactive overlay menu anchored to a trigger element. It is b
 ## Key Characteristics
 
 - **Composable**: Build menus declaratively using `Dropdown.Menu`, `Dropdown.Section`, `Dropdown.Item`, `Dropdown.Divider`, `Dropdown.Header`, and `Dropdown.Footer`.
-- **Nestable**: Create nested submenus with `isNested` - opens on hover with a caret indicator.
+- **Nestable**: Create nested submenus by nesting `Dropdown` components - nesting is auto-detected via context. Nested dropdowns open on hover with a caret indicator.
 - **Polymorphic Items**: Render items as any element (`div`, `a`, `Link`, etc.) using the `as` prop.
 - **Accessible**: Full keyboard navigation, focus management, and proper ARIA attributes built in.
 
@@ -118,7 +120,7 @@ Use `Dropdown.Section` to group items with titles, and `Dropdown.Divider` to vis
 
 ## Nested
 
-Use `isNested` to create submenus. Nested dropdowns open on hover (and/or click) and display a caret indicator. 
+Nesting is automatic - simply place a `Dropdown` inside another `Dropdown.Menu`. The component detects its nesting level via context and adjusts placement, hover behavior, and caret visibility accordingly.
 
 Keyboard navigation is fully supported between parent and child menus. Use `Enter` to open a nested menu, and `Esc` to close it.
 
@@ -141,6 +143,19 @@ Use the `disabled` prop on `Dropdown.Item` to prevent interaction.
   </TabItem>
   <TabItem value="code" label="Code">
     <CodeBlock language="tsx">{dropdownDisabledItemsTsx}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+## Infinite Scroll
+
+Use `infiniteScrollProps` on `Dropdown.Section` to lazily load items as the user scrolls. The section needs the `scrolling` prop to enable a scrollable container.
+
+<Tabs>
+  <TabItem value="preview" label="Preview" default className="preview-tab">
+    <DropdownInfiniteScroll />
+  </TabItem>
+  <TabItem value="code" label="Code">
+    <CodeBlock language="tsx">{dropdownInfiniteScrollTsx}</CodeBlock>
   </TabItem>
 </Tabs>
 
@@ -178,12 +193,11 @@ Use the `as` prop to render items as different elements - links, anchors, or any
 | `trigger` | `ReactNode` | - | Element that triggers the dropdown |
 | `shouldCloseOnSelection` | `boolean` | `true` | Whether the dropdown closes after an item is selected |
 | `caret` | `ReactNode` | - | Custom caret element replacing the default indicator |
-| `showCaret` | `boolean` | `isNested` | Shows or hides the caret indicator |
+| `showCaret` | `boolean` | `false` (root) / `true` (nested) | Shows or hides the caret indicator |
 | `autoFocus` | `"first-item" \| "last-item" \| "menu" \| "none"` | `"menu"` | Controls which item receives focus when the dropdown opens |
 | `isOpen` | `boolean` | - | Controls the dropdown open state (controlled mode) |
 | `isDisabled` | `boolean` | - | Disables the dropdown trigger |
-| `isNested` | `boolean` | `false` | Indicates the dropdown is nested inside another dropdown |
-| `placement` | <PopoverPlacementTypePopover /> | `isNested ? "right-start" : "bottom-center"` | Preferred placement of the dropdown relative to the trigger |
+| `placement` | <PopoverPlacementTypePopover /> | `"bottom-center"` (root)  / `"right-start"` (nested)| Preferred placement of the dropdown relative to the trigger |
 | `offset` | `number` | - | Distance in pixels between the dropdown and the trigger |
 | `backdrop` | `"none" \| "transparent" \| "opaque" \| "blur"` | - | The backdrop style displayed behind the dropdown |
 | `shouldFlip` | `boolean` | `true` | Flips placement when there is not enough space |
@@ -191,7 +205,7 @@ Use the `as` prop to render items as different elements - links, anchors, or any
 | `shouldCloseOnScroll` | `boolean` | `!shouldBlockScroll` | Closes the dropdown when the page is scrolled |
 | `shouldCloseOnClickOutside` | `boolean` | `true` | Closes the dropdown when clicking outside of it |
 | `shouldCloseOnEsc` | `boolean` | `true` | Closes the dropdown when the Escape key is pressed |
-| `openOnHover` | `boolean` | `isNested` | Opens the dropdown on hover instead of click |
+| `openOnHover` | `boolean` | `false` (root) / `true` (nested) | Opens the dropdown on hover instead of click |
 | `showArrow` | `boolean` | `false` | Shows an arrow pointing toward the trigger |
 | `growContent` | `boolean` | - | Allows the dropdown content to grow beyond the trigger width |
 | `onOpen` | `() => void` | - | Callback fired when the dropdown opens |

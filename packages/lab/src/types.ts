@@ -66,8 +66,6 @@ export type PopoverProps = {
   onTriggerBlur?: () => void;
   /** Callback fired when the open state changes */
   onOpenChange?: (isOpen: boolean) => void;
-  /** Indicates the popover is nested inside another popover */
-  isNested?: boolean;
   /** Opens the popover on hover instead of click */
   openOnHover?: boolean;
   /** Returns focus to the trigger when the popover closes */
@@ -208,7 +206,6 @@ export type DropdownSectionProps = {
 };
 
 export type DropdownItemProps<T extends ElementType = 'div'> = {
-  children: React.ReactNode;
   /** Visually highlights the item */
   isHighlighted?: boolean;
   /** Whether selecting this item closes the dropdown */
@@ -226,7 +223,7 @@ export type DropdownItemProps<T extends ElementType = 'div'> = {
   classNames?: DropdownItemClassNames;
   /** The description of the dropdown item */
   description?: string;
-} & Omit<ComponentPropsWithRef<T>, 'children' | 'className'>;
+} & Omit<ComponentPropsWithRef<T>, 'className'>;
 
 export type DropdownTriggerProps = {
   children: React.ReactNode;
@@ -536,7 +533,6 @@ export type SelectProps<T extends OptionItem> = {
   | 'delayShow'
   | 'delayHide'
   | 'hoverableContent'
-  | 'isNested'
   | 'openOnHover'
   | 'children'
   | 'classNames'

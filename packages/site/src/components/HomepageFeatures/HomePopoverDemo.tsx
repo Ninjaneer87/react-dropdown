@@ -8,7 +8,7 @@ function HomePopoverDemo() {
     <BrowserOnly>
       {() => {
         return (
-          <SitePopover> 
+          <SitePopover shouldBlockScroll={false} shouldCloseOnScroll={false}>
             <SitePopover.Trigger>
               <SiteTooltip content="This is Tooltip over the Popover Trigger">
                 <div className={styles.flex}>

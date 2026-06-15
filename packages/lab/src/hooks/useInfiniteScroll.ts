@@ -62,7 +62,7 @@ export function useInfiniteScroll<
 
       timer = setTimeout(() => {
         isLoadingRef.current = false;
-      }, 100); // Debounce time to prevent multiple calls
+      }, 0);
     }
 
     return () => clearTimeout(timer);

@@ -37,17 +37,17 @@ export function useKeyboardNavigation<T extends HTMLElement>({
   const onFirstUpRef = useRef(onFirstUp);
   const onLastDownRef = useRef(onLastDown);
 
-  const getItems = useCallback(() => {
+  const getFocusableItems = useCallback(() => {
     const containerElement = containerRef.current;
     if (!containerElement) return;
 
-    const items = [
+    const focusableItems = [
       ...containerElement.querySelectorAll(
         '[data-focusable-item="true"]:not([disabled]):not([data-disabled="true"])',
       ),
     ] as T[];
 
-    focusableItemsRef.current = items;
+    focusableItemsRef.current = focusableItems;
   }, []);
 
   const focusItem = useCallback((props: FocusItemProps) => {
@@ -79,7 +79,7 @@ export function useKeyboardNavigation<T extends HTMLElement>({
   }, []);
 
   const { mutationContainerRef } = useMutationObserver({
-    onMutation: getItems,
+    onMutation: getFocusableItems,
     isActive,
   });
 
@@ -118,13 +118,12 @@ export function useKeyboardNavigation<T extends HTMLElement>({
 
   useEffect(() => {
     if (!isActive) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLastFocusedIndex(undefined);
       return;
     }
 
-    getItems();
-  }, [getItems, isActive]);
+    getFocusableItems();
+  }, [getFocusableItems, isActive]);
 
   const onKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {

@@ -10,3 +10,5 @@ export { useResizeObserver } from './useResizeObserver';
 export { useWindowResize } from './useWindowResize';
 export { useLocalStorage } from './useLocalStorage';
 export { usePrevValue } from './usePrevValue';
+export { useKeyboardNavigation } from './useKeyboardNavigation';
+export type { FocusItemProps } from './useKeyboardNavigation';

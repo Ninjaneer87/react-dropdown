@@ -242,6 +242,12 @@ function Select<T extends OptionItem>({
     }
   }
 
+  function handleClose() {
+    setIsOpen(false);
+    if (onClose) onClose();
+    if (onOpenChange) onOpenChange(false);
+  }
+
   const popoverContentClassName = cn('p-0');
   const baseClassName = cn(
     fullWidth ? 'w-full' : 'w-70',
@@ -359,6 +365,7 @@ function Select<T extends OptionItem>({
     clearSearchOnSelection,
     currentOptions: filteredItems,
     lastFocusedIndex,
+    handleClose,
   };
 
   return (
@@ -577,6 +584,7 @@ function Select<T extends OptionItem>({
                 )}
 
                 {typeof children !== 'function' && children}
+
                 {typeof children === 'function' &&
                   filteredItems &&
                   filteredItems.map((item) => {
@@ -610,7 +618,21 @@ function Select<T extends OptionItem>({
                     </SelectItem>
                   ))}
 
-                {infiniteScrollProps?.hasMore && <li ref={loaderRef} />}
+                {infiniteScrollProps?.hasMore && (
+                  <li data-infinite-scroll-loader ref={loaderRef} />
+                )}
+
+                {infiniteScrollProps?.isLoading && (
+                  <SelectItem
+                    key="loading"
+                    value="loading"
+                    text="Loading..."
+                    disabled
+                    classNames={{ base: 'flex justify-center' }}
+                  >
+                    <SpinnerLoader />
+                  </SelectItem>
+                )}
               </ul>
               {bottomContent && bottomContent}
             </div>
