@@ -130,6 +130,8 @@ a[aria-label='Powered by Algolia'] {
 
 .DocSearch-Button {
   position: relative;
+  border: none;
+  outline: none;
 
   &::before {
     transition: opacity 0.2s ease;
