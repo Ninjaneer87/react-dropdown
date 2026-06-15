@@ -106,8 +106,58 @@ a[aria-label='Powered by Algolia'] {
   }
 }
 
-.DocSearch-Button:focus-visible {
-  outline: 1px solid var(--ifm-color-primary);
+.DocSearch-Button:focus-visible,
+.DocSearch-Button:hover {
+  &::before {
+    opacity: 1;
+  }
+}
+
+@property --border-gradient-angle {
+  syntax: '<angle>';
+  initial-value: 90deg;
+  inherits: false;
+}
+
+@keyframes spin {
+  0% {
+    --border-gradient-angle: 90deg;
+  }
+  100% {
+    --border-gradient-angle: 450deg;
+  }
+}
+
+.DocSearch-Button {
+  position: relative;
+
+  &::before {
+    transition: opacity 0.2s ease;
+    opacity: 0.4;
+    --border-gradient-angle: 90deg;
+    --border-gradient: linear-gradient(
+      var(--border-gradient-angle),
+      var(--ifm-font-color-base) 0.26%,
+      var(--ifm-color-primary) 100.26%
+    );
+    --border-width: 1px;
+    --mask-transparent-gradient:
+      linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    /* Magic starts here */
+    padding: var(--border-width);
+    background: var(--border-gradient);
+    -webkit-mask: var(--mask-transparent-gradient);
+    mask: var(--mask-transparent-gradient);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: spin 10s infinite linear;
+  }
 }
 
 #__docusaurus {
@@ -284,8 +334,6 @@ button {
     flex-direction: column;
   }
 }
-
-/* src/css/custom.css */
 
 .form-control {
   display: block;
