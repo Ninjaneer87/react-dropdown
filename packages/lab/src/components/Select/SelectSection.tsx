@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { useSelectContext } from '../../context/SelectContext';
-import { SelectSectionProps } from '../../types';
-import SelectItem from './SelectItem';
-import SelectDivider from './SelectDivider';
-import { cn } from '../../utils/common';
+import { useSelectContext } from '@/context/SelectContext';
+import { SelectSectionProps } from '@/types';
+import SelectItem from '@/components/Select/SelectItem';
+import SelectDivider from '@/components/Select/SelectDivider';
+import { cn } from '@/utils/common';
 
 function SelectSection({
   children,

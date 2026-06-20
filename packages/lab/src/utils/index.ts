@@ -1,2 +1,2 @@
 
-export { debounceCallback, cn } from './common';
+export { debounceCallback, cn } from '@/utils/common';

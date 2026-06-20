@@ -10,29 +10,29 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { PopoverContext } from '../../context/PopoverContext';
-import PopoverTrigger from './PopoverTrigger';
+import { PopoverContext } from '@/context/PopoverContext';
+import PopoverTrigger from '@/components/Popover/PopoverTrigger';
 import {
   PopoverComposition,
   PopoverPlacement,
   PopoverProps,
   PopoverSize,
-} from '../../types';
-import { useDelayUnmount } from '../../hooks/useDelayUnmount';
-import PopoverContent from './PopoverContent';
+} from '@/types';
+import { useDelayUnmount } from '@/hooks/useDelayUnmount';
+import PopoverContent from '@/components/Popover/PopoverContent';
 import {
   createPositionFromPlacement,
   Coords,
   buildDynamicPlacement,
   growContentPosition,
   cn,
-} from '../../utils/common';
-import ClientPortal from '../utility/ClientPortal';
-import { useWindowResize } from '../../hooks/useWindowResize';
+} from '@/utils/common';
+import ClientPortal from '@/components/utility/ClientPortal';
+import { useWindowResize } from '@/hooks/useWindowResize';
 import {
   PopoverRootContext,
   usePopoverRootContext,
-} from '../../context/PopoverRootContext';
+} from '@/context/PopoverRootContext';
 import { Slot } from '@/components/utility/Slot';
 import {
   useFocusTrap,

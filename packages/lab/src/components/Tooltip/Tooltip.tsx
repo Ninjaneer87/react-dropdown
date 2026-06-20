@@ -1,9 +1,9 @@
 'use client';
 
 import { forwardRef, useState } from 'react';
-import { TooltipProps } from '../../types';
-import Popover from '../Popover/Popover';
-import { cn } from '../../utils/common';
+import { TooltipProps } from '@/types';
+import Popover from '@/components/Popover/Popover';
+import { cn } from '@/utils/common';
 
 const Tooltip = forwardRef<HTMLElement, TooltipProps>(
   (

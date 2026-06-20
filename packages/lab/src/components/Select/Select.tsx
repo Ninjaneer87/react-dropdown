@@ -12,17 +12,17 @@ import {
   SelectCompositionProps,
   SelectProps,
   SelectTruncate,
-} from '../../types';
-import SelectDivider from './SelectDivider';
-import SelectItem from './SelectItem';
-import SelectSection from './SelectSection';
-import Popover from '../Popover/Popover';
-import { SelectContext, SelectContextType } from '../../context/SelectContext';
-import CaretIcon from '../ui/CaretIcon';
-import { cn } from '../../utils/common';
-import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
-import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
-import SpinnerLoader from '../SpinnerLoader/SpinnerLoader';
+} from '@/types';
+import SelectDivider from '@/components/Select/SelectDivider';
+import SelectItem from '@/components/Select/SelectItem';
+import SelectSection from '@/components/Select/SelectSection';
+import Popover from '@/components/Popover/Popover';
+import { SelectContext, SelectContextType } from '@/context/SelectContext';
+import CaretIcon from '@/components/ui/CaretIcon';
+import { cn } from '@/utils/common';
+import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import SpinnerLoader from '@/components/SpinnerLoader/SpinnerLoader';
 import SelectSearch from '@/components/Select/SelectSearch';
 
 const DEFAULT_TRUNCATE: SelectTruncate = {

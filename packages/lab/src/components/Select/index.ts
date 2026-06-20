@@ -1,6 +1,6 @@
 'use client';
 
-export { default as Select } from './Select';
-export { default as SelectDivider } from './SelectDivider';
-export { default as SelectItem } from './SelectItem';
-export { default as SelectSection } from './SelectSection';
+export { default as Select } from '@/components/Select/Select';
+export { default as SelectDivider } from '@/components/Select/SelectDivider';
+export { default as SelectItem } from '@/components/Select/SelectItem';
+export { default as SelectSection } from '@/components/Select/SelectSection';

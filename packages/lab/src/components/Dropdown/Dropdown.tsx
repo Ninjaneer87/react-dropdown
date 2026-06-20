@@ -1,17 +1,17 @@
 'use client';
 
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import { DropdownContext } from '../../context/DropdownContext';
-import DropdownMenu from './DropdownMenu';
-import DropdownHeader from './DropdownHeader';
-import DropdownFooter from './DropdownFooter';
-import DropdownSection from './DropdownSection';
-import DropdownItem from './DropdownItem';
-import DropdownTrigger from './DropdownTrigger';
-import DropdownDivider from './DropdownDivider';
-import { DropdownComposition, DropdownProps } from '../../types';
-import Popover from '../Popover/Popover';
-import { defaultChildCaret, defaultRootCaret } from '../../utils/elements';
+import { DropdownContext } from '@/context/DropdownContext';
+import DropdownMenu from '@/components/Dropdown/DropdownMenu';
+import DropdownHeader from '@/components/Dropdown/DropdownHeader';
+import DropdownFooter from '@/components/Dropdown/DropdownFooter';
+import DropdownSection from '@/components/Dropdown/DropdownSection';
+import DropdownItem from '@/components/Dropdown/DropdownItem';
+import DropdownTrigger from '@/components/Dropdown/DropdownTrigger';
+import DropdownDivider from '@/components/Dropdown/DropdownDivider';
+import { DropdownComposition, DropdownProps } from '@/types';
+import Popover from '@/components/Popover/Popover';
+import { defaultChildCaret, defaultRootCaret } from '@/utils/elements';
 import { Slot } from '@/components/utility/Slot';
 import { cn } from '@/utils/common';
 import {

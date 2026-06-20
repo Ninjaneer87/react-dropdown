@@ -1,10 +1,10 @@
 'use client';
 
-import { useDropdownContext } from '../../context/DropdownContext';
-import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
-import { DropdownDividerProps } from '../../types';
-import { cn } from '../../utils/common';
-import { dividerBaseClassName } from '../../utils/elements';
+import { useDropdownContext } from '@/context/DropdownContext';
+import { useDropdownMenuContext } from '@/context/DropdownMenuContext';
+import { DropdownDividerProps } from '@/types';
+import { cn } from '@/utils/common';
+import { dividerBaseClassName } from '@/utils/elements';
 
 function DropdownDivider({ classNames }: DropdownDividerProps) {
   const dropdownContext = useDropdownContext();

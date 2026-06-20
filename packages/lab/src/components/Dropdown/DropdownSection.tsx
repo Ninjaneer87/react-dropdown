@@ -1,12 +1,12 @@
 'use client';
 
 import Dropdown from '@/components/Dropdown/Dropdown';
-import { useDropdownContext } from '../../context/DropdownContext';
-import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
-import { usePopoverContext } from '../../context/PopoverContext';
-import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
-import { DropdownSectionProps } from '../../types';
-import { cn } from '../../utils/common';
+import { useDropdownContext } from '@/context/DropdownContext';
+import { useDropdownMenuContext } from '@/context/DropdownMenuContext';
+import { usePopoverContext } from '@/context/PopoverContext';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { DropdownSectionProps } from '@/types';
+import { cn } from '@/utils/common';
 import SpinnerLoader from '@/components/SpinnerLoader/SpinnerLoader';
 
 function DropdownSection({

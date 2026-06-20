@@ -7,7 +7,7 @@ import {
   SelectItemClassNames,
   SelectSectionClassNames,
   SelectTruncate,
-} from '../types';
+} from '@/types';
 import { FocusItemProps } from '@/hooks/useKeyboardNavigation';
 
 export type SelectContextType<T extends OptionItem = OptionItem> = {

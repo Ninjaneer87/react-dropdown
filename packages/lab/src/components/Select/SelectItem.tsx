@@ -1,12 +1,12 @@
 'use client';
 
 import { useRef } from 'react';
-import { usePopoverRootContext } from '../../context/PopoverRootContext';
-import { useSelectContext } from '../../context/SelectContext';
-import { OptionItem, SelectItemProps } from '../../types';
-import { cn } from '../../utils/common';
-import { Slot } from '../utility/Slot';
-import styles from './SelectItem.module.scss';
+import { usePopoverRootContext } from '@/context/PopoverRootContext';
+import { useSelectContext } from '@/context/SelectContext';
+import { OptionItem, SelectItemProps } from '@/types';
+import { cn } from '@/utils/common';
+import { Slot } from '@/components/utility/Slot';
+import styles from '@/components/Select/SelectItem.module.scss';
 
 function SelectItem<T extends OptionItem>({
   children,

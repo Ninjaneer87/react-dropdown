@@ -1,9 +1,9 @@
 'use client';
 
 import { forwardRef } from 'react';
-import { TimelineProps } from '../../types';
-import { cn } from '../../utils/common';
-import styles from './Timeline.module.scss';
+import { TimelineProps } from '@/types';
+import { cn } from '@/utils/common';
+import styles from '@/components/Timeline/Timeline.module.scss';
 
 const Timeline = forwardRef<HTMLUListElement, TimelineProps>(
   (

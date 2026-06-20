@@ -1,8 +1,8 @@
 'use client';
 
 import React, { forwardRef } from 'react';
-import { PopoverTriggerProps } from '../../types';
-import { usePopoverContext } from '../../context/PopoverContext';
+import { PopoverTriggerProps } from '@/types';
+import { usePopoverContext } from '@/context/PopoverContext';
 import { Slot } from '@/components/utility/Slot';
 
 const PopoverTrigger = forwardRef<HTMLElement, PopoverTriggerProps>(

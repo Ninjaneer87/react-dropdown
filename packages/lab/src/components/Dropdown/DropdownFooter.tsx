@@ -1,9 +1,9 @@
 'use client';
 
-import { useDropdownContext } from '../../context/DropdownContext';
-import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
-import { DropdownFooterProps } from '../../types';
-import { cn } from '../../utils/common';
+import { useDropdownContext } from '@/context/DropdownContext';
+import { useDropdownMenuContext } from '@/context/DropdownMenuContext';
+import { DropdownFooterProps } from '@/types';
+import { cn } from '@/utils/common';
 
 function DropdownFooter({
   children,

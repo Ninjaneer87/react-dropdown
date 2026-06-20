@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { usePopoverContext } from '../../context/PopoverContext';
-import { useSelectContext } from '../../context/SelectContext';
-import { cn } from '../../utils/common';
+import { usePopoverContext } from '@/context/PopoverContext';
+import { useSelectContext } from '@/context/SelectContext';
+import { cn } from '@/utils/common';
 
 type Props = {
   placeholder: string;

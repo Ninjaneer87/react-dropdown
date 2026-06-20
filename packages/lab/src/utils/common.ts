@@ -1,5 +1,5 @@
 import { CSSProperties } from 'react';
-import { PopoverAlign, PopoverPlacement, PopoverPosition } from '../types';
+import { PopoverAlign, PopoverPlacement, PopoverPosition } from '@/types';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 

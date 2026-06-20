@@ -1,11 +1,11 @@
 'use client';
 
-import { useDropdownContext } from '../../context/DropdownContext';
-import { DropdownMenuContext } from '../../context/DropdownMenuContext';
-import { usePopoverContext } from '../../context/PopoverContext';
-import { DropdownMenuProps } from '../../types';
-import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
-import { cn } from '../../utils/common';
+import { useDropdownContext } from '@/context/DropdownContext';
+import { DropdownMenuContext } from '@/context/DropdownMenuContext';
+import { usePopoverContext } from '@/context/PopoverContext';
+import { DropdownMenuProps } from '@/types';
+import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
+import { cn } from '@/utils/common';
 
 function DropdownMenu({ children, classNames }: DropdownMenuProps) {
   const dropdownContext = useDropdownContext();

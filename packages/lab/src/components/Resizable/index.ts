@@ -1,3 +1,3 @@
 'use client';
 
-export { default as Resizable } from './Resizable';
+export { default as Resizable } from '@/components/Resizable/Resizable';

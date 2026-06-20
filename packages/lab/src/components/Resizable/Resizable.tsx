@@ -9,7 +9,7 @@ import {
   useState,
   type MouseEventHandler,
 } from 'react';
-import styles from './Resizable.module.scss';
+import styles from '@/components/Resizable/Resizable.module.scss';
 import { cn } from '@/utils/common';
 import { useLocalStorage } from '@/hooks';
 

@@ -1,8 +1,8 @@
 'use client';
 
 import { forwardRef } from 'react';
-import { useDropdownContext } from '../../context/DropdownContext';
-import { DropdownTriggerProps } from '../../types';
+import { useDropdownContext } from '@/context/DropdownContext';
+import { DropdownTriggerProps } from '@/types';
 import { Slot } from '@/components/utility/Slot';
 
 const DropdownTrigger = forwardRef<

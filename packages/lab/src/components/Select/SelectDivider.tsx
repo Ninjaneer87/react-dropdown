@@ -1,7 +1,7 @@
-import { useSelectContext } from '../../context/SelectContext';
-import { SelectDividerProps } from '../../types';
-import { cn } from '../../utils/common';
-import { dividerBaseClassName } from '../../utils/elements';
+import { useSelectContext } from '@/context/SelectContext';
+import { SelectDividerProps } from '@/types';
+import { cn } from '@/utils/common';
+import { dividerBaseClassName } from '@/utils/elements';
 
 function SelectDivider({ classNames }: SelectDividerProps) {
   const selectContext = useSelectContext();

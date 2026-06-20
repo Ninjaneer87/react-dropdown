@@ -1,11 +1,11 @@
 'use client';
 
 import { ElementType, forwardRef, ForwardedRef } from 'react';
-import { useDropdownContext } from '../../context/DropdownContext';
-import { useDropdownMenuContext } from '../../context/DropdownMenuContext';
-import { DropdownItemProps } from '../../types';
-import { cn } from '../../utils/common';
-import styles from './DropdownItem.module.scss';
+import { useDropdownContext } from '@/context/DropdownContext';
+import { useDropdownMenuContext } from '@/context/DropdownMenuContext';
+import { DropdownItemProps } from '@/types';
+import { cn } from '@/utils/common';
+import styles from '@/components/Dropdown/DropdownItem.module.scss';
 import { useDropdownRootContext } from '@/context/DropdownRootContext';
 
 type DropdownItemComponent = {

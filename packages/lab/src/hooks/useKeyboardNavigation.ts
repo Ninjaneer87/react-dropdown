@@ -1,8 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useMutationObserver } from './useMutationObserver';
-import { ListAutoFocus } from '../types';
+import { useMutationObserver } from '@/hooks/useMutationObserver';
+import { ListAutoFocus } from '@/types';
 
 export type FocusItemProps =
   | {
