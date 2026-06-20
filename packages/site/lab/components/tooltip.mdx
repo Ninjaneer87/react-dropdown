@@ -154,7 +154,7 @@ Use `hoverableContent` prop to keep the tooltip visible when hovering over the t
 | `fullWidthTriggerWrapper` | `boolean` | - | Makes the trigger wrapper take full width |
 | `onOpen` | `() => void` | - | Callback fired when the tooltip opens |
 | `onClose` | `() => void` | - | Callback fired when the tooltip closes |
-| `onClickOutside` | `() => void` | - | Callback fired when clicking outside the tooltip |
+| `onClickOutside` | `(event: MouseEvent \| TouchEvent) => void` | - | Callback fired when clicking outside the tooltip |
 | `onOpenChange` | `(isOpen: boolean) => void` | - | Callback fired when the open state changes |
 | `onTriggerFocus` | `() => void` | - | Callback fired when the trigger receives focus |
 | `onTriggerBlur` | `() => void` | - | Callback fired when the trigger loses focus |

@@ -58,8 +58,8 @@ export type PopoverProps = {
   onOpen?: () => void;
   /** Callback fired when the popover closes */
   onClose?: () => void;
-  /** Callback fired when clicking outside the popover */
-  onClickOutside?: () => void;
+  /** Callback fired when clicking outside the popover. Receives the native `mousedown` event. */
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
   /** Callback fired when the trigger receives focus */
   onTriggerFocus?: () => void;
   /** Callback fired when the trigger loses focus */
@@ -68,7 +68,7 @@ export type PopoverProps = {
   onOpenChange?: (isOpen: boolean) => void;
   /** Opens the popover on hover instead of click */
   openOnHover?: boolean;
-  /** Returns focus to the trigger when the popover closes */
+  /** Returns focus to the trigger when the popover closes via `handleClose`. On outside click, only the root popover in a nested tree restores focus. */
   focusTriggerOnClose?: boolean;
   /** Delay in milliseconds before showing the popover */
   delayShow?: number;

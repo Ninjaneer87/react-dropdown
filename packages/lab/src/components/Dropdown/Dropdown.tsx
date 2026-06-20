@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { DropdownContext } from '../../context/DropdownContext';
 import DropdownMenu from './DropdownMenu';
 import DropdownHeader from './DropdownHeader';
@@ -22,6 +22,7 @@ import {
 const Dropdown = (props: DropdownProps & DropdownComposition) => {
   const dropdownRootContext = useDropdownRootContext();
   const isRootDropdown = !dropdownRootContext;
+  const triggerRef = useRef<HTMLDivElement>(null);
 
   const { isRootOpen } = dropdownRootContext || {};
 
@@ -58,6 +59,7 @@ const Dropdown = (props: DropdownProps & DropdownComposition) => {
     classNames,
     triggerWrapper,
     fullWidthTriggerWrapper,
+    focusTriggerOnClose = true,
   } = props;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -145,7 +147,7 @@ const Dropdown = (props: DropdownProps & DropdownComposition) => {
         shouldCloseOnClickOutside={shouldCloseOnClickOutside}
         shouldCloseOnEsc={shouldCloseOnEsc}
         backdrop={backdrop}
-        focusTriggerOnClose
+        focusTriggerOnClose={focusTriggerOnClose}
         placement={placement}
         isDisabled={isDisabled}
         isOpen={open}
@@ -166,15 +168,19 @@ const Dropdown = (props: DropdownProps & DropdownComposition) => {
           setIsOpen(false);
           if (onClose) onClose();
         }}
-        onClickOutside={() => {
-          if (onClickOutside) onClickOutside();
+        onClickOutside={(event) => {
+          if (onClickOutside) onClickOutside(event);
         }}
         onOpenChange={(isOpen) => {
           setIsOpen(isOpen);
           if (onOpenChange) onOpenChange(isOpen);
         }}
       >
-        <Popover.Trigger data-dropdown-trigger aria-haspopup="menu">
+        <Popover.Trigger
+          data-dropdown-trigger
+          aria-haspopup="menu"
+          ref={triggerRef}
+        >
           {isRootDropdown ? (
             dropdownTrigger
           ) : (
@@ -202,6 +208,12 @@ const Dropdown = (props: DropdownProps & DropdownComposition) => {
             setIsOpen(false);
             if (onClose) onClose();
             if (onOpenChange) onOpenChange(false);
+
+            requestAnimationFrame(() => {
+              if (focusTriggerOnClose) {
+                triggerRef.current?.focus();
+              }
+            });
           },
           isRootOpen: open,
         }}

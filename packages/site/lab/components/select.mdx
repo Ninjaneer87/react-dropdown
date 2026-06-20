@@ -267,8 +267,9 @@ Use `infiniteScrollProps` to load more options as the user scrolls. Combine with
 | `onSearchChange` | `(searchQuery: string) => void` | - | Callback fired when the search query changes |
 | `onAddNewOption` | `(newOption: T) => void` | - | Callback fired when a new option is added |
 | `onOpen` | `() => void` | - | Callback fired when the select opens |
-| `onClickOutside` | `() => void` | - | Callback fired when clicking outside the select |
+| `onClickOutside` | `(event: MouseEvent \| TouchEvent) => void` | - | Callback fired when clicking outside the select |
 | `onOpenChange` | `(isOpen: boolean) => void` | - | Callback fired when the open state changes |
+| `focusTriggerOnClose` | `boolean` | `true` | Returns focus to the select trigger when the menu closes after a selection. Passed through to the underlying Popover for other close paths (Escape, outside click) |
 | `onTriggerFocus` | `() => void` | - | Callback fired when the trigger receives focus |
 | `onTriggerBlur` | `() => void` | - | Callback fired when the trigger loses focus |
 | `triggerWrapper` | `boolean` | - | Wraps the trigger in a span instead of using Slot |

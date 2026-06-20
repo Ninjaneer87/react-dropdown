@@ -33,11 +33,13 @@ import {
   PopoverRootContext,
   usePopoverRootContext,
 } from '../../context/PopoverRootContext';
-import { usePreventBodyScroll } from '../../hooks/usePreventBodyScroll';
-import { useResizeObserver } from '../../hooks/useResizeObserver';
-import { usePositionObserver } from '../../hooks/usePositionObserver';
 import { Slot } from '@/components/utility/Slot';
-import { useFocusTrap, usePrevValue } from '@/hooks';
+import {
+  useFocusTrap,
+  usePreventBodyScroll,
+  useResizeObserver,
+  usePositionObserver,
+} from '@/hooks';
 
 const PopoverBase = forwardRef<
   HTMLSpanElement,
@@ -85,7 +87,6 @@ const PopoverBase = forwardRef<
     },
     ref,
   ) => {
-    const prevControlledIsOpen = usePrevValue(controlledIsOpen);
     const { autoFocus, trapFocus } = focusTrapProps;
     const popoverContentRef = useRef<HTMLDivElement>(null);
     const popoverTriggerRef = useRef<HTMLDivElement>(null);
@@ -345,23 +346,6 @@ const PopoverBase = forwardRef<
       }, delayHide);
     }, [isDisabled, isRootPopover, openOnHover, delayHide]);
 
-    useEffect(
-      () => () => {
-        if (showDelayRef.current) clearTimeout(showDelayRef.current);
-        if (hideDelayRef.current) clearTimeout(hideDelayRef.current);
-      },
-      [],
-    );
-
-    useEffect(() => {
-      const shouldFocusTriggerOnControlledClose =
-        prevControlledIsOpen && !controlledIsOpen && focusTriggerOnClose;
-
-      if (shouldFocusTriggerOnControlledClose) {
-        popoverTriggerRef.current?.focus();
-      }
-    }, [controlledIsOpen, prevControlledIsOpen, focusTriggerOnClose]);
-
     useWindowResize(setContentCoords);
     usePreventBodyScroll(isRootExpanded && isRootPopover && shouldBlockScroll);
     useResizeObserver({
@@ -409,8 +393,11 @@ const PopoverBase = forwardRef<
           return;
         }
 
-        if (onClickOutsideRef.current) onClickOutsideRef.current();
-        if (shouldCloseOnClickOutside) handleClose();
+        if (onClickOutsideRef.current) onClickOutsideRef.current(event);
+        if (shouldCloseOnClickOutside) {
+          const shouldFocusTrigger = focusTriggerOnClose && isRootPopover;
+          handleClose(shouldFocusTrigger);
+        }
       }
 
       document.addEventListener('mousedown', handleClickOutside);
@@ -425,6 +412,8 @@ const PopoverBase = forwardRef<
       handleClose,
       popoverId,
       rootPopoverId,
+      isRootPopover,
+      focusTriggerOnClose,
     ]);
 
     // Handle position and scroll
@@ -503,6 +492,15 @@ const PopoverBase = forwardRef<
         document.removeEventListener('keydown', onPopoverKeyDown);
       };
     }, [shouldCloseOnEsc, isExpanded, handleClose, popoverId]);
+
+    // Unmount cleanup
+    useEffect(
+      () => () => {
+        if (showDelayRef.current) clearTimeout(showDelayRef.current);
+        if (hideDelayRef.current) clearTimeout(hideDelayRef.current);
+      },
+      [],
+    );
 
     const sizeClassMap: Record<PopoverSize, string> = {
       free: 'popover-size-free',

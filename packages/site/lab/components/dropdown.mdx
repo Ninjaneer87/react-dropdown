@@ -124,6 +124,8 @@ Nesting is automatic - simply place a `Dropdown` inside another `Dropdown.Menu`.
 
 Keyboard navigation is fully supported between parent and child menus. Use `Enter` to open a nested menu, and `Esc` to close it.
 
+When a nested dropdown lives inside another overlay (such as a Popover), closing the outer overlay closes nested menus without stealing focus from the outer trigger. Only the root popover restores focus on an outside click.
+
 <Tabs>
   <TabItem value="preview" label="Preview" default className="preview-tab">
     <DropdownNested />
@@ -210,8 +212,9 @@ Use the `as` prop to render items as different elements - links, anchors, or any
 | `growContent` | `boolean` | - | Allows the dropdown content to grow beyond the trigger width |
 | `onOpen` | `() => void` | - | Callback fired when the dropdown opens |
 | `onClose` | `() => void` | - | Callback fired when the dropdown closes |
-| `onClickOutside` | `() => void` | - | Callback fired when clicking outside the dropdown |
+| `onClickOutside` | `(event: MouseEvent \| TouchEvent) => void` | - | Callback fired when clicking outside the dropdown |
 | `onOpenChange` | `(isOpen: boolean) => void` | - | Callback fired when the open state changes |
+| `focusTriggerOnClose` | `boolean` | `true` | Returns focus to the dropdown trigger when the menu closes after a selection (`handleCloseRoot`). Passed through to the underlying Popover |
 | `onTriggerFocus` | `() => void` | - | Callback fired when the trigger receives focus |
 | `onTriggerBlur` | `() => void` | - | Callback fired when the trigger loses focus |
 | `triggerWrapper` | `boolean` | - | Wraps the trigger in a span instead of using Slot |

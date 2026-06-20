@@ -162,14 +162,14 @@ Add your styles and your component is ready to be used.
 | `showArrow` | `boolean` | `false` | Shows an arrow pointing toward the trigger |
 | `openOnHover` | `boolean` | - | Opens the popover on hover instead of click |
 | `openOnFocus` | `boolean` | `false` | Opens the popover when the trigger receives focus |
-| `focusTriggerOnClose` | `boolean` | `true` | Returns focus to the trigger when the popover closes |
+| `focusTriggerOnClose` | `boolean` | `true` | Returns focus to the trigger when the popover closes via `handleClose` (e.g. Escape). On outside click, only the root popover in a nested tree restores focus |
 | `delayShow` | `number` | `0` | Delay in milliseconds before showing the popover |
 | `delayHide` | `number` | `0` | Delay in milliseconds before hiding the popover |
 | `hoverableContent` | `boolean` | `true` | Keeps the popover open while hovering over its content |
 | `growContent` | `boolean` | `false` | Allows the popover content to grow beyond the trigger width |
 | `onOpen` | `() => void` | - | Callback fired when the popover opens |
 | `onClose` | `() => void` | - | Callback fired when the popover closes |
-| `onClickOutside` | `() => void` | - | Callback fired when clicking outside the popover |
+| `onClickOutside` | `(event: MouseEvent \| TouchEvent) => void` | - | Callback fired when clicking outside the popover |
 | `onOpenChange` | `(isOpen: boolean) => void` | - | Callback fired when the open state changes |
 | `onTriggerFocus` | `() => void` | - | Callback fired when the trigger receives focus |
 | `onTriggerBlur` | `() => void` | - | Callback fired when the trigger loses focus |

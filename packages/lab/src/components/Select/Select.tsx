@@ -91,6 +91,7 @@ function Select<T extends OptionItem>({
   size = 'trigger',
   triggerWrapper,
   fullWidthTriggerWrapper,
+  focusTriggerOnClose = true,
   ...rest
 }: SelectProps<T> & SelectCompositionProps<T>) {
   if (items && children && typeof children !== 'function') {
@@ -134,6 +135,7 @@ function Select<T extends OptionItem>({
   const [searchValue, setSearchValue] = useState('');
   const [internalItems, setInternalItems] = useState<T[]>(items ?? []);
   const searchRef = useRef<HTMLInputElement | null>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
 
   const open = controlledIsOpen ?? isOpen;
   const loading = !!isLoading || !!infiniteScrollProps?.isLoading;
@@ -246,6 +248,12 @@ function Select<T extends OptionItem>({
     setIsOpen(false);
     if (onClose) onClose();
     if (onOpenChange) onOpenChange(false);
+
+    requestAnimationFrame(() => {
+      if (focusTriggerOnClose) {
+        triggerRef.current?.focus();
+      }
+    });
   }
 
   const popoverContentClassName = cn('p-0');
@@ -401,7 +409,7 @@ function Select<T extends OptionItem>({
           shouldCloseOnClickOutside={shouldCloseOnClickOutside}
           shouldCloseOnEsc={shouldCloseOnEsc}
           backdrop={backdrop}
-          focusTriggerOnClose
+          focusTriggerOnClose={focusTriggerOnClose}
           placement="bottom-center"
           isDisabled={isDisabled}
           isOpen={open}
@@ -419,8 +427,8 @@ function Select<T extends OptionItem>({
             setIsOpen(false);
             if (onClose) onClose(selected);
           }}
-          onClickOutside={() => {
-            if (onClickOutside) onClickOutside();
+          onClickOutside={(event) => {
+            if (onClickOutside) onClickOutside(event);
           }}
           onOpenChange={(isOpen) => {
             setIsOpen(isOpen);
@@ -437,6 +445,7 @@ function Select<T extends OptionItem>({
           <Popover.Trigger
             data-select-trigger
             aria-haspopup="listbox"
+            ref={triggerRef}
             {...rest}
           >
             {trigger ? (

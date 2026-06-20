@@ -392,6 +392,30 @@ Different dropdown use cases need different focus strategies, and the timing of 
 
 ---
 
+## Where should focus go when the dropdown closes?
+
+Opening focus was only half the story. Closing also needs an explicit plan, especially when dropdowns nest inside popovers.
+
+Dropdown restores focus in `handleCloseRoot` after a selection:
+
+```ts
+requestAnimationFrame(() => {
+  if (focusTriggerOnClose) {
+    triggerRef.current?.focus();
+  }
+});
+```
+
+That mirrors the Popover `requestAnimationFrame` pattern and keeps keyboard users on the trigger they started from. The underlying Popover still handles Escape and outside-click closing, but only the **root** popover in a nested tree restores focus on an outside click - otherwise a submenu trigger inside the content can steal focus from the page-level trigger.
+
+Set `focusTriggerOnClose={false}` on nested informational popovers inside menu items when hover/tooltip behavior should not participate in focus restoration.
+
+:::info[Takeaway]
+Coordinate open and close focus explicitly. Root overlays own outside-click focus restoration; leaf components like Dropdown should restore focus only when the user actually dismissed that menu.
+:::
+
+---
+
 ## Infinite scroll in dropdown sections
 
 Dropdowns with hundreds of options (countries, users, products) can't load everything upfront. `DropdownSection` supports an `infiniteScrollProps` config that wires up an `IntersectionObserver` in [`useInfiniteScroll`](/lab/hooks/useInfiniteScroll) hook to a sentinel at the bottom of the scrollable area:

@@ -177,6 +177,17 @@ if (focusTrigger) {
 }
 ```
 
+A second issue showed up with nesting: when a root popover closes, every nested popover in the tree also closes. If each one restores focus to its own trigger, the last nested instance wins and focus lands on the wrong element (for example, a submenu item instead of the page-level trigger). The fix is to only restore focus from the **root** popover on an outside click:
+
+```ts
+const shouldFocusTrigger = focusTriggerOnClose && isRootPopover;
+handleClose(shouldFocusTrigger);
+```
+
+Nested popovers can still restore focus when closed on their own (for example, with `Escape` while the root overlay stays open).
+
+The `onClickOutside` callback also receives the native `mousedown` event, which is useful when you need to inspect what was clicked.
+
 ### ARIA attributes
 
 The trigger will often benefit from `aria-expanded` to communicate its state, along with a semantic relationship to the popover content. For simple informational popovers, `aria-describedby` pointing to the popover content's id (generated with `useId`) can work well. However, if the popover contains interactive UI like menus or forms, more explicit semantics such as `aria-controls`, `aria-haspopup`, appropriate roles (`menu`, `dialog`, etc.), or even a native `<dialog>` element may be more appropriate depending on the interaction pattern. Without these relationships, assistive technologies may not clearly communicate how the trigger and popover content are connected.

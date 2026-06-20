@@ -95,9 +95,9 @@ const Tooltip = forwardRef<HTMLElement, TooltipProps>(
           setIsOpen(false);
           if (onClose) onClose();
         }}
-        onClickOutside={() => {
+        onClickOutside={(event) => {
           setIsOpen(false);
-          if (onClickOutside) onClickOutside();
+          if (onClickOutside) onClickOutside(event);
         }}
         onOpenChange={(isOpen) => {
           setIsOpen(isOpen);

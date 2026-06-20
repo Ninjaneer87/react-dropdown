@@ -271,15 +271,13 @@ export function buildDynamicPlacement(
   // Fits start check
   if (fitAlign === 'start') {
     if (position === 'top' || position === 'bottom') {
-      const fits =
-        viewport.width - trigger.left - popoverRect.width >= 0;
+      const fits = viewport.width - trigger.left - popoverRect.width >= 0;
       if (!fits) {
         fitAlign = 'center';
       }
     }
     if (position === 'left' || position === 'right') {
-      const fits =
-        viewport.height - trigger.top - popoverRect.height >= 0;
+      const fits = viewport.height - trigger.top - popoverRect.height >= 0;
       if (!fits) {
         fitAlign = 'center';
       }
