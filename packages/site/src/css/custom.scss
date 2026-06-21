@@ -321,6 +321,12 @@ button {
   place-items: center;
   gap: 0.5rem;
 
+  &--two-columns {
+    width: 100%;
+    grid-template-columns: repeat(2, 1fr);
+    place-items: start;
+  }
+
   @media screen and (max-width: 600px) {
     margin: 0 auto;
     grid-template-columns: repeat(1, 1fr);
@@ -398,6 +404,9 @@ button {
 
   img {
     border-radius: 20px;
+    border: 1px solid var(--ifm-color-emphasis-100);
+    margin: auto;
+    display: block;
   }
 }
 

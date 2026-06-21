@@ -2,6 +2,7 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import SitePopover from '@site/src/components/site-lab/SitePopover/SitePopover';
 import styles from './HomePopoverDemo.module.scss';
 import SiteTooltip from '@site/src/components/site-lab/SiteTooltip/SiteTooltip';
+import HomeDropdownDemo from '@site/src/components/HomepageFeatures/HomeDropdownDemo';
 
 function HomePopoverDemo() {
   return (
@@ -76,6 +77,8 @@ function HomePopoverDemo() {
                 <b>500+</b>{' '}
                 <span className={styles.secondaryText}>connections</span>
               </div>
+
+              <HomeDropdownDemo />
             </SitePopover.Content>
           </SitePopover>
         );

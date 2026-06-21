@@ -236,13 +236,11 @@ const PopoverBase = forwardRef<
       (focusTrigger = focusTriggerOnClose) => {
         if (isDisabled) return;
 
-        if (onCloseRef.current) {
-          onCloseRef.current();
-        }
-
         setIsOpen(false);
         setIsHoverOpen(false);
+
         onOpenChangeRef.current?.(false);
+        onCloseRef.current?.();
 
         if (focusTrigger) {
           // Delay focus to prevent the current keydown event from firing on the trigger

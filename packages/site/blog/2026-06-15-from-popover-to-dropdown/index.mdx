@@ -13,6 +13,7 @@ The first natural candidate for that is a [Dropdown](/lab/components/dropdown) -
 {/* truncate */}
 
 import HomeDropdownDemo from '@site/src/components/HomepageFeatures/HomeDropdownDemo';
+import HomePopoverDemo from '@site/src/components/HomepageFeatures/HomePopoverDemo';
 import DropdownInfiniteScroll from '@site/src/components/lab/Dropdown/DropdownInfiniteScroll';
 import SiteDropdown from '@site/src/components/site-lab/SiteDropdown/SiteDropdown';
 
@@ -161,8 +162,8 @@ const isRootDropdown = !dropdownRootContext;
 ```
 
 It's as simple as: 
-- if it's **not** wrapped in the root context provider (`dropdownRootContext === null`), it's the root dropdown → Wrap it in the provider.
-- if it **is** already wrapped in the root context provider, it's a child dropdown → Do not wrap it again.
+- if it's **not** wrapped in the root context provider (`dropdownRootContext === null`), it's the root instance → Wrap it in the provider.
+- if it **is** already wrapped in the root context provider, it's a child instance → Do not wrap it again.
 
 ```tsx
 if (isRootDropdown) {
@@ -191,7 +192,7 @@ useEffect(() => {
 }, [isRootOpen, isRootDropdown]);
 ```
 
-When the root closes - click-outside, Escape, selection - `isRootOpen` flips to `false`, and every nested dropdown closes itself (with transitions). No event bus, no imperative refs, no prop drilling. The same `Dropdown` component behaves correctly at any depth purely based on what's in context.
+When the root closes - click-outside, Escape, selection - `isRootOpen` flips to `false`, and every nested dropdown closes itself (with transitions).
 
 The auto-adjusted defaults follow directly from this:
 
@@ -332,7 +333,7 @@ The `as` prop eliminates wrapper elements and event conflicts. The `forwardRef` 
 - **`'menu'`** (default) - focuses the menu container itself. Arrow keys start navigation from there. Good for general-purpose dropdowns where the user might want to read the options first.
 - **`'first-item'`** - immediately focuses the first item. Good when the user is expected to pick something quickly.
 - **`'last-item'`** - focuses the last item. Useful for "recent items" or chronological lists where the newest entry is at the bottom.
-- **`'none'`** - no auto-focus. The dropdown opens but focus stays on the trigger. Useful for hover-triggered dropdowns where stealing focus would be disorienting.
+- **`'none'`** - no auto-focus. The underlying Popover takes over the initial focus.
 
 ```ts
 useEffect(() => {
@@ -408,17 +409,42 @@ requestAnimationFrame(() => {
 
 That mirrors the Popover `requestAnimationFrame` pattern and keeps keyboard users on the trigger they started from. The underlying Popover still handles Escape and outside-click closing, but only the **root** popover in a nested tree restores focus on an outside click - otherwise a submenu trigger inside the content can steal focus from the page-level trigger.
 
-Set `focusTriggerOnClose={false}` on nested informational popovers inside menu items when hover/tooltip behavior should not participate in focus restoration.
+Where focus lands depends on how the dropdown was closed:
 
+- **Click outside** - closes the entire dropdown tree; focus returns to the root trigger (or the dropdown trigger itself when it is the root).
+
+- **Selection on any item** - closes the entire dropdown tree; focus returns to the root trigger.
+- **Escape** - closes one dropdown at a time, from the innermost open menu back toward the root; focus returns to the trigger of whichever dropdown was just closed.
+
+**Test it out:**
+
+(Press Enter after each closing action to verify focus restoration, try both keyboard and mouse selection.)
+<div className="placement-grid placement-grid--two-columns">
+  <div>
+  **Popover is the root**
+  <HomePopoverDemo />
+  <br />
+  <br />
+  </div>
+
+  <div>
+  **Dropdown is the root**
+  <HomeDropdownDemo />
+  <br />
+  <br />
+  </div>
+</div>
 :::info[Takeaway]
-Coordinate open and close focus explicitly. Root overlays own outside-click focus restoration; leaf components like Dropdown should restore focus only when the user actually dismissed that menu.
+Closing behavior and focus restoration are paired decisions. A dismiss action that closes the whole tree should return focus to the root trigger; Escape should step back one level at a time and restore focus to the trigger of the menu that just closed.
 :::
 
 ---
 
 ## Infinite scroll in dropdown sections
 
-Dropdowns with hundreds of options (countries, users, products) can't load everything upfront. `DropdownSection` supports an `infiniteScrollProps` config that wires up an `IntersectionObserver` in [`useInfiniteScroll`](/lab/hooks/useInfiniteScroll) hook to a sentinel at the bottom of the scrollable area:
+Dropdowns with asynchronous options (countries, users, products fetched from an API) can't load everything upfront.
+
+`DropdownSection` supports an `infiniteScrollProps` config that wires up an `IntersectionObserver` in [`useInfiniteScroll`](/lab/hooks/useInfiniteScroll) hook to a sentinel at the bottom of the scrollable area:
 
 ```tsx
 <Dropdown>
@@ -445,7 +471,7 @@ Dropdowns with hundreds of options (countries, users, products) can't load every
 </Dropdown>
 ```
 
-The observer fires `onLoadMore` when the sentinel enters the scrollable viewport. Combined with the `MutationObserver` in `useKeyboardNavigation`, newly loaded items are automatically keyboard-navigable - no extra wiring.
+The observer fires `onLoadMore` when the sentinel enters the scrollable viewport. Combined with the `MutationObserver` in `useKeyboardNavigation`, newly loaded items are automatically keyboard-navigable - no explicit wiring required.
 
 The `scrolling` prop adds `max-height` and `overflow-y: auto` to the section. Section titles are sticky by default (`isStickyTitle`) so they stay visible during scroll.
 
