@@ -121,6 +121,7 @@ export OP_BIOMETRIC_UNLOCK_ENABLED=true
 export OP_ACCOUNT=https://my.1password.com/
 OP_VAULT_NAME="Personal"
 OP_SOCK_PATH=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+export SSH_AUTH_SOCK="${OP_SOCK_PATH/#\~/$HOME}"
 
 # 1Password item names
 GH_WORK_PAT_NAME="GitHub PAT - Work"
